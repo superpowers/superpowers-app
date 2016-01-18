@@ -52,7 +52,7 @@ packager({
   for (let buildPath of buildPaths) {
     const folderName = path.basename(buildPath);
     console.log(`Generating archive for ${folderName}.`);
-    execSync(`zip -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/packages` });
+    execSync(`zip --symlinks -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/packages` });
   }
 
   console.log("Done.");
