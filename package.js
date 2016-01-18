@@ -41,7 +41,10 @@ packager({
   
   const buildPaths = [];
   for (const oldPath of oldPaths) {
-    const newPath = oldPath.replace("Superpowers", "superpowers").replace("-darwin-", "-osx-");
+    const newPath = oldPath
+      .replace("Superpowers", "superpowers")
+      .replace("-darwin-", "-osx-")
+      .replace("-win32-", "-win-");
     fs.renameSync(oldPath, newPath);
     buildPaths.push(newPath);
   }
