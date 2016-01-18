@@ -33,7 +33,8 @@ body {
 
   .tabs-bar {
     height: 35px;
-    border-bottom: 1px solid #ccc;
+    background: #eee;
+    border-bottom: 1px solid #aaa;
     @import "styles/tabsBar"
   }
 
@@ -43,7 +44,11 @@ body {
   }
 }
 
-.main .panes > iframe {
+.main .panes > * {
   flex: 1;
   border: 0;
+}
+
+.main .panes > *:not(.active) {
+  display: none;
 }
