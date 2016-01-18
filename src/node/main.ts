@@ -15,7 +15,7 @@ electron.app.on("ready", function() {
     useContentSize: true, autoHideMenuBar: true,
     show: false
   });
-  mainWindow.loadURL(`${__dirname}/renderer/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/renderer/index.html`);
   mainWindow.webContents.on("did-finish-load", () => {
     // mainWindow.webContents.openDevTools();
     mainWindow.show();
