@@ -1,8 +1,5 @@
 **/node_modules
-app/*
-!app/package.json
-!app/renderer
-app/renderer/*
-!app/renderer/fonts
+app/main.js
+app/renderer/index.*
 src/**/*.js
 packages/*
