@@ -43,14 +43,13 @@ packager({
   
   const buildPaths = [];
   for (const oldPath of oldPaths) {
-    const newPath = oldPath.replace("Superpowers", "superpowers");
+    const newPath = oldPath.replace("Superpowers", "superpowers").replace("-darwin-", "-osx-");
     fs.renameSync(oldPath, newPath);
     buildPaths.push(newPath);
   }
 
   async.each(buildPaths, (buildPath, callback) => {
     const folderName = path.basename(buildPath);
-    console.log("folder name:", folderName);
     const output = fs.createWriteStream(`${buildPath}.zip`);
     const archive = archiver("zip");
 
@@ -59,7 +58,7 @@ packager({
     archive.pipe(output);
 
     let setEntryData = null;
-    if (buildPath.indexOf("darwin") !== -1 || buildPath.indexOf("linux") !== -1) {
+    if (buildPath.indexOf("-osx-") !== -1 || buildPath.indexOf("-linux-") !== -1) {
       setEntryData = (data) => {
         if (data.name.indexOf("/Contents/MacOS/") !== -1 || data.name === `${folderName}/Superpowers`) {
           console.log(`Marked ${data.name} as executable.`);
