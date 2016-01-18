@@ -1,0 +1,18 @@
+{
+  "name": "superpowers-launcher",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js -w",
+    "start": "electron app"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "dnd-tree-view": "^2.4.2",
+    "jade": "^1.11.0",
+    "stylus": "^0.52.4",
+    "tab-strip": "^1.2.0",
+    "typescript": "^1.7.5"
+  }
+}

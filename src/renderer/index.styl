@@ -1,0 +1,49 @@
+@import "styles/reset"
+@import "styles/treeView"
+
+body {
+  display: flex;
+}
+
+.sidebar {
+  min-width: 240px;
+  max-width: 480px;
+  width: 240px;
+  display: flex;
+  flex-flow: column;
+  background: #f0f0f0;
+  color: #444;
+
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-flow: column;
+}
+
+.sidebar .servers-tree-view {
+  flex: 1;
+  position: relative;
+  
+  > .tree { position: absolute; }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+
+  .tabs-bar {
+    height: 35px;
+    border-bottom: 1px solid #ccc;
+    @import "styles/tabsBar"
+  }
+
+  .panes {
+    flex: 1;
+    display: flex;
+  }
+}
+
+.main .panes > iframe {
+  flex: 1;
+  border: 0;
+}

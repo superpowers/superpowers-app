@@ -1,0 +1,7 @@
+**/node_modules
+app/*
+!app/package.json
+!app/renderer
+app/renderer/*
+!app/renderer/fonts
+src/**/*.js

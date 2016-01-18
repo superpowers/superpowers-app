@@ -1,0 +1,15 @@
+sudo: false
+
+language: node_js
+node_js:
+    - "4.2.4"
+before_install:
+    - npm install -g npm
+    - npm --version
+
+cache:
+  directories:
+    - node_modules
+
+script:
+  - npm run build

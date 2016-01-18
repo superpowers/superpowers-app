@@ -1,0 +1,29 @@
+@import "./Roboto"
+@import "./buttons"
+
+* {
+  box-sizing border-box;
+  min-width: 0;
+  min-height: 0;
+  font-family: inherit;
+}
+
+*[hidden] {
+  display: none !important;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  cursor: default;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+
+input:invalid { outline-color: red; }
