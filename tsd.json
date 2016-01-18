@@ -9,7 +9,16 @@
       "commit": "fe563dff3428bac1260d1794e2c2ecf8f097535a"
     },
     "node/node.d.ts": {
-      "commit": "fe563dff3428bac1260d1794e2c2ecf8f097535a"
+      "commit": "70bf7e2bfeb0d5b1b651ef3219bcc65c8eec117e"
+    },
+    "electron-packager/electron-packager.d.ts": {
+      "commit": "70bf7e2bfeb0d5b1b651ef3219bcc65c8eec117e"
+    },
+    "archiver/archiver.d.ts": {
+      "commit": "70bf7e2bfeb0d5b1b651ef3219bcc65c8eec117e"
+    },
+    "async/async.d.ts": {
+      "commit": "70bf7e2bfeb0d5b1b651ef3219bcc65c8eec117e"
     }
   }
 }

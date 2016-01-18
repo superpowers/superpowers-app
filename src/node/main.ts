@@ -9,15 +9,16 @@ electron.app.on("window-all-closed", function() {
 });
 
 electron.app.on("ready", function() {
+  electron.Menu.setApplicationMenu(null);
   mainWindow = new electron.BrowserWindow({
     width: 1000, height: 600,
     useContentSize: true, autoHideMenuBar: true,
     show: false
   });
-  mainWindow.setMenu(null);
   mainWindow.loadURL(`${__dirname}/renderer/index.html`);
   mainWindow.webContents.on("did-finish-load", () => {
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     mainWindow.show();
   });
 });
+  

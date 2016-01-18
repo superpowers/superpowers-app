@@ -1,4 +1,8 @@
 {
   "name": "superpowers-launcher",
-  "main": "main.js"
+  "main": "main.js",
+  "superpowers": {
+    "electron": "0.36.4",
+    "appApiVersion": "2"
+  }
 }

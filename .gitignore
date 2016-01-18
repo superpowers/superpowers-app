@@ -5,3 +5,4 @@ app/*
 app/renderer/*
 !app/renderer/fonts
 src/**/*.js
+packages/*
