@@ -6,7 +6,15 @@ let mainWindow: GitHubElectron.BrowserWindow;
 let appIcon: GitHubElectron.Tray;
 let appIconMenu: GitHubElectron.Menu;
 
-let quit = false;
+let shouldQuit = electron.app.makeSingleInstance((args, workingDirectory) => {
+  restoreMainWindow();
+  return true;
+});
+
+if (shouldQuit) {
+  electron.app.quit();
+  process.exit(0);
+}
 
 electron.app.on("window-all-closed", () => { /* Nothing */ });
 
@@ -19,14 +27,15 @@ electron.app.on("ready", function() {
 function setupAppIcon() {
   appIcon = new electron.Tray(`${__dirname}/icon-16.png`);
   appIcon.setToolTip("Superpowers");
-  appIcon.on("double-click", () => { mainWindow.show(); });
+  appIcon.on("double-click", () => { restoreMainWindow(); });
   appIconMenu = electron.Menu.buildFromTemplate([
     { type: "separator" },
-    { label: "Dashboard", type: "normal", click: () => { mainWindow.show(); } },
+    { label: "Dashboard", type: "normal", click: () => { restoreMainWindow(); } },
     { type: "separator" },
-    { label: "Exit", type: "normal", click: () => { quit = true; electron.app.quit(); } }
+    { label: "Exit", type: "normal", click: () => { shouldQuit = true; electron.app.quit(); } }
   ]);
   appIcon.setContextMenu(appIconMenu);
+  if (electron.app.dock != null) electron.app.dock.setMenu(appIconMenu);
 
   // TODO: Insert 5 most recently used servers
   appIconMenu.insert(0, new electron.MenuItem({ label: "My Server", type: "normal", click: () => {} }));
@@ -46,9 +55,16 @@ function setupMainWindow() {
   });
 
   mainWindow.on("close", (event) => {
-    if (quit) return;
+    if (shouldQuit) return;
 
     event.preventDefault();
     mainWindow.hide();
   });
+}
+
+function restoreMainWindow() {
+  if (mainWindow == null) return;
+  if (!mainWindow.isVisible()) mainWindow.show();
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.focus();
 }
