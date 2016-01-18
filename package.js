@@ -2,8 +2,6 @@
 
 const fs = require("fs");
 const execSync = require("child_process").execSync;
-const archiver = require("archiver");
-const async = require("async");
 const path = require("path");
 
 const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/package.json`));
@@ -48,29 +46,11 @@ packager({
     buildPaths.push(newPath);
   }
 
-  async.each(buildPaths, (buildPath, callback) => {
+  for (let buildPath of buildPaths) {
     const folderName = path.basename(buildPath);
-    const output = fs.createWriteStream(`${buildPath}.zip`);
-    const archive = archiver("zip");
+    console.log(`Generating archive for ${folderName}.`);
+    execSync(`zip -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/packages` });
+  }
 
-    output.on("close", () => { callback(); });
-    output.on("error", (err) => { throw err; });
-    archive.pipe(output);
-
-    let setEntryData = null;
-    if (buildPath.indexOf("-osx-") !== -1 || buildPath.indexOf("-linux-") !== -1) {
-      setEntryData = (data) => {
-        if (data.name.indexOf("/Contents/MacOS/") !== -1 || data.name === `${folderName}/Superpowers`) {
-          console.log(`Marked ${data.name} as executable.`);
-          data.mode = 0o744;
-        }
-        return data;
-      }
-    }
-    
-    archive.directory(buildPath, folderName, setEntryData);
-    archive.finalize();
-  }, () => {
-    console.log("Done.");
-  });
+  console.log("Done.");
 });
