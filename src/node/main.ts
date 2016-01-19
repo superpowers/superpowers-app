@@ -3,8 +3,8 @@
 import * as electron from "electron";
 
 let mainWindow: GitHubElectron.BrowserWindow;
-let appIcon: GitHubElectron.Tray;
-let appIconMenu: GitHubElectron.Menu;
+let trayIcon: GitHubElectron.Tray;
+let trayMenu: GitHubElectron.Menu;
 
 let shouldQuit = electron.app.makeSingleInstance((args, workingDirectory) => {
   restoreMainWindow();
@@ -16,29 +16,34 @@ if (shouldQuit) {
   process.exit(0);
 }
 
-electron.app.on("window-all-closed", () => { /* Nothing */ });
+electron.app.on("before-quit", () => { shouldQuit = true;  });
+electron.app.on("activate", () => { restoreMainWindow(); });
 
 electron.app.on("ready", function() {
   electron.Menu.setApplicationMenu(null);
-  setupAppIcon();
+  setupTrayOrDock();
   setupMainWindow();
 });
 
-function setupAppIcon() {
-  appIcon = new electron.Tray(`${__dirname}/icon-16.png`);
-  appIcon.setToolTip("Superpowers");
-  appIcon.on("double-click", () => { restoreMainWindow(); });
-  appIconMenu = electron.Menu.buildFromTemplate([
+function setupTrayOrDock() {
+  trayMenu = electron.Menu.buildFromTemplate([
     { type: "separator" },
     { label: "Dashboard", type: "normal", click: () => { restoreMainWindow(); } },
     { type: "separator" },
     { label: "Exit", type: "normal", click: () => { shouldQuit = true; electron.app.quit(); } }
   ]);
-  appIcon.setContextMenu(appIconMenu);
-  if (electron.app.dock != null) electron.app.dock.setMenu(appIconMenu);
 
   // TODO: Insert 5 most recently used servers
-  appIconMenu.insert(0, new electron.MenuItem({ label: "My Server", type: "normal", click: () => {} }));
+  trayMenu.insert(0, new electron.MenuItem({ label: "My Server", type: "normal", click: () => {} }));
+  
+  if (process.platform !== "darwin") {
+    trayIcon = new electron.Tray(`${__dirname}/icon-16.png`);
+    trayIcon.setToolTip("Superpowers");
+    trayIcon.setContextMenu(trayMenu);
+    trayIcon.on("double-click", () => { restoreMainWindow(); });
+  } else {
+    electron.app.dock.setMenu(trayMenu);
+  }
 }
 
 function setupMainWindow() {
