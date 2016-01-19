@@ -4,8 +4,8 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 const path = require("path");
 
-const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/package.json`));
-const appPackage = JSON.parse(fs.readFileSync(`${__dirname}/app/package.json`));
+const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/package.json`, { encoding: "utf8" }));
+const appPackage = JSON.parse(fs.readFileSync(`${__dirname}/app/package.json`, { encoding: "utf8" }));
 appPackage.dependencies = rootPackage.dependencies;
 
 fs.writeFileSync(`${__dirname}/app/package.json`, JSON.stringify(appPackage, null, 2));
