@@ -59,6 +59,8 @@ function setupMainWindow() {
     mainWindow.show();
   });
 
+  mainWindow.webContents.on("will-navigate", (event) => { event.preventDefault(); });
+
   mainWindow.on("close", (event) => {
     if (shouldQuit) return;
 
