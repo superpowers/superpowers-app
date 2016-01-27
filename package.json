@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dnd-tree-view": "^2.4.2",
+    "resize-handle": "^4.0.0",
     "tab-strip": "^1.2.0"
   },
   "devDependencies": {

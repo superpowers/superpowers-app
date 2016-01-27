@@ -13,4 +13,5 @@ spawn(`tsc${suffix}`, watchArgs.concat([ "-p", `${__dirname}/src/node` ]), spawn
 // Renderer
 spawn(`jade${suffix}`, watchArgs.concat([ `${__dirname}/src/renderer/index.jade`, "--out", `${__dirname}/app/renderer` ]), spawnOptions);
 spawn(`stylus${suffix}`, watchArgs.concat([ `${__dirname}/src/renderer/index.styl`, "--out", `${__dirname}/app/renderer` ]), spawnOptions);
+spawn(`stylus${suffix}`, watchArgs.concat([ `${__dirname}/src/renderer/resizeHandle.styl`, "--out", `${__dirname}/app/renderer` ]), spawnOptions);
 spawn(`tsc${suffix}`, watchArgs.concat([ "-p", `${__dirname}/src/renderer` ]), spawnOptions);

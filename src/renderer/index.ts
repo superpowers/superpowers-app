@@ -2,11 +2,14 @@
 
 import * as TreeView from "dnd-tree-view";
 import * as TabStrip from "tab-strip";
+import * as ResizeHandle from "resize-handle";
 
 const sidebarElt = document.querySelector(".sidebar");
 const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 const tabStrip = new TabStrip(tabsBarElt);
 const panesElt = document.querySelector(".panes");
+
+new ResizeHandle(document.querySelector(".sidebar") as HTMLDivElement, "left");
 
 // Servers tree view
 const serversTreeView = new TreeView(document.querySelector(".servers-tree-view") as HTMLElement, { dropCallback: onServerDrop });
