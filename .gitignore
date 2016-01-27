@@ -1,5 +1,6 @@
 **/node_modules
 app/**/*.js
-app/renderer/index.*
+app/**/*.css
+app/**/*.html
 src/**/*.js
 packages/*
