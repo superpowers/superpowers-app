@@ -4,13 +4,13 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 const path = require("path");
 
-const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/package.json`, { encoding: "utf8" }));
-const appPackage = JSON.parse(fs.readFileSync(`${__dirname}/app/package.json`, { encoding: "utf8" }));
+const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, { encoding: "utf8" }));
+const appPackage = JSON.parse(fs.readFileSync(`${__dirname}/../app/package.json`, { encoding: "utf8" }));
 appPackage.dependencies = rootPackage.dependencies;
 
-fs.writeFileSync(`${__dirname}/app/package.json`, JSON.stringify(appPackage, null, 2));
+fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2));
 
-execSync("npm install --production", { cwd: `${__dirname}/app`, stdio: "inherit" });
+execSync("npm install --production", { cwd: `${__dirname}/../app`, stdio: "inherit" });
 execSync("npm install electron-packager", { stdio: "inherit" });
 
 console.log("Running electron-packager...");
@@ -52,7 +52,7 @@ packager({
   for (let buildPath of buildPaths) {
     const folderName = path.basename(buildPath);
     console.log(`Generating archive for ${folderName}.`);
-    execSync(`zip --symlinks -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/packages` });
+    execSync(`zip --symlinks -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/../packages` });
   }
 
   console.log("Done.");
