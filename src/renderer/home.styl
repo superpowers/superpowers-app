@@ -1,0 +1,31 @@
+@import "styles/reset"
+
+body {
+  display: flex;
+  flex-flow: column;
+}
+
+.top {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+
+  ol, ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .links {
+    padding: 1em;
+  }
+
+  .news {
+    flex: 1;
+    padding: 1em;
+    background: #eee;
+  }
+}
+
+.chat {
+  flex: 1;
+}

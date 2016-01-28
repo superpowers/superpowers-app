@@ -14,20 +14,28 @@ languageCodes.push("none");
 
 for (const languageCode of languageCodes) {
   const locale = i18n.loadLocale(languageCode);
-  gulp.task(`jade-${languageCode}`, () => {
+
+  gulp.task(`jade-index-${languageCode}`, () => {
     const result = gulp.src("./src/renderer/index.jade").pipe(jade({ locals: { t: i18n.makeT(locale) } }));
     if (languageCode !== "en") result.pipe(rename({ extname: `.${languageCode}.html` }));
     return result.pipe(gulp.dest("app/renderer"));
   });
-  tasks.push(`jade-${languageCode}`);
+
+  gulp.task(`jade-home-${languageCode}`, () => {
+    const result = gulp.src("./src/renderer/home.jade").pipe(jade({ locals: { t: i18n.makeT(locale) } }));
+    if (languageCode !== "en") result.pipe(rename({ extname: `.${languageCode}.html` }));
+    return result.pipe(gulp.dest("app/renderer"));
+  });
+
+  tasks.push(`jade-index-${languageCode}`, `jade-home-${languageCode}`);
 }
 
 // Stylus
 const stylus = require("gulp-stylus");
 
 gulp.task("stylus-index", () => gulp.src("./src/renderer/index.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
-gulp.task("stylus-resize-handle", () => gulp.src("./src/renderer/resizeHandle.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
-tasks.push("stylus-index", "stylus-resize-handle");
+gulp.task("stylus-home", () => gulp.src("./src/renderer/home.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
+tasks.push("stylus-index", "stylus-home");
 
 // TypeScript
 const ts = require("gulp-typescript");

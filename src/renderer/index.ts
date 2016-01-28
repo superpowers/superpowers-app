@@ -226,7 +226,7 @@ homeTabElt.classList.add("pinned");
 tabStrip.tabsRoot.appendChild(homeTabElt);
 
 const homeIframeElt = document.createElement("iframe");
-homeIframeElt.src = "http://superpowers-html5.com/";
+homeIframeElt.src = "home.html";
 homeIframeElt.classList.add("active");
 homeIframeElt.dataset["name"] = "home";
 panesElt.appendChild(homeIframeElt);
