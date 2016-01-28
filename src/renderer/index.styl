@@ -1,5 +1,6 @@
 @import "styles/reset"
 @import "styles/treeView"
+@import "styles/dialogs"
 
 body {
   display: flex;
@@ -21,8 +22,16 @@ body {
 .sidebar .servers-tree-view {
   flex: 1;
   position: relative;
-  
+
   > .tree { position: absolute; }
+
+  li { justify-content: space-between; }
+}
+
+.servers-buttons {
+  .add-server { background-image: url(images/servers/add.svg); }
+  .edit-server { background-image: url(images/servers/edit.svg); }
+  .remove-server { background-image: url(images/servers/remove.svg); }
 }
 
 .main {

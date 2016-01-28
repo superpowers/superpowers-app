@@ -8,8 +8,12 @@
   },
   "license": "ISC",
   "dependencies": {
+    "async": "^1.5.2",
     "dnd-tree-view": "^2.4.2",
+    "lodash": "^4.0.0",
+    "mkdirp": "^0.5.1",
     "resize-handle": "^4.0.0",
+    "simple-dialogs": "^1.0.1",
     "tab-strip": "^1.2.0"
   },
   "devDependencies": {
