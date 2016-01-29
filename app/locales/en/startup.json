@@ -1,0 +1,7 @@
+{
+  "failed": "Could not start app",
+  "errors": {
+    "missingEnvironmentVariables": "Could not find required environment variables: ${envVars}.",
+    "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}."
+  }
+}

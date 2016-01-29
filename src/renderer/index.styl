@@ -6,6 +6,22 @@
 
 body { display: flex; }
 
+.loading {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  
+  background: #444;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .sidebar {
   min-width: 240px;
   max-width: 480px;
@@ -49,6 +65,10 @@ body { display: flex; }
     flex: 1;
     display: flex;
   }
+}
+  
+.main .panes .home {
+  @import "styles/home.styl";
 }
 
 .main .panes > * {

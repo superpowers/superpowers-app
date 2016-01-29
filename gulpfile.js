@@ -21,55 +21,33 @@ for (const languageCode of languageCodes) {
     return result.pipe(gulp.dest("app/renderer"));
   });
 
-  gulp.task(`jade-home-${languageCode}`, () => {
-    const result = gulp.src("./src/renderer/home.jade").pipe(jade({ locals: { t: i18n.makeT(locale) } }));
-    if (languageCode !== "en") result.pipe(rename({ extname: `.${languageCode}.html` }));
-    return result.pipe(gulp.dest("app/renderer"));
-  });
-
-  tasks.push(`jade-index-${languageCode}`, `jade-home-${languageCode}`);
+  tasks.push(`jade-index-${languageCode}`);
 }
 
 // Stylus
 const stylus = require("gulp-stylus");
 
 gulp.task("stylus-index", () => gulp.src("./src/renderer/index.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
-gulp.task("stylus-home", () => gulp.src("./src/renderer/home.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
-tasks.push("stylus-index", "stylus-home");
+tasks.push("stylus-index");
 
 // TypeScript
 const ts = require("gulp-typescript");
 const tslint = require("gulp-tslint");
 
 // Node
-const tsNodeProject = ts.createProject("./src/node/tsconfig.json");
+const tsProject = ts.createProject("./src/tsconfig.json");
 
-gulp.task("typescript-node", () => {
+gulp.task("typescript", () => {
   let failed = false;
-  const tsResult = tsNodeProject.src()
+  const tsResult = tsProject.src()
     .pipe(tslint({ tslint: require("tslint") }))
     .pipe(tslint.report("prose", { emitError: false }))
-    .pipe(ts(tsNodeProject))
+    .pipe(ts(tsProject))
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
   return tsResult.js.pipe(gulp.dest("./app"));
 });
-tasks.push("typescript-node");
-
-// Renderer
-const tsRendererProject = ts.createProject("./src/renderer/tsconfig.json");
-
-gulp.task("typescript-renderer", () => {
-  let failed = false;
-  const tsResult = tsRendererProject.src()
-    .pipe(tslint({ tslint: require("tslint") }))
-    .pipe(tslint.report("prose", { emitError: false }))
-    .pipe(ts(tsRendererProject))
-    .on("error", () => { failed = true; })
-    .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
-  return tsResult.js.pipe(gulp.dest("./app/renderer"));
-});
-tasks.push("typescript-renderer");
+tasks.push("typescript");
 
 // All
 gulp.task("default", tasks);

@@ -18,5 +18,10 @@ html
     .main
       .tabs-bar
       .panes
+        .home.active(data-name="home")
+          include pages/home
+
+    .loading
+      div= t("common:states.loading")
 
     script(src="index.js")

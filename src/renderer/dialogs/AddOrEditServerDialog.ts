@@ -2,49 +2,54 @@ import { BaseDialog } from "simple-dialogs";
 
 type AddOrEditOptions = {
   validationLabel: string;
-  initialAddressValue: string;
+  initialHostnameValue: string;
   initialPortValue: string;
   initialLabelValue: string;
 }
-export interface AddOrEditServerResult { address: string; port: string; label: string; };
+
+interface AddOrEditServerResult {
+  hostname: string;
+  port: string;
+  label: string;
+};
 
 export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerResult> {
-  private addressInputElt: HTMLInputElement;
+  private hostnameInputElt: HTMLInputElement;
   private portInputElt: HTMLInputElement;
   private labelInputElt: HTMLInputElement;
 
   constructor(promptLabel: string, options: AddOrEditOptions, callback: (result: AddOrEditServerResult) => void) {
     super(callback);
-    
+
     // Prompt name
     const labelElt = document.createElement("label");
     labelElt.textContent = promptLabel;
     this.formElt.appendChild(labelElt);
 
-    const addressRootElt = document.createElement("div");
-    addressRootElt.style.display = "flex";
-    this.formElt.appendChild(addressRootElt);
+    const hostRootElt = document.createElement("div");
+    hostRootElt.style.display = "flex";
+    this.formElt.appendChild(hostRootElt);
 
-    // Address
-    this.addressInputElt = document.createElement("input");
-    this.addressInputElt.style.flex = "1";
-    this.addressInputElt.required = true;
-    this.addressInputElt.value = options.initialAddressValue;
-    this.addressInputElt.title = "Address";
-    this.addressInputElt.placeholder = "Address";
-    addressRootElt.appendChild(this.addressInputElt);
+    // Hostname
+    this.hostnameInputElt = document.createElement("input");
+    this.hostnameInputElt.style.flex = "1";
+    this.hostnameInputElt.required = true;
+    this.hostnameInputElt.value = options.initialHostnameValue;
+    this.hostnameInputElt.title = "Hostname";
+    this.hostnameInputElt.placeholder = "Hostname";
+    hostRootElt.appendChild(this.hostnameInputElt);
 
     const separatorElt = document.createElement("label");
     separatorElt.style.margin = "0 0.5em";
     separatorElt.textContent = ":";
-    addressRootElt.appendChild(separatorElt);
+    hostRootElt.appendChild(separatorElt);
 
     // Port
     this.portInputElt = document.createElement("input");
     this.portInputElt.value = options.initialPortValue;
     this.portInputElt.title = "Port";
     this.portInputElt.placeholder = "Port";
-    addressRootElt.appendChild(this.portInputElt);
+    hostRootElt.appendChild(this.portInputElt);
 
     // Label
     this.labelInputElt = document.createElement("input");
@@ -75,13 +80,13 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
       buttonsElt.appendChild(cancelButtonElt);
       buttonsElt.appendChild(this.validateButtonElt);
     }
-    
-    this.addressInputElt.focus();
+
+    this.hostnameInputElt.focus();
   }
-  
+
   submit() {
     const result = {
-      address: this.addressInputElt.value,
+      hostname: this.hostnameInputElt.value,
       port: this.portInputElt.value !== "" ? this.portInputElt.value : null,
       label: this.labelInputElt.value
     };
