@@ -52,8 +52,16 @@ packager({
   for (let buildPath of buildPaths) {
     const folderName = path.basename(buildPath);
     console.log(`Generating archive for ${folderName}.`);
-    execSync(`zip --symlinks -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/../packages` });
+    try {
+      execSync(`zip --symlinks -r ${folderName}.zip ${folderName}`, { cwd: `${__dirname}/../packages` });
+    } catch (err) {
+      console.error(err.stack);
+    }
   }
+
+  delete appPackage.dependencies;
+  fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2));
+  execSync("npm prune", { cwd: `${__dirname}/../app`, stdio: "inherit" });
 
   console.log("Done.");
 });
