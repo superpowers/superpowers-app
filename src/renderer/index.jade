@@ -7,9 +7,9 @@ html
   body
     .sidebar
       .servers-buttons.flat-button-strip
-        button(title=t("sidebar:treeView.addServer.title"), disabled,data-hotkey="control+N").add-server
-        button(title=t("sidebar:treeView.editServer.title"),disabled).edit-server
-        button(title=t("sidebar:treeView.removeServer.title"),disabled).remove-server
+        button.add-server(title=t("sidebar:treeView.addServer.title"), disabled,data-hotkey="control+N")
+        button.edit-server(title=t("sidebar:treeView.editServer.title"),disabled)
+        button.remove-server(title=t("sidebar:treeView.removeServer.title"),disabled)
 
       .servers-tree-view
       .local-server
@@ -17,6 +17,9 @@ html
 
     .main
       .tabs-bar
+        ol.tab-strip
+          li(data-name="home").active.pinned
+            img.icon(src="images/tabs/home.svg")
       .panes
         .home.active(data-name="home")
           include pages/home

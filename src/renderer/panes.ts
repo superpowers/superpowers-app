@@ -4,10 +4,7 @@ const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 const panesElt = document.querySelector(".panes");
 const tabStrip = new TabStrip(tabsBarElt);
 
-const homeTabElt = document.createElement("li");
-homeTabElt.dataset["name"] = "home";
-homeTabElt.classList.add("active", "pinned");
-tabStrip.tabsRoot.appendChild(homeTabElt);
+const homeTabElt = tabStrip.tabsRoot.querySelector(`li[data-name="home"]`);
 
 export function openServer(serverEntry: ServerEntry) {
   clearActiveTab();
