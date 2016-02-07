@@ -1,7 +1,7 @@
 .tab-strip {
-  height: 35px;
+  height: 36px;
   display: flex;
-  margin: 0 0 0 -1px;
+  margin: 0 0 -1px -1px;
   padding: 0;
 
   * {
@@ -16,12 +16,12 @@
   display: flex;
   align-items: center;
   width: 160px;
-  height: 35px;
+  height: 36px;
+  background: #ddd;
   border-left: 1px solid #bbb;
   border-right: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
   margin-right: -1px;
-  background: #ddd;
-  
 
   &.dragged {
     flex: 0 0 0;
@@ -37,7 +37,7 @@
 
   &:not(.active) { color: #888; }
   &:hover { background: #eee; }
-  &.active { background: #fff; }
+  &.active { background: #fff; border-bottom: 1px solid #fff; }
 
   &.unread {
     animation-duration: 1s;
@@ -59,54 +59,49 @@
   justify-content: center;
 }
 
-.tab-strip > li .icon {
-  padding: 0 0.25em;
-  width: calc(24px + 0.5em);
-  pointer-events: none;
-}
-
-.tab-strip > li .label {
-  pointer-events: none;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  flex-flow: column;
-}
-
-.tab-strip > li .location {
-  font-size: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: -4px;
-
-  &:empty { display: none; }
-}
-
-.tab-strip > li .name {
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-}
-
-.tab-strip > li .close {
-  margin-right: 0.25em;
-  width: 20px;
-  height: 20px;
-  border: none;
-  box-shadow: none;
-  outline: none;
-
-  background: url(/images/tabs/close.svg) center center no-repeat;
-  opacity: 0.5;
-
-  &:hover {
-    background-image: url(/images/tabs/close-active.svg);
-    opacity: 0.5;
+.tab-strip > li {
+  .icon {
+    padding: 0 0.25em;
+    width: calc(24px + 0.5em);
+    pointer-events: none;
   }
 
-  &:active {
-    background-image: url(/images/tabs/close-active.svg);
-    opacity: 1;
+  .label {
+    pointer-events: none;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    flex-flow: column;
+  }
+
+  .location {
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: -3px;
+
+    &:empty { display: none; }
+  }
+
+  .name {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .close {
+    margin-right: 0.25em;
+    width: 20px;
+    height: 20px;
+    border: none;
+    box-shadow: none;
+    outline: none;
+
+    background: url(images/tabs/close.svg) center center no-repeat;
+    opacity: 0.5;
+
+    &:hover { background-image: url(images/tabs/close-active.svg); opacity: 0.5; }
+    &:active { background-image: url(images/tabs/close-active.svg); opacity: 1; }
   }
 }

@@ -15,7 +15,31 @@ export function openServer(serverEntry: ServerEntry) {
   if (serverTabElt == null) {
     serverTabElt = document.createElement("li");
     serverTabElt.dataset["serverId"] = serverEntry.id;
-    serverTabElt.textContent = serverEntry.label;
+
+    const iconElt = document.createElement("img");
+    iconElt.className = "icon";
+    iconElt.src = "images/tabs/server.svg";
+    serverTabElt.appendChild(iconElt);
+
+    const labelElt = document.createElement("div");
+    labelElt.className = "label";
+
+    const locationElt = document.createElement("div");
+    locationElt.className = "location";
+    locationElt.textContent = `${serverEntry.hostname}:${serverEntry.port}`;
+    labelElt.appendChild(locationElt);
+
+    const nameElt = document.createElement("div");
+    nameElt.className = "name";
+    nameElt.textContent = serverEntry.label;
+    labelElt.appendChild(nameElt);
+
+    serverTabElt.appendChild(labelElt);
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "close";
+    serverTabElt.appendChild(closeButton);
+
     tabStrip.tabsRoot.appendChild(serverTabElt);
 
     serverPaneElt = document.createElement("iframe");
@@ -34,6 +58,7 @@ export function openServer(serverEntry: ServerEntry) {
 
 tabStrip.on("activateTab", onTabActivate);
 tabStrip.on("closeTab", onTabClose);
+tabStrip.tabsRoot.addEventListener("click", onTabStripClick);
 
 function onTabActivate(tabElt: HTMLLIElement) {
   clearActiveTab();
@@ -65,6 +90,13 @@ function onTabClose(tabElement: HTMLLIElement) {
 
   tabElement.parentElement.removeChild(tabElement);
   paneElt.parentElement.removeChild(paneElt);
+}
+
+function onTabStripClick(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  if (target.tagName !== "BUTTON" || target.className !== "close") return;
+
+  onTabClose(target.parentElement as HTMLLIElement);
 }
 
 function clearActiveTab() {
