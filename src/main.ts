@@ -108,7 +108,7 @@ function onNewStandaloneWindow(event: Electron.IPCMainEvent, url: string, title:
     title, icon: `${__dirname}/superpowers.ico`,
     width: 1000, height: 600,
     minWidth: 800, minHeight: 480,
-    autoHideMenuBar: true
+    useContentSize: true, autoHideMenuBar: true
   });
 
   const windowId = standaloneWindow.id;

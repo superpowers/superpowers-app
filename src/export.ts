@@ -33,7 +33,8 @@ function onExport(event: Electron.IPCMainEvent, data: ExportData) {
   const exportWindow = new electron.BrowserWindow({
     title: "Superpowers", icon: `${__dirname}/public/images/icon.png`,
     width: 1000, height: 600,
-    minWidth: 800, minHeight: 480
+    minWidth: 800, minHeight: 480,
+    useContentSize: true
   });
   exportWindow.setMenuBarVisibility(false);
   exportWindow.loadURL(`${data.baseURL}:${data.mainPort}/build.html`);
