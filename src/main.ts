@@ -86,7 +86,10 @@ function setupMainWindow() {
     mainWindow.webContents.openDevTools();
   });
 
-  mainWindow.webContents.on("will-navigate", (event: Event, newURL: string) => { event.preventDefault(); });
+  mainWindow.webContents.on("will-navigate", (event: Event, newURL: string) => {
+    event.preventDefault();
+    electron.shell.openExternal(newURL);
+  });
 
   mainWindow.on("close", (event: Event) => {
     if (shouldQuit) return;
