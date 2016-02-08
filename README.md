@@ -7,8 +7,13 @@ See https://github.com/superpowers/superpowers/tree/master/launcher for the curr
 
 Clone this repository, make sure you have Node.js 4.x installed and run:
 
+```bash
     npm install
     npm run build
+
+    # Install Electron
+    npm install -g electron-prebuilt
+```
 
 To run it:
 
