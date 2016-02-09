@@ -161,23 +161,32 @@ function onTextAreaKeyPress(event: KeyboardEvent) {
   }
 }
 
+const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 function send(msg: string) {
-  if (msg[0] === "/") {
-    let [ command, params ] = msg.split(" ", 2);
-    command = command.slice(1).toLowerCase();
+  const result = commandRegex.exec(msg);
+  if (result != null) {
+    const command = result[1].toLocaleLowerCase();
+    const params = result[2];
 
-    if (command === "disconnect") {
-      disconnect();
-    } else if (command === "connect") {
-      connect();
-    } else if (irc != null) {
-      if (command === "nick" || command === "nickname") {
-        irc.nick(params);
-      } else {
-        addInfo(`Unsupported command: ${msg}`);
+    switch (command) {
+      case "disconnect": disconnect(); return;
+      case "connect": connect(); return;
+    }
+
+    if (irc != null) {
+      switch (command) {
+        case "nick":
+          irc.nick(params);
+          break;
+        case "msg":
+          const [ target, message ] = params.split(" ", 2);
+          irc.send(target, message);
+          break;
+        default:
+          addInfo(`Unsupported command: ${command}`);
       }
     } else {
-        addInfo(`Not connected.`);
+      addInfo(`Not connected.`);
     }
   } else if (hasJoinedChannel) {
     irc.send(channelName, msg);
