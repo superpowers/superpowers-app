@@ -5,3 +5,4 @@
 /// <reference path="async/async.d.ts" />
 /// <reference path="lodash/lodash.d.ts" />
 /// <reference path="mkdirp/mkdirp.d.ts" />
+/// <reference path="slate-irc/slate-irc.d.ts" />

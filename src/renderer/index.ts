@@ -2,6 +2,7 @@ import * as electron from "electron";
 import * as i18n from "../shared/i18n";
 import * as settings from "./settings";
 import * as sidebar from "./sidebar";
+import * as chat from "./chat";
 
 electron.ipcRenderer.on("init", onInitialize);
 window.addEventListener("message", onMessageReceived);
@@ -30,6 +31,7 @@ function start() {
   loadingElt.parentElement.removeChild(loadingElt);
 
   sidebar.start();
+  chat.start();
 }
 
 function onMessageReceived(event: MessageEvent) {
