@@ -22,7 +22,7 @@ body { display: flex; }
   justify-content: center;
 }
 
-.sidebar {
+body > .sidebar {
   min-width: 240px;
   max-width: 480px;
   width: 240px;
@@ -35,8 +35,8 @@ body { display: flex; }
   flex-flow: column;
 }
 
-.sidebar .servers-tree-view {
-  flex: 1;
+body > .sidebar .servers-tree-view {
+  flex: 1 1 0;
   position: relative;
 
   > .tree { position: absolute; }
@@ -51,7 +51,7 @@ body { display: flex; }
 }
 
 .main {
-  flex: 1;
+  flex: 1 1 0;
   display: flex;
   flex-flow: column;
 
@@ -61,7 +61,7 @@ body { display: flex; }
   }
 
   .panes {
-    flex: 1;
+    flex: 1 1 0;
     display: flex;
   }
 }
@@ -71,7 +71,7 @@ body { display: flex; }
 }
 
 .main .panes > * {
-  flex: 1;
+  flex: 1 1 0;
   border: 0;
 }
 
