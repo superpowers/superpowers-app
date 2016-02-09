@@ -87,6 +87,7 @@ function onNick(event: SlateIRC.NickEvent) {
 
 function onQuit(event: SlateIRC.QuitEvent) {
   addInfo(`${event.nick} has quit (${event.message}).`);
+  removeUserFromList(event.nick);
 }
 
 function onData(event: SlateIRC.DataEvent) {
