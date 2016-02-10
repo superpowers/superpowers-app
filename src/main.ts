@@ -74,6 +74,7 @@ function setupTrayOrDock() {
 function setupMainWindow() {
   mainWindow = new electron.BrowserWindow({
     width: 1000, height: 600, icon: `${__dirname}/superpowers.ico`,
+    minWidth: 800, minHeight: 480,
     useContentSize: true, autoHideMenuBar: true,
     show: false
   });
