@@ -5,7 +5,7 @@ See https://github.com/superpowers/superpowers/tree/master/launcher for the curr
 
 ## How to install
 
-Clone this repository, make sure you have Node.js 4.x installed and run:
+Clone this repository, make sure you have the latest version of [Node.js](https://nodejs.org/) installed and run:
 
 ```bash
     npm install
