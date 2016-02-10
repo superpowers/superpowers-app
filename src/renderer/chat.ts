@@ -17,7 +17,8 @@ let channelName = "#superpowers-html5";
 let hasJoinedChannel = false;
 
 export function start() {
-  connect();
+  // connect();
+  addInfo(`Type /connect to join chat.`);
 }
 
 function connect() {
@@ -165,32 +166,40 @@ const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 function send(msg: string) {
   const result = commandRegex.exec(msg);
   if (result != null) {
-    const command = result[1].toLocaleLowerCase();
-    const params = result[2];
+    handleCommand(result[1].toLocaleLowerCase(), result[2]);
+    return;
+  }
 
-    switch (command) {
-      case "disconnect": disconnect(); return;
-      case "connect": connect(); return;
-    }
-
-    if (irc != null) {
-      switch (command) {
-        case "nick":
-          irc.nick(params);
-          break;
-        case "msg":
-          const [ target, message ] = params.split(" ", 2);
-          irc.send(target, message);
-          break;
-        default:
-          addInfo(`Unsupported command: ${command}`);
-      }
-    } else {
-      addInfo(`Not connected.`);
-    }
-  } else if (hasJoinedChannel) {
+  if (irc == null) {
+    addInfo("You are not connected.");
+  } else if (!hasJoinedChannel) {
+    addInfo("You have not yet joined a channel.");
+  } else {
     irc.send(channelName, msg);
     addMessage(irc.me, msg);
+  }
+}
+
+function handleCommand(command: string, params: string) {
+  switch (command) {
+    case "disconnect": disconnect(); return;
+    case "connect": connect(); return;
+  }
+
+  if (irc != null) {
+    switch (command) {
+      case "nick":
+        irc.nick(params);
+        break;
+      case "msg":
+        const [ target, message ] = params.split(" ", 2);
+        irc.send(target, message);
+        break;
+      default:
+        addInfo(`Unsupported command: ${command}`);
+    }
+  } else {
+    addInfo("You are not connected.");
   }
 }
 
