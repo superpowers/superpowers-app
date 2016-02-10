@@ -94,13 +94,13 @@ const splashElt = loadingElt.querySelector(".splash") as HTMLImageElement;
 const statusElt = loadingElt.querySelector(".status") as HTMLDivElement;
 splashElt.hidden = false;
 
-let inAnimation = (splashElt as any).animate([
+let splashInAnim = (splashElt as any).animate([
   { opacity: "0", transform: "translateY(-50vh)" },
   { opacity: "1", transform: "translateY(0)" }
 ], { duration: 500, easing: "ease-out" });
 
-inAnimation.addEventListener("finish", () => {
-  inAnimation = null;
+splashInAnim.addEventListener("finish", () => {
+  splashInAnim = null;
   if (onAppReady != null) onAppReady();
 });
 
@@ -108,21 +108,26 @@ function start() {
   sidebar.start();
   chat.start();
 
-  if (inAnimation != null) onAppReady = playOutAnimation;
+  if (splashInAnim != null) onAppReady = playOutAnimation;
   else playOutAnimation();
 }
 
 function playOutAnimation() {
-  const fadeOutStatusAnim = (statusElt as any).animate([ { opacity: "1" }, { opacity: "0" } ], { duration: 300, easing: "ease-in" });
-  fadeOutStatusAnim.addEventListener("finish", () => {
+  const statusOutAnim = (statusElt as any).animate([ { opacity: "1" }, { opacity: "0" } ], { duration: 300, easing: "ease-in" });
+  statusOutAnim.addEventListener("finish", () => {
     statusElt.style.opacity = "0";
 
-    const outAnimation = (splashElt as any).animate([
-      { opacity: "1", transform: "scale(1, 1)" },
-      { opacity: "0", transform: "scale(5, 5)" }
+    const loadingOutAnim = (loadingElt as any).animate([
+      { opacity: "1" },
+      { opacity: "0" }
     ], { duration: 300, easing: "ease-in" });
 
-    outAnimation.addEventListener("finish", () => {
+    const splashOutAnim = (splashElt as any).animate([
+      { transform: "scale(1, 1)" },
+      { transform: "scale(5, 5)" }
+    ], { duration: 300, easing: "ease-in" });
+
+    loadingOutAnim.addEventListener("finish", () => {
       loadingElt.parentElement.removeChild(loadingElt);
     });
   });
