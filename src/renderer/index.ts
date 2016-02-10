@@ -25,7 +25,7 @@ function setupDevToolsShortcut() {
 
 function getLocalAppVersion() {
   let appVersion = electron.remote.app.getVersion();
-  if (appVersion === "dev") {
+  if (appVersion === "0.0.0-dev") {
     const { version } = require(`${__dirname}/../../package.json`);
     appVersion = `v${version}-dev`;
   } else {
@@ -64,7 +64,7 @@ function checkForUpdates() {
   // TODO: install server and offer installing a system on first run!
 
   fetchVersions((err, components) => {
-    if (components != null && components["app"].version !== appVersion && electron.remote.app.getVersion() !== "dev") {
+    if (components != null && components["app"].version !== appVersion && electron.remote.app.getVersion() !== "0.0.0-dev") {
       const label = i18n.t("updates:app", { latest: components["app"].version, current: appVersion });
       const options = {
         validationLabel: i18n.t("common:actions.download"),

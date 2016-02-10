@@ -6,9 +6,10 @@ const path = require("path");
 
 const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, { encoding: "utf8" }));
 const appPackage = JSON.parse(fs.readFileSync(`${__dirname}/../app/package.json`, { encoding: "utf8" }));
+appPackage.version = rootPackage.version;
 appPackage.dependencies = rootPackage.dependencies;
 
-fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2));
+fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2) + "\n");
 
 execSync("npm install --production", { cwd: `${__dirname}/../app`, stdio: "inherit" });
 execSync("npm install electron-packager", { stdio: "inherit" });
@@ -59,8 +60,9 @@ packager({
     }
   }
 
+  appPackage.version = "0.0.0-dev";
   delete appPackage.dependencies;
-  fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2));
+  fs.writeFileSync(`${__dirname}/../app/package.json`, JSON.stringify(appPackage, null, 2) + "\n");
   execSync("npm prune", { cwd: `${__dirname}/../app`, stdio: "inherit" });
 
   console.log("Done.");
