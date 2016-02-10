@@ -46,7 +46,8 @@ export function openServer(serverEntry: ServerEntry) {
     serverPaneElt.dataset["serverId"] = serverEntry.id;
 
     const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
-    // TODO: Check if server the server is online and if it's a Superpowers server (fetch superpowers.json)
+
+    // TODO: Check if the server is online and if it's a Superpowers server (fetch superpowers.json)
     serverPaneElt.src = `http://${host}`;
     panesElt.appendChild(serverPaneElt);
   }
