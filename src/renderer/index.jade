@@ -25,6 +25,9 @@ html
           include home
 
     .loading
-      div= t("common:states.loading")
+      .splash(hidden)
+        img(src="images/superpowers-256.png")
+        .status Loading Superpowers...
+      .version
 
     script(src="index.js")

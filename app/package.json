@@ -1,5 +1,6 @@
 {
-  "name": "superpowers-launcher",
+  "name": "superpowers-app",
+  "version": "dev",
   "main": "main.js",
   "superpowers": {
     "electron": "0.36.5",

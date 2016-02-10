@@ -1,6 +1,12 @@
 {
   "activeLanguage": "English",
   
+  "actions": {
+    "skip": "Skip",
+    "download": "Download",
+    "install": "Install"
+  },
+
   "states": {
     "loading": "Loading..."
   }

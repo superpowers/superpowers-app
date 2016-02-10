@@ -83,8 +83,6 @@ function setupMainWindow() {
   mainWindow.webContents.on("did-finish-load", () => {
     mainWindow.webContents.send("init", userDataPath, i18n.languageCode);
     mainWindow.show();
-
-    mainWindow.webContents.openDevTools();
   });
 
   mainWindow.webContents.on("will-navigate", (event: Event, newURL: string) => {

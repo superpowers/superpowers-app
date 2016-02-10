@@ -7,19 +7,54 @@
 body { display: flex; }
 
 .loading {
+  z-index: 5;
   position: absolute;
-  z-index: 100;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  
-  background: #444;
-  color: #fff;
+  overflow: hidden;
+
+  background: #eee;
+  color: #444;
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  .splash {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .splash img {
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+  
+  .status { font-size: 2em; }
+
+  .version {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0.5em;
+  }
+}
+
+
+.update-available {
+  z-index: 100;
+  
+  .info {
+    padding: 0.5em;
+  }
+
+  .actions {
+    padding: 0.5em;
+  }
 }
 
 body > .sidebar {
