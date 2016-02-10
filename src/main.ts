@@ -90,12 +90,18 @@ function setupMainWindow() {
     electron.shell.openExternal(newURL);
   });
 
-  mainWindow.on("close", (event: Event) => {
-    if (shouldQuit) return;
+  mainWindow.on("close", onCloseMainWindow);
+}
 
-    event.preventDefault();
-    mainWindow.hide();
-  });
+function onCloseMainWindow(event: Event) {
+  if (shouldQuit) return;
+
+  event.preventDefault();
+
+  // NOTE: Minimize before closing to convey the fact
+  // that the app is still running in the background
+  mainWindow.minimize();
+  setTimeout(() => { if (mainWindow.isMinimized()) mainWindow.hide(); }, 200);
 }
 
 function restoreMainWindow() {
