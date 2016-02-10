@@ -1,0 +1,8 @@
+{
+  "startingUp": "Запуск Superpowers...",
+  "failed": "Не получилось запустить приложение",
+  "errors": {
+    "missingEnvironmentVariables": "Не удалось найти требуемые переменные окружения: ${envVars}.",
+    "couldNotCreateUserDataFolder": "Не удалось создать пользовательскую папку данных в ${userDataPath}. Причина: ${reason}."
+  }
+}
