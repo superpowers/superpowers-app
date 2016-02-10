@@ -1,0 +1,13 @@
+{
+  "activeLanguage": "Русский",
+  
+  "actions": {
+    "skip": "Пропустить",
+    "download": "Скачать",
+    "install": "Установить"
+  },
+
+  "states": {
+    "loading": "Загрузка..."
+  }
+}
