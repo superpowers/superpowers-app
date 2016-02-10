@@ -41,7 +41,19 @@ body > .sidebar .servers-tree-view {
 
   > .tree { position: absolute; }
 
-  li { justify-content: space-between; }
+  li {
+    display: block;
+    height: auto;
+    padding: 0.5em 1em;
+    
+    .label, .host {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .label { font-size: 1.5em; }
+  }
 }
 
 .servers-buttons {

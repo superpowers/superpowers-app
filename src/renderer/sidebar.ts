@@ -96,17 +96,17 @@ function addServer(serverEntry: ServerEntry) {
   serverElt.dataset["serverId"] = serverEntry.id;
   serversTreeView.append(serverElt, "item");
 
-  const hostElt = document.createElement("span");
+  const labelElt = document.createElement("div");
+  labelElt.classList.add("label");
+  labelElt.textContent = serverEntry.label;
+  serverElt.appendChild(labelElt);
+
+  const hostElt = document.createElement("div");
   hostElt.classList.add("host");
 
   const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
   hostElt.textContent = host;
   serverElt.appendChild(hostElt);
-
-  const labelElt = document.createElement("span");
-  labelElt.classList.add("label");
-  labelElt.textContent = serverEntry.label;
-  serverElt.appendChild(labelElt);
 }
 
 function onServerDrop(dropInfo: { target: HTMLLIElement; where: string; }, orderedNodes: HTMLLIElement[]) {
