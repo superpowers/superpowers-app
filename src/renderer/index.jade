@@ -7,9 +7,9 @@ html
   body
     .sidebar
       .servers-buttons.flat-button-strip
-        button.add-server(title=t("sidebar:treeView.addServer.title"), disabled,data-hotkey="control+N")
-        button.edit-server(title=t("sidebar:treeView.editServer.title"),disabled)
-        button.remove-server(title=t("sidebar:treeView.removeServer.title"),disabled)
+        button.add-server(title=t("sidebar:servers.add"), disabled,data-hotkey="control+N")
+        button.edit-server(title=t("sidebar:servers.edit"),disabled)
+        button.remove-server(title=t("sidebar:servers.remove"),disabled)
 
       .servers-tree-view
       .local-server
@@ -27,7 +27,7 @@ html
     .loading
       .splash(hidden)
         img(src="images/superpowers-256.png")
-        .status Loading Superpowers...
+        .status=t("startup:startingUp")
       .version
 
     script(src="index.js")

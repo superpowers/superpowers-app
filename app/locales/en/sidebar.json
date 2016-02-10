@@ -1,0 +1,7 @@
+{
+  "servers": {
+    "add": "Add server",
+    "edit": "Edit server",
+    "remove": "Remove server"
+  }
+}

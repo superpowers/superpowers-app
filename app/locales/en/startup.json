@@ -1,4 +1,5 @@
 {
+  "startingUp": "Starting up Superpowers...",
   "failed": "Could not start app",
   "errors": {
     "missingEnvironmentVariables": "Could not find required environment variables: ${envVars}.",
