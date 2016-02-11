@@ -37,7 +37,7 @@ function onAppReady() {
     i18n.languageCode = languageCode;
     i18n.load([ "startup", "tray" ], () => {
       if (dataPathErr != null) {
-        electron.dialog.showErrorBox(i18n.t("startup:failed"), i18n.t(dataPathErr.key, dataPathErr.variables));
+        electron.dialog.showErrorBox(i18n.t("startup:failedToStart"), i18n.t(dataPathErr.key, dataPathErr.variables));
         electron.app.quit();
         process.exit(1);
         return;

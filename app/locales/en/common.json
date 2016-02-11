@@ -2,12 +2,15 @@
   "activeLanguage": "English",
   
   "actions": {
+    "close": "Close",
     "skip": "Skip",
     "download": "Download",
-    "install": "Install"
+    "install": "Install",
+    "update": "Update"
   },
 
   "states": {
     "loading": "Loading..."
   }
 }
+

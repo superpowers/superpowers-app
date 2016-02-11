@@ -1,8 +1,21 @@
 {
   "startingUp": "Starting up Superpowers...",
-  "failed": "Could not start app",
+  "failedToStart": "Could not start app",
+  "startAnyway": "Start anyway",
+
   "errors": {
     "missingEnvironmentVariables": "Could not find required environment variables: ${envVars}.",
-    "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}."
+    "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}.",
+    "couldNotLoadSettings": "Could not load settings from ${settingsPath}. Reason: ${reason}."
+  },
+  
+  "updateAvailable": {
+    "app": "Superpowers ${latest} is available (you're running ${current}).",
+    "core": "Superpowers Core ${latest} is available (you're running ${current}).",
+    "systems": "There are updates available for some systems."
+  },
+  
+  "status": {
+    "installingCore": "Installing latest Superpowers Core..."
   }
 }
