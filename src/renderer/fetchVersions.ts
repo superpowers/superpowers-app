@@ -12,8 +12,8 @@ interface FetchVersionsCallback {
 
 export default function fetchVersions(callback: FetchVersionsCallback) {
   const components: { [name: string]: ComponentInfo } = {
-    "app": { repository: "superpowers/superpowers-launcher", version: null },
-    "server": { repository: "superpowers/superpowers", version: null }
+    "app": { repository: "superpowers/superpowers-app", version: null },
+    "core": { repository: "superpowers/superpowers", version: null }
   };
 
   // TODO: Check the various installed systems too
