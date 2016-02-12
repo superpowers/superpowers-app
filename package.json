@@ -2,6 +2,7 @@
   "name": "superpowers-app",
   "version": "1.0.0",
   "scripts": {
+    "prebuild": "npm install",
     "build": "gulp --silent",
     "start": "electron app",
     "package": "node scripts/package.js"
