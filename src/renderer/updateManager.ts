@@ -19,7 +19,7 @@ interface ComponentInfo {
 
 const components: { [name: string]: ComponentInfo } = {
   "app": { repository: "superpowers/superpowers-app", current: appVersion, latest: null },
-  "core": { repository: "superpowers/superpowers", current: null, latest: null }
+  "core": { repository: "superpowers/superpowers-core", current: null, latest: null }
 };
 
 function fetchVersions(callback: (err: Error) => void) {

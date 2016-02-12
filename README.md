@@ -7,7 +7,7 @@
 [![Twitter](https://img.shields.io/twitter/follow/SuperpowersDev.svg?style=social)](https://twitter.com/SuperpowersDev)
 
 [Website](http://superpowers-html5.com/) —
-[Main repository](https://github.com/superpowers/superpowers) —
+[Main repository](https://github.com/superpowers/superpowers-core) —
 [How to contribute](http://docs.superpowers-html5.com/en/development/how-to-contribute) —
 [Build instructions](http://docs.superpowers-html5.com/en/development/building-superpowers)
 
