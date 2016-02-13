@@ -12,10 +12,15 @@
   "updateAvailable": {
     "app": "Superpowers ${latest} is available (you're running ${current}).",
     "core": "Superpowers Core ${latest} is available (you're running ${current}).",
+    "askGameInstall": "Superpowers uses systems to build projects. Do you want to install the system \"Game\"? It is used to make HTML5 2D+3D games.",
     "systems": "There are updates available for some systems."
   },
   
   "status": {
-    "installingCore": "Installing latest Superpowers Core..."
+    "installingCore": "Installing latest Superpowers Core...",
+    "installingCoreSucceed": "Superpowers Core was successfully installed.",
+    "installingCoreFailed": "Superpowers Core installation has failed. ${error}",
+    "installingGame": "Installing latest Game system...",
+    "installingGameFailed": "Superpowers Game system installation has failed. ${error}"
   }
 }
