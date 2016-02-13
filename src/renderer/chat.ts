@@ -1,8 +1,9 @@
 import * as net from "net";
+import * as tls from "tls";
 import * as SlateIRC from "slate-irc";
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
-// import * as i18n from "../shared/i18n";
+import * as i18n from "../shared/i18n";
 
 new ResizeHandle(document.querySelector(".chat .sidebar") as HTMLDivElement, "right");
 
@@ -12,7 +13,7 @@ const usersTreeView = new TreeView(document.querySelector(".chat .users-tree-vie
 
 let socket: net.Socket;
 let irc: SlateIRC.Client;
-const ircNetwork = { host: "irc.freenode.net", port: 6667 };
+const ircNetwork = { host: "irc.freenode.net", port: 6697 };
 let channelName = "#superpowers-html5";
 let hasJoinedChannel = false;
 
@@ -27,9 +28,10 @@ function connect() {
   addInfo(`Connecting to ${ircNetwork.host}:${ircNetwork.port}...`);
 
   // TODO: Support multiple channels
-  // if (i18n.languageCode !== "en") channelName = `#superpowers-html5-${i18n.languageCode}`;
+  if (i18n.languageCode !== "en") channelName = `#superpowers-html5-${i18n.languageCode}`;
 
-  socket = net.connect(ircNetwork);
+  socket = tls.connect({ host: ircNetwork.host, port: ircNetwork.port, rejectUnauthorized: false }) as any as net.Socket;
+
   socket.on("error", onSocketError);
 
   irc = SlateIRC(socket);
