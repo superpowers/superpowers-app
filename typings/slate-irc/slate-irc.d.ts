@@ -48,6 +48,8 @@ declare module "slate-irc" {
     class Client {
       me: string;
 
+      write(str: string): void;
+
       pass(pass: string): void;
       nick(nick: string): void;
       user(username: string, realname: string): void;
