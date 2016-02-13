@@ -6,6 +6,7 @@
 .top {
   display: flex;
   border-bottom: 1px solid #ccc;
+  height: 150px;
 
   ol, ul {
     list-style: none;
@@ -19,9 +20,18 @@
 
   .news {
     flex: 1 1 0;
-    padding: 1em;
+    padding: 0.5em;
     background: #eee;
+    overflow-y: scroll;
   }
+  
+  .news table { width: 100%; }
+  .news th, td {
+    vertical-align: top;
+    padding: 0.5em;
+  }
+  .news th { text-align: right; white-space: nowrap; }
+  .news td { width: 100%; }
 }
 
 .chat {

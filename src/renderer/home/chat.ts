@@ -3,7 +3,7 @@ import * as tls from "tls";
 import * as SlateIRC from "slate-irc";
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
-import * as i18n from "../shared/i18n";
+import * as i18n from "../../shared/i18n";
 
 new ResizeHandle(document.querySelector(".chat .sidebar") as HTMLDivElement, "right");
 

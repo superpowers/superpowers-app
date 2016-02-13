@@ -5,7 +5,7 @@ import * as settings from "./settings";
 import * as splashScreen from "./splashScreen";
 import * as updateManager from "./updateManager";
 import * as sidebar from "./sidebar";
-import * as chat from "./chat";
+import * as home from "./home";
 
 setupDevToolsShortcut();
 
@@ -58,7 +58,7 @@ function onSettingsLoaded(err: Error) {
 
 function start() {
   sidebar.start();
-  chat.start();
+  home.start();
 
   splashScreen.fadeOut();
 }
