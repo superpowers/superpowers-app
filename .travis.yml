@@ -8,6 +8,7 @@ addons:
   apt:
     packages:
     - wine
+install: true
 script:
 - npm run build
 before_deploy:
