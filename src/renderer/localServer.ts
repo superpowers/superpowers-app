@@ -13,7 +13,7 @@ export function start() {
 	startStopServerButton.addEventListener("click", startStopServer);
 	settingsButton.addEventListener("click", openSettings);
 
-	/*if (settings.autoStartServer)*/ startServer();
+	// if (settings.autoStartServer) startServer();
 }
 
 function startStopServer() {
