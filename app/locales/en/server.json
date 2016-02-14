@@ -1,3 +1,16 @@
 {
-  "myServer": "My Server"
+  "myServer": "My Server",
+
+  "status": {
+  	"starting": "Server starting...",
+  	"started": "Server running.",
+  	"stopping": "Server stopping...",
+  	"stopped": "Server stopped."
+  },
+
+  "buttons": {
+    "settings": "Settings",
+    "start": "Start",
+    "stop": "Stop"
+  }
 }

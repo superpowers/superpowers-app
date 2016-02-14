@@ -13,6 +13,9 @@ html
 
       .servers-tree-view
       .local-server
+        .status= t("server:status.stopped")
+        button.start-stop= t("server:buttons.start")
+        button.settings= t("server:buttons.settings")
     .resize-handle.left
 
     .main
