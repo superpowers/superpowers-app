@@ -69,7 +69,7 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
     }
 
     const size = parseInt(res.headers["content-length"], 10);
-    splashScreen.setProgressMax(size);
+    splashScreen.setProgressMax(size * 2);
     splashScreen.setProgressValue(0);
     let downloaded = 0;
 
@@ -81,8 +81,8 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
       yauzl.fromBuffer(zipBuffer/*, { lazyEntries: true }*/, (err: Error, zipFile: any) => {
         if (err != null) throw err;
 
-        splashScreen.setProgressMax(zipFile.entryCount);
-        splashScreen.setProgressValue(0);
+        splashScreen.setProgressMax(zipFile.entryCount * 2);
+        splashScreen.setProgressValue(zipFile.entryCount);
         let entriesProcessed = 0;
 
         const rootFolderName = path.parse(downloadURL).name;
@@ -96,7 +96,7 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
             mkdirp(filename, (err) => {
               if (err != null) throw err;
               entriesProcessed++;
-              splashScreen.setProgressValue(entriesProcessed);
+              splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
               //zipFile.readEntry();
               if (entriesProcessed === zipFile.entryCount) done();
             });
@@ -107,9 +107,9 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
               mkdirp(path.dirname(filename), (err: Error) => {
                 if (err) throw err;
                 readStream.pipe(fs.createWriteStream(filename));
-                readStream.on("end", function() {
+                readStream.on("end", () => {
                   entriesProcessed++;
-                  splashScreen.setProgressValue(entriesProcessed);
+                  splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
                   //zipFile.readEntry();
                   if (entriesProcessed === zipFile.entryCount) done();
                 });
