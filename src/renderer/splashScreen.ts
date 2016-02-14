@@ -6,6 +6,8 @@ appVersionElt.textContent = updateManager.appVersion;
 
 const splashElt = loadingElt.querySelector(".splash") as HTMLImageElement;
 const statusElt = loadingElt.querySelector(".status") as HTMLDivElement;
+const progressElt = loadingElt.querySelector(".progress") as HTMLDivElement;
+const progressBarElt = progressElt.querySelector("progress") as HTMLProgressElement;
 splashElt.hidden = false;
 
 let onAppReady: Function;
@@ -22,6 +24,18 @@ splashInAnim.addEventListener("finish", () => {
 
 export function setStatus(text: string) {
   statusElt.textContent = text;
+}
+
+export function setProgressVisible(visible: boolean) {
+  progressElt.hidden = !visible;
+}
+
+export function setProgressValue(value: number) {
+  progressBarElt.value = value;
+}
+
+export function setProgressMax(max: number) {
+  progressBarElt.max = max;
 }
 
 export function fadeOut() {

@@ -1,5 +1,6 @@
 import * as electron from "electron";
 import * as async from "async";
+import * as path from "path";
 import * as fs from "fs";
 import * as dialogs from "simple-dialogs";
 import * as mkdirp from "mkdirp";
@@ -11,7 +12,7 @@ import fetch from "../shared/fetch";
 
 /* tslint:disable */
 const https: typeof dummy_https = require("follow-redirects").https;
-const unzip = require("unzip");
+const yauzl = require("yauzl");
 /* tslint:enable */
 
 export let appVersion = electron.remote.app.getVersion();
@@ -54,7 +55,9 @@ function fetchVersions(callback: (err: Error) => void) {
 }
 
 function downloadRelease(downloadURL: string, downloadPath: string, callback: (err: string) => void) {
-  mkdirp.sync(downloadPath);
+  splashScreen.setProgressVisible(true);
+  splashScreen.setProgressValue(null);
+
   https.get({
     hostname: "github.com",
     path: downloadURL,
@@ -65,9 +68,65 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
       return;
     }
 
-    let rootFolderName: string;
+    const size = parseInt(res.headers["content-length"], 10);
+    splashScreen.setProgressMax(size);
+    splashScreen.setProgressValue(0);
+    let downloaded = 0;
+
+    const buffers: Buffer[] = [];
+    res.on("data", (data: Buffer) => { buffers.push(data); downloaded += data.length; splashScreen.setProgressValue(downloaded); });
+    res.on("end", () => {
+      const zipBuffer = Buffer.concat(buffers);
+
+      yauzl.fromBuffer(zipBuffer/*, { lazyEntries: true }*/, (err: Error, zipFile: any) => {
+        if (err != null) throw err;
+
+        splashScreen.setProgressMax(zipFile.entryCount);
+        splashScreen.setProgressValue(0);
+        let entriesProcessed = 0;
+
+        const rootFolderName = path.parse(downloadURL).name;
+
+        //zipFile.readEntry();
+        zipFile.on("entry", (entry: any) => {
+          if (entry.fileName.indexOf(rootFolderName) !== 0) throw new Error(`Found file outside of root folder: ${entry.fileName} (${rootFolderName})`);
+
+          const filename = path.join(downloadPath, entry.fileName.replace(rootFolderName, ""));
+          if (/\/$/.test(entry.fileName)) {
+            mkdirp(filename, (err) => {
+              if (err != null) throw err;
+              entriesProcessed++;
+              splashScreen.setProgressValue(entriesProcessed);
+              //zipFile.readEntry();
+              if (entriesProcessed === zipFile.entryCount) done();
+            });
+          } else {
+            zipFile.openReadStream(entry, (err: Error, readStream: NodeJS.ReadableStream) => {
+              if (err) throw err;
+
+              mkdirp(path.dirname(filename), (err: Error) => {
+                if (err) throw err;
+                readStream.pipe(fs.createWriteStream(filename));
+                readStream.on("end", function() {
+                  entriesProcessed++;
+                  splashScreen.setProgressValue(entriesProcessed);
+                  //zipFile.readEntry();
+                  if (entriesProcessed === zipFile.entryCount) done();
+                });
+              });
+            });
+          }
+        });
+
+        /*zipFile.on("end", () => {
+          callback(null);
+        });*/
+      });
+    });
+
+    /*let rootFolderName: string;
     res.pipe(unzip.Parse())
-      .on("entry", (entry: any) => {
+      .on("entry", (entry: ZipEntry) => {
         if (rootFolderName == null) {
           rootFolderName = entry.path;
           return;
@@ -75,10 +134,29 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
 
         const entryPath = `${downloadPath}/${entry.path.replace(rootFolderName, "")}`;
         if (entry.type === "Directory") mkdirp.sync(entryPath);
-        else entry.pipe(fs.createWriteStream(entryPath));
+        else {
+          console.log(`Start ${entry.path}`);
+          const res = entry.pipe(fs.createWriteStream(entryPath));
+          entries++;
+          splashScreen.setProgressMax(entries);
+
+          res.on("close", () => {
+            completedEntries++;
+            splashScreen.setProgressValue(completedEntries);
+          });
+        }
       })
-      .on("close", () => { callback(null); });
+      .on("close", () => {
+        console.log("done!");
+        console.log(completedEntries, entries);
+        callback(null);
+      });*/
   });
+
+  function done() {
+    splashScreen.setProgressVisible(false);
+    callback(null);
+  }
 }
 
 export function checkForUpdates(callback: Function) {
