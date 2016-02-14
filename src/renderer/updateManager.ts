@@ -78,7 +78,7 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
     res.on("end", () => {
       const zipBuffer = Buffer.concat(buffers);
 
-      yauzl.fromBuffer(zipBuffer/*, { lazyEntries: true }*/, (err: Error, zipFile: any) => {
+      yauzl.fromBuffer(zipBuffer, { lazyEntries: true }, (err: Error, zipFile: any) => {
         if (err != null) throw err;
 
         splashScreen.setProgressMax(zipFile.entryCount * 2);
@@ -87,7 +87,7 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
 
         const rootFolderName = path.parse(downloadURL).name;
 
-        //zipFile.readEntry();
+        zipFile.readEntry();
         zipFile.on("entry", (entry: any) => {
           if (entry.fileName.indexOf(rootFolderName) !== 0) throw new Error(`Found file outside of root folder: ${entry.fileName} (${rootFolderName})`);
 
@@ -97,8 +97,7 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
               if (err != null) throw err;
               entriesProcessed++;
               splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
-              //zipFile.readEntry();
-              if (entriesProcessed === zipFile.entryCount) done();
+              zipFile.readEntry();
             });
           } else {
             zipFile.openReadStream(entry, (err: Error, readStream: NodeJS.ReadableStream) => {
@@ -110,57 +109,23 @@ function downloadRelease(downloadURL: string, downloadPath: string, callback: (e
                 readStream.on("end", () => {
                   entriesProcessed++;
                   splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
-                  //zipFile.readEntry();
-                  if (entriesProcessed === zipFile.entryCount) done();
+                  zipFile.readEntry();
                 });
               });
             });
           }
         });
 
-        /*zipFile.on("end", () => {
+        zipFile.on("end", () => {
+          splashScreen.setProgressVisible(false);
           callback(null);
-        });*/
+        });
       });
     });
-
-    /*let rootFolderName: string;
-    res.pipe(unzip.Parse())
-      .on("entry", (entry: ZipEntry) => {
-        if (rootFolderName == null) {
-          rootFolderName = entry.path;
-          return;
-        }
-
-        const entryPath = `${downloadPath}/${entry.path.replace(rootFolderName, "")}`;
-        if (entry.type === "Directory") mkdirp.sync(entryPath);
-        else {
-          console.log(`Start ${entry.path}`);
-          const res = entry.pipe(fs.createWriteStream(entryPath));
-          entries++;
-          splashScreen.setProgressMax(entries);
-
-          res.on("close", () => {
-            completedEntries++;
-            splashScreen.setProgressValue(completedEntries);
-          });
-        }
-      })
-      .on("close", () => {
-        console.log("done!");
-        console.log(completedEntries, entries);
-        callback(null);
-      });*/
   });
-
-  function done() {
-    splashScreen.setProgressVisible(false);
-    callback(null);
-  }
 }
 
 export function checkForUpdates(callback: Function) {
-  // TODO: Offer installing a system on first run!
   async.series([ fetchVersions, checkAppUpdate, checkUpdates ],
   (err) => { callback(); });
 }
