@@ -27,9 +27,11 @@ function onMessageReceived(event: MessageEvent) {
   }
 }
 
+const namespaces = [ "common", "startup", "sidebar", "server", "dialogs", "home" ];
+
 function onInitialize(sender: any, userDataPath: string, languageCode: string) {
   i18n.languageCode = languageCode;
-  i18n.load([ "common", "startup", "sidebar", "server" ], () => {
+  i18n.load(namespaces, () => {
     settings.load(userDataPath, onSettingsLoaded);
   });
 }

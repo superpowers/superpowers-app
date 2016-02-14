@@ -1,6 +1,7 @@
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 import { InfoDialog, ConfirmDialog } from "simple-dialogs";
+import * as i18n from "../shared/i18n";
 
 import AddAddOrEditServerDialog from "./dialogs/AddOrEditServerDialog";
 import * as settings from "./settings";
@@ -35,7 +36,7 @@ function onAddServerClick(event: MouseEvent) {
     initialLabelValue: ""
   };
 
-  new AddAddOrEditServerDialog("Enter the server details", addOrEditOptions, (newServer: ServerEntry) => {
+  new AddAddOrEditServerDialog(i18n.t("dialogs:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
     if (newServer == null) return;
 
     let id = 0;
@@ -54,12 +55,12 @@ function onEditServerClick(event: MouseEvent) {
   const serverEntry = settings.favoriteServersById[serverId];
 
   const addOrEditOptions = {
-    validationLabel: "Edit",
+    validationLabel: i18n.t("common:actions.save"),
     initialHostnameValue: serverEntry.hostname,
     initialPortValue: serverEntry.port,
     initialLabelValue: serverEntry.label
   };
-  new AddAddOrEditServerDialog("Edit the server details", addOrEditOptions, (updatedEntry) => {
+  new AddAddOrEditServerDialog(i18n.t("dialogs:editServer.title"), addOrEditOptions, (updatedEntry) => {
     if (updatedEntry == null) return;
 
     serverEntry.hostname = updatedEntry.hostname;
