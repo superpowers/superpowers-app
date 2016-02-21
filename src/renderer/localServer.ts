@@ -26,6 +26,8 @@ function startStopServer() {
 function startServer() {
   if (serverProcess != null) return;
 
+  // TODO: Enable "starting" state and wait for "started" message
+  // from server to go to started
   statusElt.textContent = i18n.t("server:status.started"); // .starting
   startStopServerButton.textContent = i18n.t("server:buttons.stop");
   // startStopServerButton.disabled = true;
