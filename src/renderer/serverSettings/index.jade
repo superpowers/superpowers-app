@@ -1,0 +1,12 @@
+.top
+  .settings
+    button.open-projects-folder= t("server:settings.openProjectsFolder")
+    .auto-start-server
+      input#auto-start-server(type="checkbox")
+      label(for="auto-start-server")= t("server:settings.autoStartServer")
+
+  .systems-plugins
+    span Systems/plugins interface
+    span (not implemented)
+
+textarea.log(readonly)

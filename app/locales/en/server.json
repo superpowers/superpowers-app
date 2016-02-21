@@ -12,5 +12,11 @@
     "settings": "Settings",
     "start": "Start",
     "stop": "Stop"
+  },
+
+  "settings": {
+    "title": "Server Settings",
+    "openProjectsFolder": "Open projects folder",
+    "autoStartServer": "Auto-start server on startup"
   }
 }

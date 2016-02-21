@@ -59,9 +59,9 @@ body { display: flex; }
 }
 
 body > .sidebar {
-  min-width: 240px;
+  min-width: 250px;
   max-width: 480px;
-  width: 240px;
+  width: 250px;
   display: flex;
   flex-flow: column;
   background: #f0f0f0;
@@ -127,6 +127,10 @@ body > .sidebar .local-server {
   
 .main .panes .home {
   @import "home/index.styl";
+}
+
+.main .panes .server-settings {
+  @import "serverSettings/index.styl";
 }
 
 .main .panes > * {

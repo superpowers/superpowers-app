@@ -6,6 +6,7 @@ import * as splashScreen from "./splashScreen";
 import * as updateManager from "./updateManager";
 import * as sidebar from "./sidebar";
 import * as home from "./home";
+import * as serverSettings from "./serverSettings";
 import * as localServer from "./localServer";
 
 setupDevToolsShortcut();
@@ -62,6 +63,7 @@ function onSettingsLoaded(err: Error) {
 function start() {
   sidebar.start();
   home.start();
+  serverSettings.start();
   localServer.start();
 
   splashScreen.fadeOut();

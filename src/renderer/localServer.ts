@@ -1,6 +1,7 @@
 import * as childProcess from "child_process";
 import * as settings from "./settings";
 import * as i18n from "../shared/i18n";
+import { openServerSettings } from "./panes";
 
 let serverProcess: childProcess.ChildProcess;
 
@@ -8,21 +9,18 @@ const localServerElt = document.querySelector(".local-server") as HTMLDivElement
 const statusElt = localServerElt.querySelector(".status") as HTMLDivElement;
 const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
 const settingsButton = localServerElt.querySelector(".settings") as HTMLButtonElement;
+const myServerTextarea = document.querySelector("textarea.log") as HTMLTextAreaElement;
 
 export function start() {
-	startStopServerButton.addEventListener("click", startStopServer);
-	settingsButton.addEventListener("click", openSettings);
+  startStopServerButton.addEventListener("click", startStopServer);
+  settingsButton.addEventListener("click", openServerSettings);
 
-	// if (settings.autoStartServer) startServer();
+  if (settings.autoStartServer) startServer();
 }
 
 function startStopServer() {
-	if (serverProcess == null) startServer();
-	else stopServer();
-}
-
-function openSettings() {
-	// TODO
+  if (serverProcess == null) startServer();
+  else stopServer();
 }
 
 function startServer() {
@@ -54,7 +52,7 @@ function startServer() {
 }
 
 function stopServer() {
-	if (serverProcess == null) return;
+  if (serverProcess == null) return;
 
   statusElt.textContent = i18n.t("server:status.stopping");
   startStopServerButton.textContent = i18n.t("server:buttons.start");
@@ -69,12 +67,10 @@ function onServerExit() {
   startStopServerButton.textContent = i18n.t("server:buttons.start");
   startStopServerButton.disabled = false;
 
-  // myServerTextarea.value += "\n";
+  myServerTextarea.value += "\n";
 }
 
 function onServerMessage(msg: string) {
-	console.log(msg);
-
-  // myServerTextarea.value += `${msg}\n`;
-  // setTimeout(() => { myServerTextarea.scrollTop = myServerTextarea.scrollHeight; }, 0);
+  myServerTextarea.value += `${msg}\n`;
+  setTimeout(() => { myServerTextarea.scrollTop = myServerTextarea.scrollHeight; }, 0);
 }

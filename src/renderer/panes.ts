@@ -1,4 +1,5 @@
 import * as TabStrip from "tab-strip";
+import * as i18n from "../shared/i18n";
 
 const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 const panesElt = document.querySelector(".panes");
@@ -56,6 +57,35 @@ export function openServer(serverEntry: ServerEntry) {
   serverPaneElt.classList.add("active");
 }
 
+export function openServerSettings() {
+  clearActiveTab();
+
+  let serverSettingsTabElt = tabsBarElt.querySelector(`li[data-name="server-settings"]`) as HTMLLIElement;
+  if (serverSettingsTabElt == null) {
+    serverSettingsTabElt = document.createElement("li");
+    serverSettingsTabElt.dataset["name"] = "server-settings";
+
+    const iconElt = document.createElement("img");
+    iconElt.className = "icon";
+    iconElt.src = "images/tabs/serverSettings.svg";
+    serverSettingsTabElt.appendChild(iconElt);
+
+    const labelElt = document.createElement("div");
+    labelElt.className = "label";
+    labelElt.textContent = i18n.t("server:settings.title");
+    serverSettingsTabElt.appendChild(labelElt);
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "close";
+    serverSettingsTabElt.appendChild(closeButton);
+
+    tabStrip.tabsRoot.appendChild(serverSettingsTabElt);
+  }
+  const serverSettingsPaneElt = panesElt.querySelector(`div[data-name="server-settings"]`) as HTMLIFrameElement;
+
+  serverSettingsTabElt.classList.add("active");
+  serverSettingsPaneElt.classList.add("active");
+}
 
 tabStrip.on("activateTab", onTabActivate);
 tabStrip.on("closeTab", onTabClose);

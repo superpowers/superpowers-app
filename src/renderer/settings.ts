@@ -7,6 +7,7 @@ export let favoriteServers: ServerEntry[];
 export let favoriteServersById: { [id: string]: ServerEntry };
 
 export let recentProjects: { host: string; projectId: string; name: string; }[];
+export let autoStartServer: boolean;
 
 export function load(dataPath: string, callback: (err: Error) => void) {
   userDataPath = dataPath;
@@ -28,6 +29,9 @@ export function load(dataPath: string, callback: (err: Error) => void) {
       favoriteServers = [ myServerEntry ];
       favoriteServersById[myServerEntry.id] = myServerEntry;
 
+      recentProjects = [];
+      autoStartServer = true;
+
       callback(null);
       return;
     }
@@ -36,6 +40,7 @@ export function load(dataPath: string, callback: (err: Error) => void) {
     favoriteServers = data.favoriteServers;
     for (const entry of favoriteServers) favoriteServersById[entry.id] = entry;
     recentProjects = data.recentProjects;
+    autoStartServer = data.autoStartServer;
 
     callback(null);
   });
@@ -45,7 +50,8 @@ export function load(dataPath: string, callback: (err: Error) => void) {
 export function scheduleSave() {
   const data = {
     favoriteServers,
-    recentProjects
+    recentProjects,
+    autoStartServer
   };
 
   fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2), { encoding: "utf8" });
