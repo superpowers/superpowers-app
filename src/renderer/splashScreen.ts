@@ -53,7 +53,7 @@ function playOutAnimation() {
       { opacity: "0" }
     ], { duration: 300, easing: "ease-in" });
 
-    const splashOutAnim = (splashElt as any).animate([
+    /* const splashOutAnim = */ (splashElt as any).animate([
       { transform: "scale(1, 1)" },
       { transform: "scale(5, 5)" }
     ], { duration: 300, easing: "ease-in" });

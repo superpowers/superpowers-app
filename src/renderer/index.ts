@@ -16,7 +16,7 @@ electron.ipcRenderer.on("init", onInitialize);
 
 function setupDevToolsShortcut() {
   window.addEventListener("keyup", (event) => {
-    if (event.keyCode === 123) electron.remote.getCurrentWindow().webContents.openDevTools();
+    if (event.keyCode === 123 /* F12 */) electron.remote.getCurrentWindow().webContents.openDevTools();
   });
 }
 
@@ -46,7 +46,9 @@ function onSettingsLoaded(err: Error) {
       cancelLabel: i18n.t("common:actions.close")
     };
 
+    /* tslint:disable:no-unused-expression */
     new dialogs.ConfirmDialog(label, options, (shouldProceed) => {
+      /* tslint:enable:no-unused-expression */
       if (!shouldProceed) {
         electron.remote.app.quit();
         return;

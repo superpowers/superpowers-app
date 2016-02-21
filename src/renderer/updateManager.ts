@@ -16,8 +16,9 @@ const yauzl = require("yauzl");
 /* tslint:enable */
 
 export let appVersion = electron.remote.app.getVersion();
-if (appVersion === "0.0.0-dev") appVersion = `v${require(`${__dirname}/../../package.json`).version}-dev`;
-else appVersion = `v${appVersion}`;
+if (appVersion === "0.0.0-dev") {
+  appVersion = `v${JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`, { encoding: "utf8" })).version}-dev`;
+} else appVersion = `v${appVersion}`;
 
 interface ComponentInfo {
   repository: string;
@@ -141,7 +142,9 @@ function checkAppUpdate(callback: Function) {
     cancelLabel: i18n.t("common:actions.skip")
   };
 
+  /* tslint:disable:no-unused-expression */
   new dialogs.ConfirmDialog(label, options, (shouldDownload) => {
+    /* tslint:enable:no-unused-expression */
     if (shouldDownload) {
       electron.shell.openExternal("http://superpowers-html5.com/");
       electron.remote.app.quit();
@@ -166,13 +169,17 @@ function checkUpdates(callback: Function) {
         validationLabel: i18n.t("common:actions.install"),
         cancelLabel: i18n.t("common:actions.skip")
       };
+      /* tslint:disable:no-unused-expression */
       new dialogs.ConfirmDialog(label, options, (installGame) => {
+      /* tslint:enable:no-unused-expression */
         if (installGame) {
           splashScreen.setStatus(i18n.t("startup:status.installingGame"));
           // FIXME: Use common stuff from the core folder
           downloadRelease(components["game"].downloadURL, `${settings.userDataPath}/systems/game`, (error) => {
             if (error != null) {
+              /* tslint:disable:no-unused-expression */
               new dialogs.InfoDialog(i18n.t("startup:status.installingGameFailed", { error }), null, () => {
+                /* tslint:enable:no-unused-expression */
                 callback(error);
               });
             } else {
@@ -195,7 +202,9 @@ function checkUpdates(callback: Function) {
     cancelLabel: i18n.t("common:actions.skip")
   };
 
+  /* tslint:disable:no-unused-expression */
   new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
+    /* tslint:enable:no-unused-expression */
     if (shouldUpdate) {
       // FIXME: Use common stuff from the core folder
       installCore(() => { callback(); });
@@ -212,7 +221,9 @@ function installCore(callback: (error: string) => void) {
 
   downloadRelease(components["core"].downloadURL, `${settings.userDataPath}/core`, (error) => {
     if (error != null) {
+      /* tslint:disable:no-unused-expression */
       new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error }), null, () => {
+        /* tslint:enable:no-unused-expression */
         callback(error);
       });
     } else {

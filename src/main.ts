@@ -1,5 +1,4 @@
 import * as electron from "electron";
-import * as fs from "fs";
 import * as i18n from "./shared/i18n";
 import getUserData from "./getUserData";
 import "./export";

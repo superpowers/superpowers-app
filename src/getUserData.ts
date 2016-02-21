@@ -1,6 +1,5 @@
 import * as path from "path";
 import * as fs from "fs";
-import * as electron from "electron";
 import { LocalizedError } from "./shared/i18n";
 
 export default function(callback: (err: LocalizedError, dataPath?: string, languageCode?: string) => void) {

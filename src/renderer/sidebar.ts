@@ -1,13 +1,12 @@
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
-import { InfoDialog, ConfirmDialog } from "simple-dialogs";
+import { ConfirmDialog } from "simple-dialogs";
 import * as i18n from "../shared/i18n";
 
 import AddAddOrEditServerDialog from "./dialogs/AddOrEditServerDialog";
 import * as settings from "./settings";
 import * as panes from "./panes";
 
-const sidebarElt = document.querySelector(".sidebar");
 new ResizeHandle(document.querySelector(".sidebar") as HTMLDivElement, "left");
 
 const addServerBtn = document.querySelector(".add-server") as HTMLButtonElement;
@@ -36,7 +35,9 @@ function onAddServerClick(event: MouseEvent) {
     initialLabelValue: ""
   };
 
+  /* tslint:disable:no-unused-expression */
   new AddAddOrEditServerDialog(i18n.t("dialogs:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
+    /* tslint:enable:no-unused-expression */
     if (newServer == null) return;
 
     let id = 0;
@@ -60,7 +61,10 @@ function onEditServerClick(event: MouseEvent) {
     initialPortValue: serverEntry.port,
     initialLabelValue: serverEntry.label
   };
+
+  /* tslint:disable:no-unused-expression */
   new AddAddOrEditServerDialog(i18n.t("dialogs:editServer.title"), addOrEditOptions, (updatedEntry) => {
+    /* tslint:enable:no-unused-expression */
     if (updatedEntry == null) return;
 
     serverEntry.hostname = updatedEntry.hostname;
@@ -77,7 +81,9 @@ function onEditServerClick(event: MouseEvent) {
 }
 
 function onRemoveServerClick(event: MouseEvent) {
+  /* tslint:disable:no-unused-expression */
   new ConfirmDialog("Are you sure you want to remove the server?", { validationLabel: "Remove" }, (confirm) => {
+    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     const selectedServerId = serversTreeView.selectedNodes[0].dataset["serverId"];
