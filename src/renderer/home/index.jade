@@ -9,10 +9,15 @@
   .news= t("common:states.loading")
 
 .chat
-  .channel
-    .log
-    .input
-      textarea
-  .resize-handle.right
-  .sidebar
-    .users-tree-view
+  template
+    .channel
+      .log
+      .input
+        textarea
+    .resize-handle.right
+    .sidebar
+      .users-tree-view
+
+  .tabs-bar
+    ol.tab-strip
+  .panes
