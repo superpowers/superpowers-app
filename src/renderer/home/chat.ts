@@ -27,6 +27,7 @@ const tabTemplate = document.querySelector(".chat template") as HTMLTemplateElem
 let socket: net.Socket;
 let irc: SlateIRC.Client;
 const ircNetwork = { host: "irc.freenode.net", port: 6697 };
+let mentionRegex: RegExp;
 
 const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 
@@ -341,8 +342,13 @@ function connect() {
 function disconnect() { cleanUp(null); }
 function onSocketError(err: Error) { cleanUp(err.message); }
 
+function setupMentionRegex() {
+  mentionRegex = new RegExp(`/(.*\s)?${irc.me}(\s*)/`, "g");
+}
+
 function onWelcome(name: string) {
   statusChatTab.addInfo(`Connected as ${irc.me}.`);
+  setupMentionRegex();
 
   let defaultChannelName = "#superpowers-html5";
   if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
@@ -373,6 +379,8 @@ function onPart(event: SlateIRC.PartEvent) {
 }
 
 function onNick(event: SlateIRC.NickEvent) {
+  if (irc.me === event.new) setupMentionRegex();
+
   for (const name in channelChatTabs) {
     const chatTab = channelChatTabs[name];
     if (chatTab.hasUser(event.nick)) chatTab.onNick(event);
@@ -404,19 +412,53 @@ function onMessage(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me) {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "private");
+    notify(`Private message from ${event.from}`, event.message, () => {
+      onTabActivate(statusChatTab.tabElt);
+    });
   } else {
     const chatTab = channelChatTabs[event.to];
-    if (chatTab != null) chatTab.addMessage(event.from, event.message, null);
+    if (chatTab == null) return;
+
+    if (mentionRegex != null && mentionRegex.test(event.message)) {
+      notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
+        onTabActivate(chatTab.tabElt);
+      });
+    }
+
+    chatTab.addMessage(event.from, event.message, null);
   }
+}
+
+function notify(title: string, body: string, callback: Function) {
+  const notification = new (window as any).Notification(title, { icon: "/images/icon.png", body: body });
+  const closeTimeoutId = setTimeout(() => { notification.close(); }, 5000);
+
+  notification.addEventListener("click", () => {
+    window.focus();
+    clearTimeout(closeTimeoutId);
+    notification.close();
+    callback();
+  });
 }
 
 function onNotice(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me || event.to === "*") {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
+    notify(`Private notice from ${event.from}`, event.message, () => {
+      onTabActivate(statusChatTab.tabElt);
+    });
   } else {
     const chatTab = channelChatTabs[event.to];
-    if (chatTab != null) chatTab.addMessage(event.from, event.message, "notice");
+    if (chatTab == null) return;
+
+    if (mentionRegex != null && mentionRegex.test(event.message)) {
+      notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
+        onTabActivate(chatTab.tabElt);
+      });
+    }
+
+    chatTab.addMessage(event.from, event.message, "notice");
   }
 }
 
