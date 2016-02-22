@@ -53,6 +53,10 @@
       flex: 1 1 0;
       padding: 0.5em;
       overflow-y: scroll;
+      -webkit-user-select: initial;
+      -moz-user-select: initial;
+      user-select: initial;
+      cursor: initial;
       
       & > div { margin-bottom: 0.5em; }
     }
@@ -84,6 +88,10 @@
   }
 }
 
+.chat .tabs-bar .label {
+  padding-left: 0.5em;
+}
+
 .chat .log > .info {
   color: #666;
 }
@@ -91,4 +99,8 @@
 .chat .log > .message {
   .from { font-weight: bold; }
   .from:after { content: ": "; }
+
+  &.private { color: #664444; }
+  &.notice { color: #448888; }
+  &.me { color: #888888; }
 }

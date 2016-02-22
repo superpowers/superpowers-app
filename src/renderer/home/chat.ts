@@ -6,6 +6,10 @@ import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 import * as i18n from "../../shared/i18n";
 
+/* tslint:disable */
+const escapeHTML: (html: string) => string = require("escape-html");
+/* tslint:enable */
+
 const chatElt = document.querySelector(".home .chat");
 
 const tabsBarElt = chatElt.querySelector(".tabs-bar") as HTMLElement;
@@ -32,11 +36,17 @@ class ChatTab {
 
   logElt: HTMLDivElement;
   textAreaElt: HTMLTextAreaElement;
+  textAreaHistory: string[] = [];
+  textAreaHistoryIndex = -1;
 
   usersTreeView: TreeView;
   users: string[] = [];
 
-  constructor(public target: string, join: boolean) {
+
+  constructor(public target: string, options?: { label?: string; isChannel?: boolean; }) {
+    if (options == null) options = {};
+    if (options.label == null) options.label = target;
+
     this.tabElt = document.createElement("li");
     this.tabElt.dataset["target"] = target;
     tabStrip.tabsRoot.appendChild(this.tabElt);
@@ -44,37 +54,52 @@ class ChatTab {
     const labelElt = document.createElement("div");
     this.tabElt.appendChild(labelElt);
     labelElt.className = "label";
-    labelElt.textContent = target;
+    labelElt.textContent = options.label;
 
     this.paneElt = document.createElement("div");
     this.paneElt.hidden = true;
     panesElt.appendChild(this.paneElt);
     this.paneElt.appendChild(document.importNode(tabTemplate.content, true));
-    new ResizeHandle(this.paneElt.querySelector(".sidebar") as HTMLDivElement, "right");
 
     this.logElt = this.paneElt.querySelector(".log") as HTMLDivElement;
     this.textAreaElt = this.paneElt.querySelector("textarea") as HTMLTextAreaElement;
-    this.usersTreeView = new TreeView(this.paneElt.querySelector(".users-tree-view") as HTMLElement);
 
+    this.textAreaElt.addEventListener("keydown", this.onTextAreaKeyDown);
     this.textAreaElt.addEventListener("keypress", this.onTextAreaKeyPress);
 
-    if (join) {
+    const sidebarElt = this.paneElt.querySelector(".sidebar") as HTMLDivElement;
+
+    if (options.isChannel) {
       this.addInfo(`Joining ${this.target}...`);
       irc.join(this.target);
+
+      /* tslint:disable:no-unused-expression */
+      new ResizeHandle(sidebarElt, "right");
+      /* tslint:enable:no-unused-expression */
+      this.usersTreeView = new TreeView(this.paneElt.querySelector(".users-tree-view") as HTMLElement);
+    } else {
+      sidebarElt.parentElement.removeChild(sidebarElt);
     }
   }
 
   addInfo(text: string) {
     const elt = document.createElement("div");
     elt.className = "info";
-    elt.textContent = text;
+
+    text = escapeHTML(text);
+
+    const channelRegex = /^(.*\s)?#([#A-Za-z0-9_-]+)/g;
+    text = text.replace(channelRegex, "$1<a href=\"#\">#$2</a>");
+    elt.innerHTML = text;
+
     this.logElt.appendChild(elt);
     this.logElt.scrollTop = 9e9;
   }
 
-  addMessage(from: string, text: string) {
+  addMessage(from: string, text: string, style: string) {
     const elt = document.createElement("div");
     elt.className = "message";
+    if (style != null) elt.classList.add(style);
 
     const fromElt = document.createElement("span");
     fromElt.className = "from";
@@ -126,7 +151,7 @@ class ChatTab {
       this.addInfo("You are not connected.");
     } else {
       irc.send(this.target, msg);
-      this.addMessage(irc.me, msg);
+      this.addMessage(irc.me, msg, "me");
     }
   }
 
@@ -141,20 +166,25 @@ class ChatTab {
         case "nick":
           irc.nick(params);
           break;
-        case "msg":
+        case "msg": {
           const index = params.indexOf(" ");
           if (index === -1) {
-            this.addInfo("Please enter a message.");
+            this.addInfo("/msg: Please enter a message.");
             return;
           }
 
           const target = params.slice(0, index);
           const message = params.slice(index + 1);
           irc.send(target, message);
-          break;
-        case "join":
-          // TODO
-          break;
+        } break;
+        case "join": {
+          if (params.length === 0 || params[0] !== "#" || params.indexOf(" ") !== -1) {
+            this.addInfo("/join: Please enter a channel name.");
+            return;
+          }
+
+          join(params);
+        } break;
         default:
           this.addInfo(`Unsupported command: ${command}`);
       }
@@ -197,11 +227,33 @@ class ChatTab {
     this.removeUserFromList(event.nick);
   }
 
+  private onTextAreaKeyDown = (event: KeyboardEvent) => {
+    if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
+
+    if (event.keyCode === 38 /* Up */) {
+      event.preventDefault();
+      if (this.textAreaHistory.length === 0) return;
+      if (this.textAreaHistoryIndex === -1) this.textAreaHistoryIndex = this.textAreaHistory.length - 1;
+      else this.textAreaHistoryIndex = Math.max(this.textAreaHistoryIndex - 1, 0);
+      this.textAreaElt.value = this.textAreaHistory[this.textAreaHistoryIndex];
+    } else if (event.keyCode === 40 /* Down */) {
+      event.preventDefault();
+      if (this.textAreaHistoryIndex === -1 || this.textAreaHistoryIndex >= this.textAreaHistory.length - 1) return;
+      this.textAreaHistoryIndex++;
+      this.textAreaElt.value = this.textAreaHistory[this.textAreaHistoryIndex];
+    }
+  };
+
   private onTextAreaKeyPress = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
       event.preventDefault();
-      this.send(this.textAreaElt.value);
-      this.textAreaElt.value = "";
+      this.textAreaHistoryIndex = -1;
+
+      if (this.textAreaElt.value.length > 0) {
+        this.send(this.textAreaElt.value);
+        this.textAreaHistory.push(this.textAreaElt.value);
+        this.textAreaElt.value = "";
+      }
     }
   };
 
@@ -217,7 +269,7 @@ class ChatTab {
   };
 }
 
-const statusChatTab = new ChatTab("status", false);
+const statusChatTab = new ChatTab("status", { label: ircNetwork.host });
 statusChatTab.tabElt.classList.add("active");
 statusChatTab.paneElt.hidden = false;
 
@@ -262,12 +314,14 @@ function connect() {
 
   irc = SlateIRC(socket);
   irc.on("welcome", onWelcome);
+  irc.on("motd", onMOTD);
   irc.on("join", onJoin);
   irc.on("part", onPart);
   irc.on("nick", onNick);
   irc.on("quit", onQuit);
   irc.on("data", onData);
   irc.on("message", onMessage);
+  irc.on("notice", onNotice);
   irc.on("disconnect", onDisconnect);
 
   // TODO: Read from settings and ask on first launch
@@ -282,15 +336,19 @@ function onSocketError(err: Error) { cleanUp(err.message); }
 function onWelcome(name: string) {
   statusChatTab.addInfo(`Connected as ${irc.me}.`);
 
-  let defaultChannelName = "#superpowers-html5";
-  if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
+  let defaultChannelName = "#superpowers-html5-test";
+  if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-test-${i18n.languageCode}`;
   join(defaultChannelName);
 
   return;
 }
 
+function onMOTD(event: SlateIRC.MOTDEvent) {
+  for (const line of event.motd) statusChatTab.addInfo(line);
+}
+
 function join(channelName: string) {
-  const chatTab = new ChatTab(channelName, true);
+  const chatTab = new ChatTab(channelName, { isChannel: true });
   channelChatTabs[chatTab.target] = chatTab;
 }
 
@@ -320,17 +378,37 @@ function onQuit(event: SlateIRC.QuitEvent) {
   }
 }
 
+const ignoredCommands = [
+  "NICK", "PRIVMSG", "NOTICE",
+  "JOIN", "PART", "QUIT"
+];
 function onData(event: SlateIRC.DataEvent) {
-  console.log(`Data: ${event.string}`);
+  if (ignoredCommands.indexOf(event.command) !== -1 || event.command.slice(0, 4) === "RPL_") {
+    console.log(`Data: ${event.string}`);
+    return;
+  }
+
+  statusChatTab.addInfo(`== ${event.string}`);
 }
 
 function onMessage(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me) {
     // TODO: Open private chat tab
-    // addMessage(`(whisper) ${event.from}`, event.message);
+    statusChatTab.addMessage(`(private) ${event.from}`, event.message, "private");
   } else {
     const chatTab = channelChatTabs[event.to];
-    if (chatTab != null) chatTab.addMessage(event.from, event.message);
+    if (chatTab != null) chatTab.addMessage(event.from, event.message, null);
+  }
+}
+
+function onNotice(event: SlateIRC.MessageEvent) {
+  console.log(event);
+  if (event.to === irc.me || event.to === "*") {
+    // TODO: Open private chat tab
+    statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
+  } else {
+    const chatTab = channelChatTabs[event.to];
+    if (chatTab != null) chatTab.addMessage(event.from, event.message, "notice");
   }
 }
 

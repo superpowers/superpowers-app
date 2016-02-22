@@ -11,6 +11,7 @@
   "dependencies": {
     "async": "^1.5.2",
     "dnd-tree-view": "^2.4.2",
+    "escape-html": "^1.0.3",
     "follow-redirects": "0.0.7",
     "lodash": "^4.0.0",
     "mkdirp": "^0.5.1",
