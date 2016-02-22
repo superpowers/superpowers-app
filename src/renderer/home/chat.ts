@@ -78,6 +78,7 @@ class ChatTab {
       /* tslint:enable:no-unused-expression */
       this.usersTreeView = new TreeView(this.paneElt.querySelector(".users-tree-view") as HTMLElement);
     } else {
+      sidebarElt.parentElement.removeChild(sidebarElt.previousElementSibling); // resize handle
       sidebarElt.parentElement.removeChild(sidebarElt);
     }
   }
