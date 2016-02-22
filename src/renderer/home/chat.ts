@@ -37,12 +37,10 @@ class ChatTab {
 
   logElt: HTMLDivElement;
   textAreaElt: HTMLTextAreaElement;
-  textAreaHistory: string[] = [];
-  textAreaHistoryIndex = -1;
+  previousMessage: string;
 
   usersTreeView: TreeView;
   users: string[] = [];
-
 
   constructor(public target: string, options?: { label?: string; isChannel?: boolean; }) {
     if (options == null) options = {};
@@ -240,27 +238,20 @@ class ChatTab {
     if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) return;
 
     if (event.keyCode === 38 /* Up */) {
+      if (this.previousMessage == null) return;
+      if (this.textAreaElt.value.length > 0) return;
+      this.textAreaElt.value = this.previousMessage;
       event.preventDefault();
-      if (this.textAreaHistory.length === 0) return;
-      if (this.textAreaHistoryIndex === -1) this.textAreaHistoryIndex = this.textAreaHistory.length - 1;
-      else this.textAreaHistoryIndex = Math.max(this.textAreaHistoryIndex - 1, 0);
-      this.textAreaElt.value = this.textAreaHistory[this.textAreaHistoryIndex];
-    } else if (event.keyCode === 40 /* Down */) {
-      event.preventDefault();
-      if (this.textAreaHistoryIndex === -1 || this.textAreaHistoryIndex >= this.textAreaHistory.length - 1) return;
-      this.textAreaHistoryIndex++;
-      this.textAreaElt.value = this.textAreaHistory[this.textAreaHistoryIndex];
     }
   };
 
   private onTextAreaKeyPress = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
       event.preventDefault();
-      this.textAreaHistoryIndex = -1;
 
       if (this.textAreaElt.value.length > 0) {
         this.send(this.textAreaElt.value);
-        this.textAreaHistory.push(this.textAreaElt.value);
+        this.previousMessage = this.textAreaElt.value;
         this.textAreaElt.value = "";
       }
     }
