@@ -343,7 +343,7 @@ function disconnect() { cleanUp(null); }
 function onSocketError(err: Error) { cleanUp(err.message); }
 
 function setupMentionRegex() {
-  mentionRegex = new RegExp(`/(.*\s)?${irc.me}(\s*)/`, "g");
+  mentionRegex = new RegExp(`(.*\\s)?${irc.me}([^\\w]*)`, "g");
 }
 
 function onWelcome(name: string) {
