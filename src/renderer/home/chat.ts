@@ -83,15 +83,22 @@ class ChatTab {
     }
   }
 
-  addInfo(text: string) {
-    const elt = document.createElement("div");
-    elt.className = "info";
-
+  private linkify(text: string) {
     text = escapeHTML(text);
 
     const channelRegex = /^(.*\s)?#([#A-Za-z0-9_-]+)/g;
     text = text.replace(channelRegex, "$1<a href=\"#\">#$2</a>");
-    elt.innerHTML = text;
+
+    const linkRegex = /^(.*\s)?(http|https):\/\/([^\s]+)/g;
+    text = text.replace(linkRegex, "$1<a href=\"$2://$3\">$2://$3</a>");
+
+    return text;
+  }
+
+  addInfo(text: string) {
+    const elt = document.createElement("div");
+    elt.className = "info";
+    elt.innerHTML = this.linkify(text);
 
     this.logElt.appendChild(elt);
     this.logElt.scrollTop = 9e9;
@@ -109,7 +116,7 @@ class ChatTab {
 
     const textElt = document.createElement("span");
     textElt.className = "text";
-    textElt.textContent = text;
+    textElt.innerHTML = this.linkify(text);
     elt.appendChild(textElt);
 
     this.logElt.appendChild(elt);
