@@ -388,7 +388,8 @@ function onQuit(event: SlateIRC.QuitEvent) {
 
 const ignoredCommands = [
   "NICK", "PRIVMSG", "NOTICE",
-  "JOIN", "PART", "QUIT"
+  "JOIN", "PART", "QUIT",
+  "PING"
 ];
 function onData(event: SlateIRC.DataEvent) {
   if (ignoredCommands.indexOf(event.command) !== -1 || event.command.slice(0, 4) === "RPL_") {
@@ -410,7 +411,6 @@ function onMessage(event: SlateIRC.MessageEvent) {
 }
 
 function onNotice(event: SlateIRC.MessageEvent) {
-  console.log(event);
   if (event.to === irc.me || event.to === "*") {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
