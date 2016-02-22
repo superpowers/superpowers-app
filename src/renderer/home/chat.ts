@@ -337,8 +337,8 @@ function onSocketError(err: Error) { cleanUp(err.message); }
 function onWelcome(name: string) {
   statusChatTab.addInfo(`Connected as ${irc.me}.`);
 
-  let defaultChannelName = "#superpowers-html5-test";
-  if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-test-${i18n.languageCode}`;
+  let defaultChannelName = "#superpowers-html5";
+  if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
   join(defaultChannelName);
 
   return;
