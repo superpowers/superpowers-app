@@ -104,7 +104,7 @@ class ChatTab {
 
     const fromElt = document.createElement("span");
     fromElt.className = "from";
-    fromElt.textContent = from;
+    fromElt.textContent = `${from}: `;
     elt.appendChild(fromElt);
 
     const textElt = document.createElement("span");
