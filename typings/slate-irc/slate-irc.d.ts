@@ -1,3 +1,8 @@
+// Type definitions for slate-irc
+// Project: https://github.com/slate/slate-irc
+// Definitions by: Elisée MAURER <https://github.com/elisee/>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+
 /// <reference path="../node/node.d.ts" />
 
 declare module "slate-irc" {
@@ -65,7 +70,7 @@ declare module "slate-irc" {
       ctcp(target: string, msg: string): void;
 
       join(channel: string, key?: string): void;
-      part(channel: string, msg: string): void;
+      part(channel: string, msg?: string): void;
       names(channel: string, callback: (error: Error, names: { name: string; mode: string; }[]) => void): void;
 
       away(message: string): void;
@@ -78,6 +83,7 @@ declare module "slate-irc" {
 
       on(event: string, callback: Function): void;
       on(event: "data", callback: (event: DataEvent) => void): void;
+      on(event: "welcome", callback: (name: string) => void): void;
       on(event: "message", callback: (event: MessageEvent) => void): void;
       on(event: "notice", callback: (event: MessageEvent) => void): void;
       on(event: "motd", callback: (event: MOTDEvent) => void): void;
