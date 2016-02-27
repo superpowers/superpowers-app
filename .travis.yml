@@ -11,6 +11,13 @@ addons:
 install: true
 script:
 - npm run build
+notifications:
+  webhooks:
+    urls:
+    - https://webhooks.gitter.im/e/44f5607466509af53a93
+    on_success: change
+    on_failure: always
+    on_start: never
 before_deploy:
 - npm run package
 deploy:
