@@ -48,6 +48,8 @@ function startServer() {
   serverProcess = childProcess.fork(serverPath, ["start", `--data-path=${settings.userDataPath}`], { silent: true, env: serverEnv });
   serverProcess.on("exit", onServerExit);
   serverProcess.on("message", onServerMessage);
+  serverProcess.stdout.on("data", (data: any) => { appendToLog(String(data)); });
+  serverProcess.stderr.on("data", (data: any) => { appendToLog(String(data)); });
 }
 
 function stopServer() {
@@ -70,10 +72,7 @@ function onServerExit() {
 }
 
 function onServerMessage(msg: any) {
-  if (typeof msg === "string") {
-    appendToLog(msg);
-    return;
-  }
+  if (typeof msg !== "object") return;
 
   switch (msg.type) {
     case "started":
