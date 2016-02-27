@@ -157,7 +157,11 @@ function checkAppUpdate(callback: Function) {
 
 function checkUpdates(callback: Function) {
   const core = components["core"];
-  if (core.latest == null) return;
+  if (core.latest == null) { callback(null); return; }
+
+  // TEMPORARY: Don't offer installing superpowers-core v0.x
+  // since it's not compatible
+  if (core.latest[1] === "0") { callback(null); return; }
 
   // First installation
   if (core.current == null) {
