@@ -3,11 +3,13 @@
   
   "actions": {
     "cancel": "Cancel",
+    "clear": "Clear",
     "close": "Close",
     "skip": "Skip",
     "save": "Save",
     "download": "Download",
     "install": "Install",
+    "open": "Open",
     "update": "Update"
   },
 

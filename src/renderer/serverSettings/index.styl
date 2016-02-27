@@ -4,29 +4,116 @@
 }
 
 .top {
-  flex: 3;
+  flex: 1 1 0;
   display: flex;
+  min-height: 200px;
+  overflow: hidden;
+
+  .settings {
+    overflow-y: auto;
+    padding-bottom: 1em;
+    min-width: 300px;
+
+    section { padding: 1em 1em 0 1em; }
+  }
+
+  .systems {
+    flex: 1 1 0;
+    padding: 1em;
+  }
 }
 
-.settings {
-  flex: 1;
+.top header {
+  font-size: 1.5em;
+  margin-bottom: .5em;
+}
+
+.top table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+
+  td, th {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+  }
+
+  th {
+    text-align: left;
+    vertical-align: top;
+    font-weight: normal;
+    background: #eee;
+    white-space: nowrap;
+  }
+
+  td.no-padding {
+    padding: 0;
+
+    input[type=text], input[type=password], input[type=number] {
+      border: none;
+      width: 100%;
+      padding: 0.5em 0.25em;
+    }
+  }
+
+  .inputs { display: flex; }
+  .checkbox, ol li {
+    display: flex;
+    align-items: center;
+  }
+
+  label + input { margin-left: 0.5em; }
+  td ol { list-style: none; margin: 0; padding: 0; }
+}
+
+.systems {
   display: flex;
   flex-flow: column;
-  padding: 1em;
-  align-items: flex-start;
-  border-right: 1px solid #ccc;
+  .content { flex: 1 1 0; }
 }
 
-.systems-plugins {
-  flex: 1;
+.collapsable {
   display: flex;
   flex-flow: column;
-  margin: auto;
 
-  span { text-align: center; }
+  .header {
+    cursor: pointer;
+    background-color: #444;
+    color: #fff;
+    display: flex;
+    align-items: center;
+  }
+
+  .header .info {
+    flex: 1;
+    padding: .5em;
+  }
+  
+  .header button.toggle {
+    width: 30px;
+    align-self: stretch;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    opacity: .5;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+  }
 }
 
-.log {
-  flex: 1;
-  padding: 0.5em;
+.server-log {
+  min-height: 100px;
+  height: 140px;
+
+  .header .actions { padding-left: 0.25em;}
+
+  textarea {
+    flex: 1;
+    border: none;
+    resize: none;
+    padding: 0.5em;
+  }
 }

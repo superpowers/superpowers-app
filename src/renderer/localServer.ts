@@ -2,6 +2,7 @@ import * as childProcess from "child_process";
 import * as settings from "./settings";
 import * as i18n from "../shared/i18n";
 import { openServerSettings } from "./panes";
+import { appendToLog } from "./serverSettings";
 
 let serverProcess: childProcess.ChildProcess;
 
@@ -9,7 +10,6 @@ const localServerElt = document.querySelector(".local-server") as HTMLDivElement
 const statusElt = localServerElt.querySelector(".status") as HTMLDivElement;
 const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
 const settingsButton = localServerElt.querySelector(".settings") as HTMLButtonElement;
-const myServerTextarea = document.querySelector("textarea.log") as HTMLTextAreaElement;
 
 export function start() {
   startStopServerButton.addEventListener("click", startStopServer);
@@ -69,10 +69,9 @@ function onServerExit() {
   startStopServerButton.textContent = i18n.t("server:buttons.start");
   startStopServerButton.disabled = false;
 
-  myServerTextarea.value += "\n";
+  appendToLog("\n");
 }
 
 function onServerMessage(msg: string) {
-  myServerTextarea.value += `${msg}\n`;
-  setTimeout(() => { myServerTextarea.scrollTop = myServerTextarea.scrollHeight; }, 0);
+  appendToLog(msg);
 }

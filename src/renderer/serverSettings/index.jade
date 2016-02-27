@@ -1,12 +1,64 @@
 .top
   .settings
-    button.open-projects-folder= t("server:settings.openProjectsFolder")
-    .auto-start-server
-      input#auto-start-server(type="checkbox")
-      label(for="auto-start-server")= t("server:settings.autoStartServer")
+    section.general
+      header= t("server:settings.general.title")
+      table
+        tr.main-port
+          th= t("server:settings.general.mainPort")
+          td.no-padding
+            input(type="number")
+        tr.build-port
+          th= t("server:settings.general.buildPort")
+          td.no-padding
+            input(type="number")
+        tr
+          td(colspan="2")
+            .checkbox
+              input#auto-start-server-checkbox(type="checkbox")
+              label(for="auto-start-server-checkbox")= t("server:settings.general.autoStart")
 
-  .systems-plugins
-    span Systems/plugins interface
-    span (not implemented)
+    section.storage
+      header= t("server:settings.storage.title")
+      table
+        tr.projects-folder
+          td(colspan="2")
+            button= t("server:settings.storage.openProjectsFolder")
+        tr.max-recent-builds
+          th= t("server:settings.storage.recentBuilds")
+          td.no-padding
+            input(type="number")
 
-textarea.log(readonly)
+    section.authentication
+      header= t("server:settings.authentication.title")
+      table
+        tr
+          td
+            .checkbox
+              input#open-server-to-internet-checkbox(type="checkbox")
+              label(for="open-server-to-internet-checkbox")= t("server:settings.authentication.openToInternet")
+        tr
+          td
+            ol
+              li
+                input#guest-account-checkbox(type="checkbox")
+                label(for="guest-account-checkbox")= t("server:settings.authentication.guestAccount")
+              li
+                input#local-account-checkbox(type="checkbox")
+                label(for="local-account-checkbox")= t("server:settings.authentication.localAccount")
+              li
+                input#external-services-checkbox(type="checkbox")
+                label(for="external-services-checkbox")= t("server:settings.authentication.externalServices")
+  .systems
+    header= t("server:systems.title")
+    .content
+      .systems-tree-view
+      .system-info
+
+.resize-handle.bottom
+.server-log.collapsable
+  .header
+    .actions
+      button.clear= t("common:actions.clear")
+    .info= t("server:log")
+    button.toggle –
+  textarea(readonly)

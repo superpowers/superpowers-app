@@ -1,5 +1,6 @@
 {
   "myServer": "My Server",
+  "log": "Server log",
 
   "status": {
   	"starting": "Server starting...",
@@ -16,7 +17,33 @@
 
   "settings": {
     "title": "Server Settings",
-    "openProjectsFolder": "Open projects folder",
-    "autoStartServer": "Auto-start server on startup"
+
+    "general": {
+      "title": "General",
+
+      "mainPort": "Main port",
+      "buildPort": "Build port",
+
+      "autoStart": "Auto-start server when launching the app"
+    },
+
+    "storage": {
+      "title": "Storage",
+      "openProjectsFolder": "Open projects folder",
+      "recentBuilds": "Recent builds to keep"
+    },
+
+    "authentication": {
+      "title": "Authentication",
+      "openToInternet": "Open server to the Internet",
+
+      "guestAccount": "Enable temporary guest accounts",
+      "localAccount": "Enable local account creation",
+      "externalServices": "Enable login with external services"
+    }
+  },
+  
+  "systems": {
+    "title": "Systems and plugins"
   }
 }

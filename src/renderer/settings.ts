@@ -54,5 +54,5 @@ export function scheduleSave() {
     autoStartServer
   };
 
-  fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2), { encoding: "utf8" });
+  fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
 }
