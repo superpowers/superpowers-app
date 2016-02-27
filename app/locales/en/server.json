@@ -17,6 +17,7 @@
 
   "settings": {
     "title": "Server Settings",
+    "error": "Could not load server settings",
 
     "general": {
       "title": "General",

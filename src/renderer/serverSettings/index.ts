@@ -14,13 +14,18 @@ const autoStartServerElt = settingsElt.querySelector("#auto-start-server-checkbo
 const openProjectsFolderElt = settingsElt.querySelector(".projects-folder button") as HTMLButtonElement;
 const maxRecentBuildsElt = settingsElt.querySelector(".max-recent-builds input") as HTMLInputElement;
 
-
 const logTextarea = settingsElt.querySelector(".server-log textarea") as HTMLTextAreaElement;
 const clearServerLogButton = settingsElt.querySelector(".server-log button.clear") as HTMLButtonElement;
 clearServerLogButton.addEventListener("click", onClearLogButtonClick);
 
 export function start() {
   const serverConfig = getServerConfig();
+  if (serverConfig == null) {
+    (settingsElt.querySelector(".error") as HTMLElement).hidden = false;
+    (settingsElt.querySelector(".settings") as HTMLElement).hidden = true;
+    (settingsElt.querySelector(".systems") as HTMLElement).hidden = true;
+    return;
+  }
 
   mainPortElt.value = serverConfig.mainPort.toString();
   buildPortElt.value = serverConfig.buildPort.toString();
@@ -39,10 +44,14 @@ interface ServerConfig {
   [key: string]: any;
 }
 function getServerConfig() {
-  /* tslint:disable */
-  const defaultConfig: ServerConfig = require(`${settings.userDataPath}/core/server/config.js`).defaults;
-  /* tslint:enable */
-  console.log(defaultConfig);
+  let defaultConfig: ServerConfig;
+  try {
+    /* tslint:disable */
+    defaultConfig = require(`${settings.userDataPath}/core/server/config.js`).defaults;
+    /* tslint:enable */
+  } catch (err) {
+    return null;
+  }
 
   let localConfig: ServerConfig;
   try {
@@ -56,7 +65,6 @@ function getServerConfig() {
     else config[key] = defaultConfig[key];
   }
 
-  console.log(config);
   return config;
 }
 
@@ -70,7 +78,7 @@ function onChangeAutoStartServer() {
 }
 
 export function appendToLog(text: string) {
-  logTextarea.value += `${text}\n`;
+  logTextarea.value += text;
   setTimeout(() => { logTextarea.scrollTop = logTextarea.scrollHeight; }, 0);
 }
 
