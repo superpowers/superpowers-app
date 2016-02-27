@@ -79,7 +79,7 @@ export function openServerSettings() {
 
     tabStrip.tabsRoot.appendChild(serverSettingsTabElt);
   }
-  const serverSettingsPaneElt = panesElt.querySelector(`div[data-name="server-settings"]`) as HTMLIFrameElement;
+  const serverSettingsPaneElt = panesElt.querySelector(`:scope > div[data-name="server-settings"]`) as HTMLIFrameElement;
 
   serverSettingsTabElt.classList.add("active");
   serverSettingsPaneElt.classList.add("active");
@@ -97,8 +97,8 @@ function onTabActivate(tabElt: HTMLLIElement) {
   const paneName = tabElt.dataset["name"];
 
   let paneElt: HTMLElement;
-  if (serverId != null) paneElt = panesElt.querySelector(`iframe[data-server-id="${serverId}"]`) as HTMLIFrameElement;
-  else paneElt = panesElt.querySelector(`*[data-name="${paneName}"]`) as HTMLIFrameElement;
+  if (serverId != null) paneElt = panesElt.querySelector(`:scope > iframe[data-server-id="${serverId}"]`) as HTMLIFrameElement;
+  else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLIFrameElement;
   paneElt.classList.add("active");
 }
 
@@ -134,6 +134,6 @@ function clearActiveTab() {
   const activeTabElt = tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement;
   if (activeTabElt != null) {
     activeTabElt.classList.remove("active");
-    (panesElt.querySelector(".active") as HTMLElement).classList.remove("active");
+    (panesElt.querySelector(":scope > .active") as HTMLElement).classList.remove("active");
   }
 }
