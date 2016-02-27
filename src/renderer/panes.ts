@@ -106,7 +106,7 @@ function onTabClose(tabElement: HTMLLIElement) {
   if (tabElement.classList.contains("pinned")) return;
 
   const serverId = tabElement.dataset["serverId"];
-  const paneName = tabElement.dataset["pane"];
+  const paneName = tabElement.dataset["name"];
 
   let paneElt: HTMLElement;
   if (serverId != null) paneElt = panesElt.querySelector(`iframe[data-server-id='${serverId}']`) as HTMLIFrameElement;
@@ -118,7 +118,9 @@ function onTabClose(tabElement: HTMLLIElement) {
   }
 
   tabElement.parentElement.removeChild(tabElement);
-  paneElt.parentElement.removeChild(paneElt);
+
+  if (paneElt.dataset["persist"] === "true") paneElt.classList.remove("active");
+  else paneElt.parentElement.removeChild(paneElt);
 }
 
 function onTabStripClick(event: MouseEvent) {
