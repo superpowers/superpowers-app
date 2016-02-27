@@ -26,11 +26,8 @@ function startStopServer() {
 function startServer() {
   if (serverProcess != null) return;
 
-  // TODO: Enable "starting" state and wait for "started" message
-  // from server to go to started
-  statusElt.textContent = i18n.t("server:status.started"); // .starting
+  statusElt.textContent = i18n.t("server:status.starting");
   startStopServerButton.textContent = i18n.t("server:buttons.stop");
-  // startStopServerButton.disabled = true;
 
   const serverPath = `${settings.userDataPath}/core/server/index.js`;
 
@@ -72,6 +69,15 @@ function onServerExit() {
   appendToLog("\n");
 }
 
-function onServerMessage(msg: string) {
-  appendToLog(msg);
+function onServerMessage(msg: any) {
+  if (typeof msg === "string") {
+    appendToLog(msg);
+    return;
+  }
+
+  switch (msg.type) {
+    case "started":
+      statusElt.textContent = i18n.t("server:status.started");
+      break;
+  }
 }
