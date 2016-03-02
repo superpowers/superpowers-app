@@ -6,6 +6,7 @@
 .top {
   display: flex;
   border-bottom: 1px solid #ccc;
+  height: 150px;
 
   ol, ul {
     list-style: none;
@@ -19,14 +20,29 @@
 
   .news {
     flex: 1 1 0;
-    padding: 1em;
+    padding: 0.5em;
     background: #eee;
+    overflow-y: scroll;
   }
+  
+  .news table { width: 100%; }
+  .news th, td {
+    vertical-align: top;
+    padding: 0.5em;
+  }
+  .news th { text-align: right; white-space: nowrap; }
+  .news td { width: 100%; }
 }
 
 .chat {
   flex: 1 1 0;
   display: flex;
+  flex-flow: column;
+  
+  .panes > * {
+    flex: 1 1 0;
+    display: flex;
+  }
  
   .channel {
     flex: 1 1 0;
@@ -37,6 +53,10 @@
       flex: 1 1 0;
       padding: 0.5em;
       overflow-y: scroll;
+      -webkit-user-select: initial;
+      -moz-user-select: initial;
+      user-select: initial;
+      cursor: initial;
       
       & > div { margin-bottom: 0.5em; }
     }
@@ -68,11 +88,18 @@
   }
 }
 
+.chat .tabs-bar .label {
+  padding-left: 0.5em;
+}
+
 .chat .log > .info {
   color: #666;
 }
 
 .chat .log > .message {
   .from { font-weight: bold; }
-  .from:after { content: ": "; }
+
+  &.private { color: #664444; }
+  &.notice { color: #448888; }
+  &.me { color: #888888; }
 }

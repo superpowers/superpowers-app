@@ -1,7 +1,8 @@
 {
   "name": "superpowers-app",
-  "version": "1.0.0",
+  "version": "0.15.0",
   "scripts": {
+    "prebuild": "npm install",
     "build": "gulp --silent",
     "start": "electron app",
     "package": "node scripts/package.js"
@@ -10,12 +11,15 @@
   "dependencies": {
     "async": "^1.5.2",
     "dnd-tree-view": "^2.4.2",
+    "escape-html": "^1.0.3",
+    "follow-redirects": "0.0.7",
     "lodash": "^4.0.0",
     "mkdirp": "^0.5.1",
     "resize-handle": "^4.0.0",
     "simple-dialogs": "^1.0.1",
     "slate-irc": "^0.8.1",
-    "tab-strip": "^2.2.0"
+    "tab-strip": "^2.2.0",
+    "yauzl": "^2.4.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
@@ -24,6 +28,7 @@
     "gulp-stylus": "^2.2.0",
     "gulp-tslint": "^4.3.1",
     "gulp-typescript": "^2.10.0",
-    "tslint": "^3.3.0"
+    "tslint": "^3.3.0",
+    "yargs": "^4.1.0"
   }
 }

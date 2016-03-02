@@ -1,22 +1,14 @@
-# Redesigned Superpowers launcher
+## Desktop app for Superpowers
 
-This is a work in progress and is not currently part of any release.  
-See https://github.com/superpowers/superpowers/tree/master/launcher for the current launcher.
+[![License](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/superpowers/superpowers-app/blob/master/LICENSE.txt)
+[![Build Status](https://travis-ci.org/superpowers/superpowers-app.svg?branch=master)](https://travis-ci.org/superpowers/superpowers-app)
+[![Gitter](https://img.shields.io/gitter/room/superpowers/dev.svg)](https://gitter.im/superpowers/dev)  
+[![Patreon](https://img.shields.io/badge/patreon-support%20us-brightgreen.svg)](https://www.patreon.com/SparklinLabs)
+[![Twitter](https://img.shields.io/twitter/follow/SuperpowersDev.svg?style=social)](https://twitter.com/SuperpowersDev)
 
-## How to install
+[Website](http://superpowers-html5.com/) —
+[Main repository](https://github.com/superpowers/superpowers-core) —
+[How to contribute](http://docs.superpowers-html5.com/en/development/how-to-contribute) —
+[Build instructions](http://docs.superpowers-html5.com/en/development/building-superpowers)
 
-Clone this repository, make sure you have Node.js 4.x installed and run:
-
-```bash
-    npm install
-    npm run build
-
-    # Install Electron
-    npm install -g electron-prebuilt
-```
-
-To run it:
-
-    npm start
-
-For now, this redesigned launcher should only be used it with a Superpowers server running the [`new-launcher` branch](https://github.com/superpowers/superpowers/tree/new-launcher).
+![](http://i.imgur.com/fjVk2GV.gif)

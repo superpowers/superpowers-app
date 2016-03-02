@@ -40,8 +40,9 @@ const tsProject = ts.createProject("./src/tsconfig.json");
 gulp.task("typescript", () => {
   let failed = false;
   const tsResult = tsProject.src()
-    .pipe(tslint({ tslint: require("tslint") }))
+    .pipe(tslint())
     .pipe(tslint.report("prose", { emitError: false }))
+    .on("error", (err) => { throw err; })
     .pipe(ts(tsProject))
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });

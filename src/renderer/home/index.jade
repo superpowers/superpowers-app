@@ -5,17 +5,19 @@
       li <a href="http://itch.io/engine/superpowers/community">Community Forums</a>
       li <a href="https://patreon.com/SparklinLabs">Patreon</a>
       li <a href="https://github.com/superpowers">Open Source</a>
-  .news
-    ol
-      li News 1
-      li News 2
-      li News 3
+      li <a href="ts3server://ts.superpowers-html5.com">TeamSpeak server</a>
+  .news= t("common:states.loading")
 
 .chat
-  .channel
-    .log
-    .input
-      textarea
-  .resize-handle.right
-  .sidebar
-    .users-tree-view
+  template
+    .channel
+      .log
+      .input
+        textarea
+    .resize-handle.right
+    .sidebar
+      .users-tree-view
+
+  .tabs-bar
+    ol.tab-strip
+  .panes

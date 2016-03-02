@@ -35,6 +35,7 @@ body { display: flex; }
   }
   
   .status { font-size: 2em; }
+  .progress { margin-top: 0.5em; }
 
   .version {
     position: absolute;
@@ -58,9 +59,9 @@ body { display: flex; }
 }
 
 body > .sidebar {
-  min-width: 240px;
+  min-width: 250px;
   max-width: 480px;
-  width: 240px;
+  width: 250px;
   display: flex;
   flex-flow: column;
   background: #f0f0f0;
@@ -97,6 +98,17 @@ body > .sidebar .servers-tree-view {
   .remove-server { background-image: url(images/servers/remove.svg); }
 }
 
+body > .sidebar .local-server {
+  display: flex;
+  align-items: center;
+  padding: 0.5em;
+  border-top: 1px solid #aaa;
+  background: #ddd;
+
+  button { margin-left: 0.25em; }
+  .status { flex: 1 1 0; }
+}
+
 .main {
   flex: 1 1 0;
   display: flex;
@@ -114,7 +126,11 @@ body > .sidebar .servers-tree-view {
 }
   
 .main .panes .home {
-  @import "styles/home.styl";
+  @import "home/index.styl";
+}
+
+.main .panes .server-settings {
+  @import "serverSettings/index.styl";
 }
 
 .main .panes > * {

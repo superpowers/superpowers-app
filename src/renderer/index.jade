@@ -13,6 +13,9 @@ html
 
       .servers-tree-view
       .local-server
+        .status= t("server:status.stopped")
+        button.start-stop= t("server:buttons.start")
+        button.settings= t("server:buttons.settings")
     .resize-handle.left
 
     .main
@@ -22,12 +25,16 @@ html
             img.icon(src="images/tabs/home.svg")
       .panes
         .home.active(data-name="home")
-          include home
+          include home/index
+        .server-settings(data-name="server-settings",data-persist="true")
+          include serverSettings/index
 
     .loading
       .splash(hidden)
         img(src="images/superpowers-256.png")
         .status=t("startup:startingUp")
+        .progress(hidden)
+          progress
       .version
 
     script(src="index.js")

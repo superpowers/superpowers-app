@@ -2,12 +2,25 @@
   "activeLanguage": "English",
   
   "actions": {
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "close": "Close",
     "skip": "Skip",
+    "save": "Save",
     "download": "Download",
-    "install": "Install"
+    "install": "Install",
+    "open": "Open",
+    "update": "Update"
   },
 
   "states": {
     "loading": "Loading..."
+  },
+
+  "server": {
+    "hostname": "Hostname",
+    "port": "Port",
+    "label": "Label"
   }
 }
+

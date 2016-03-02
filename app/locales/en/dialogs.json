@@ -1,0 +1,9 @@
+{
+	"addServer": {
+		"title": "Enter server details"
+	},
+
+	"editServer": {
+		"title": "Edit server details"
+	}
+}

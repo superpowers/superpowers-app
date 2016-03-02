@@ -1,4 +1,5 @@
 import { BaseDialog } from "simple-dialogs";
+import * as i18n from "../../shared/i18n";
 
 type AddOrEditOptions = {
   validationLabel: string;
@@ -18,45 +19,63 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
   private portInputElt: HTMLInputElement;
   private labelInputElt: HTMLInputElement;
 
-  constructor(promptLabel: string, options: AddOrEditOptions, callback: (result: AddOrEditServerResult) => void) {
+  constructor(headerLabel: string, options: AddOrEditOptions, callback: (result: AddOrEditServerResult) => void) {
     super(callback);
 
-    // Prompt name
-    const labelElt = document.createElement("label");
-    labelElt.textContent = promptLabel;
-    this.formElt.appendChild(labelElt);
+    // Header
+    const headerElt = document.createElement("header");
+    headerElt.textContent = headerLabel;
+    this.formElt.appendChild(headerElt);
 
-    const hostRootElt = document.createElement("div");
-    hostRootElt.style.display = "flex";
-    this.formElt.appendChild(hostRootElt);
+    // Hostname and port
+    const hostRow = document.createElement("div");
+    hostRow.className = "group";
+    hostRow.style.display = "flex";
+    hostRow.style.alignItems = "center";
+    this.formElt.appendChild(hostRow);
 
-    // Hostname
+    const hostnameHeader = document.createElement("label");
+    hostnameHeader.textContent = i18n.t("common:server.hostname");
+    hostnameHeader.style.marginRight = "0.5em";
+    hostRow.appendChild(hostnameHeader);
+
     this.hostnameInputElt = document.createElement("input");
-    this.hostnameInputElt.style.flex = "1";
+    this.hostnameInputElt.style.flex = "1 1 0";
+    this.hostnameInputElt.style.marginRight = "0.5em";
     this.hostnameInputElt.required = true;
     this.hostnameInputElt.value = options.initialHostnameValue;
-    this.hostnameInputElt.title = "Hostname";
-    this.hostnameInputElt.placeholder = "Hostname";
-    hostRootElt.appendChild(this.hostnameInputElt);
-
-    const separatorElt = document.createElement("label");
-    separatorElt.style.margin = "0 0.5em";
-    separatorElt.textContent = ":";
-    hostRootElt.appendChild(separatorElt);
+    // this.hostnameInputElt.placeholder = ;
+    hostRow.appendChild(this.hostnameInputElt);
 
     // Port
+    const portHeader = document.createElement("label");
+    portHeader.textContent = i18n.t("common:server.port");
+    portHeader.style.marginRight = "0.5em";
+    hostRow.appendChild(portHeader);
+
     this.portInputElt = document.createElement("input");
+    this.portInputElt.style.width = "50px";
     this.portInputElt.value = options.initialPortValue;
-    this.portInputElt.title = "Port";
-    this.portInputElt.placeholder = "Port";
-    hostRootElt.appendChild(this.portInputElt);
+    this.portInputElt.placeholder = "4237";
+    hostRow.appendChild(this.portInputElt);
 
     // Label
+    const labelRow = document.createElement("div");
+    labelRow.className = "group";
+    labelRow.style.display = "flex";
+    labelRow.style.alignItems = "center";
+    this.formElt.appendChild(labelRow);
+
+    const labelHeader = document.createElement("label");
+    labelHeader.textContent = i18n.t("common:server.label");
+    labelHeader.style.marginRight = "0.5em";
+    labelRow.appendChild(labelHeader);
+
     this.labelInputElt = document.createElement("input");
     this.labelInputElt.value = options.initialLabelValue;
-    this.labelInputElt.title = "Label";
-    this.labelInputElt.placeholder = "Label";
-    this.formElt.appendChild(this.labelInputElt);
+    this.labelInputElt.placeholder = "A name for your server";
+    this.labelInputElt.style.flex = "1 1 0";
+    labelRow.appendChild(this.labelInputElt);
 
     // Buttons
     const buttonsElt = document.createElement("div");
@@ -65,7 +84,7 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
 
     const cancelButtonElt = document.createElement("button");
     cancelButtonElt.type = "button";
-    cancelButtonElt.textContent = BaseDialog.defaultLabels["cancel"];
+    cancelButtonElt.textContent = i18n.t("common:actions.cancel");
     cancelButtonElt.className = "cancel-button";
     cancelButtonElt.addEventListener("click", (event) => { event.preventDefault(); this.cancel(); });
 

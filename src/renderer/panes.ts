@@ -1,10 +1,9 @@
 import * as TabStrip from "tab-strip";
+import * as i18n from "../shared/i18n";
 
 const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 const panesElt = document.querySelector(".panes");
 const tabStrip = new TabStrip(tabsBarElt);
-
-const homeTabElt = tabStrip.tabsRoot.querySelector(`li[data-name="home"]`);
 
 export function openServer(serverEntry: ServerEntry) {
   clearActiveTab();
@@ -56,6 +55,35 @@ export function openServer(serverEntry: ServerEntry) {
   serverPaneElt.classList.add("active");
 }
 
+export function openServerSettings() {
+  clearActiveTab();
+
+  let serverSettingsTabElt = tabsBarElt.querySelector(`li[data-name="server-settings"]`) as HTMLLIElement;
+  if (serverSettingsTabElt == null) {
+    serverSettingsTabElt = document.createElement("li");
+    serverSettingsTabElt.dataset["name"] = "server-settings";
+
+    const iconElt = document.createElement("img");
+    iconElt.className = "icon";
+    iconElt.src = "images/tabs/serverSettings.svg";
+    serverSettingsTabElt.appendChild(iconElt);
+
+    const labelElt = document.createElement("div");
+    labelElt.className = "label";
+    labelElt.textContent = i18n.t("server:settings.title");
+    serverSettingsTabElt.appendChild(labelElt);
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "close";
+    serverSettingsTabElt.appendChild(closeButton);
+
+    tabStrip.tabsRoot.appendChild(serverSettingsTabElt);
+  }
+  const serverSettingsPaneElt = panesElt.querySelector(`:scope > div[data-name="server-settings"]`) as HTMLIFrameElement;
+
+  serverSettingsTabElt.classList.add("active");
+  serverSettingsPaneElt.classList.add("active");
+}
 
 tabStrip.on("activateTab", onTabActivate);
 tabStrip.on("closeTab", onTabClose);
@@ -69,8 +97,8 @@ function onTabActivate(tabElt: HTMLLIElement) {
   const paneName = tabElt.dataset["name"];
 
   let paneElt: HTMLElement;
-  if (serverId != null) paneElt = panesElt.querySelector(`iframe[data-server-id="${serverId}"]`) as HTMLIFrameElement;
-  else paneElt = panesElt.querySelector(`*[data-name="${paneName}"]`) as HTMLIFrameElement;
+  if (serverId != null) paneElt = panesElt.querySelector(`:scope > iframe[data-server-id="${serverId}"]`) as HTMLIFrameElement;
+  else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLIFrameElement;
   paneElt.classList.add("active");
 }
 
@@ -78,7 +106,7 @@ function onTabClose(tabElement: HTMLLIElement) {
   if (tabElement.classList.contains("pinned")) return;
 
   const serverId = tabElement.dataset["serverId"];
-  const paneName = tabElement.dataset["pane"];
+  const paneName = tabElement.dataset["name"];
 
   let paneElt: HTMLElement;
   if (serverId != null) paneElt = panesElt.querySelector(`iframe[data-server-id='${serverId}']`) as HTMLIFrameElement;
@@ -90,7 +118,9 @@ function onTabClose(tabElement: HTMLLIElement) {
   }
 
   tabElement.parentElement.removeChild(tabElement);
-  paneElt.parentElement.removeChild(paneElt);
+
+  if (paneElt.dataset["persist"] === "true") paneElt.classList.remove("active");
+  else paneElt.parentElement.removeChild(paneElt);
 }
 
 function onTabStripClick(event: MouseEvent) {
@@ -104,6 +134,6 @@ function clearActiveTab() {
   const activeTabElt = tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement;
   if (activeTabElt != null) {
     activeTabElt.classList.remove("active");
-    (panesElt.querySelector(".active") as HTMLElement).classList.remove("active");
+    (panesElt.querySelector(":scope > .active") as HTMLElement).classList.remove("active");
   }
 }

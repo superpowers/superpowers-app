@@ -1,20 +1,22 @@
 import * as fs from "fs";
 import * as i18n from "../shared/i18n";
 
-export let settingsPath: string;
+export let userDataPath: string;
 
 export let favoriteServers: ServerEntry[];
 export let favoriteServersById: { [id: string]: ServerEntry };
 
 export let recentProjects: { host: string; projectId: string; name: string; }[];
+export let autoStartServer: boolean;
 
-export function load(path: string, callback: (err: i18n.LocalizedError) => void) {
-  settingsPath = path;
+export function load(dataPath: string, callback: (err: Error) => void) {
+  userDataPath = dataPath;
+  const settingsPath = `${userDataPath}/settings.json`;
   console.log(`Loading settings from ${settingsPath}...`);
 
   fs.readFile(settingsPath, { encoding: "utf8" }, (err, dataJSON) => {
     if (err != null && err.code !== "ENOENT") {
-      callback(new i18n.LocalizedError("settings:errors.couldNotLoad", { reason: err.message }));
+      callback(err);
       return;
     }
 
@@ -23,9 +25,12 @@ export function load(path: string, callback: (err: i18n.LocalizedError) => void)
 
     if (dataJSON == null) {
       // Setup defaults
-      const myServerEntry = { hostname: "127.0.0.1", port: "4237", label: i18n.t("settings:myServer"), id: "0" };
+      const myServerEntry = { hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer"), id: "0" };
       favoriteServers = [ myServerEntry ];
       favoriteServersById[myServerEntry.id] = myServerEntry;
+
+      recentProjects = [];
+      autoStartServer = true;
 
       callback(null);
       return;
@@ -35,6 +40,7 @@ export function load(path: string, callback: (err: i18n.LocalizedError) => void)
     favoriteServers = data.favoriteServers;
     for (const entry of favoriteServers) favoriteServersById[entry.id] = entry;
     recentProjects = data.recentProjects;
+    autoStartServer = data.autoStartServer;
 
     callback(null);
   });
@@ -44,8 +50,9 @@ export function load(path: string, callback: (err: i18n.LocalizedError) => void)
 export function scheduleSave() {
   const data = {
     favoriteServers,
-    recentProjects
+    recentProjects,
+    autoStartServer
   };
 
-  fs.writeFile(settingsPath, JSON.stringify(data, null, 2), { encoding: "utf8" });
+  fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
 }

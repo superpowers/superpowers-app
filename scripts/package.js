@@ -43,7 +43,7 @@ packager({
   const buildPaths = [];
   for (const oldPath of oldPaths) {
     const newPath = oldPath
-      .replace("Superpowers", "superpowers")
+      .replace("Superpowers", `superpowers-v${appPackage.version}`)
       .replace("-darwin-", "-osx-")
       .replace("-win32-", "-win-");
     fs.renameSync(oldPath, newPath);

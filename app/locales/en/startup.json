@@ -1,8 +1,26 @@
 {
   "startingUp": "Starting up Superpowers...",
-  "failed": "Could not start app",
+  "failedToStart": "Could not start app",
+  "startAnyway": "Start anyway",
+
   "errors": {
     "missingEnvironmentVariables": "Could not find required environment variables: ${envVars}.",
-    "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}."
+    "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}.",
+    "couldNotLoadSettings": "Could not load settings from ${settingsPath}. Reason: ${reason}."
+  },
+
+  "updateAvailable": {
+    "app": "Superpowers ${latest} is available (you're running ${current}).",
+    "core": "Superpowers Core ${latest} is available (you're running ${current}).",
+    "askGameInstall": "Do you want to install the \"Superpowers Game\" system now? It can be used to create HTML5 2D+3D game projects.",
+    "systems": "There are updates available for some systems."
+  },
+
+  "status": {
+    "installingCore": "Installing latest Superpowers Core...",
+    "installingCoreSucceed": "Superpowers Core was successfully installed.",
+    "installingCoreFailed": "Superpowers Core installation has failed. ${error}",
+    "installingGame": "Installing latest Game system...",
+    "installingGameFailed": "Superpowers Game system installation has failed. ${error}"
   }
 }
