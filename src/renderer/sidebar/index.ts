@@ -1,11 +1,11 @@
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 import { ConfirmDialog } from "simple-dialogs";
-import * as i18n from "../shared/i18n";
+import * as i18n from "../../shared/i18n";
 
-import AddAddOrEditServerDialog from "./dialogs/AddOrEditServerDialog";
-import * as settings from "./settings";
-import * as panes from "./panes";
+import AddAddOrEditServerDialog from "./AddOrEditServerDialog";
+import * as settings from "../settings";
+import * as panes from "../panes";
 
 new ResizeHandle(document.querySelector(".sidebar") as HTMLDivElement, "left");
 
