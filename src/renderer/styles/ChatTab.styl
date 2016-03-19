@@ -1,0 +1,59 @@
+.chat-tab {
+  flex: 1 1 0;
+  display: flex;
+ 
+  .channel {
+    flex: 1 1 0;
+    display: flex;
+    flex-flow: column;
+
+    .log {
+      flex: 1 1 0;
+      padding: 0.5em;
+      overflow-y: scroll;
+      -webkit-user-select: initial;
+      -moz-user-select: initial;
+      user-select: initial;
+      cursor: initial;
+      
+      & > div { margin-bottom: 0.5em; }
+    }
+
+    .input {
+      padding: 0.5em;
+      display: flex;
+
+      textarea {
+        flex: 1 1 0;
+        resize: none;
+      }
+    }
+  }
+
+  .sidebar {
+    min-width: 150px;
+    max-width: 300px;
+    display: flex;
+  }
+
+  .users-tree-view {
+    flex: 1 1 0;
+    overflow-y: scroll;
+
+    position: relative;
+    > .tree { position: absolute; }
+    li.item .nickname { padding: 0.25em; }
+  }
+}
+
+.chat-tab .log > .info {
+  color: #666;
+}
+
+.chat-tab .log > .message {
+  .from { font-weight: bold; }
+
+  &.private { color: #664444; }
+  &.notice { color: #448888; }
+  &.me { color: #888888; }
+}

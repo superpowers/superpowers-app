@@ -8,17 +8,10 @@ import * as sidebar from "./sidebar";
 import * as home from "./home";
 import * as serverSettings from "./serverSettings";
 import * as localServer from "./localServer";
-
-setupDevToolsShortcut();
+import * as chat from "./chat";
 
 window.addEventListener("message", onMessageReceived);
 electron.ipcRenderer.on("init", onInitialize);
-
-function setupDevToolsShortcut() {
-  window.addEventListener("keyup", (event) => {
-    if (event.keyCode === 123 /* F12 */) electron.remote.getCurrentWindow().webContents.openDevTools();
-  });
-}
 
 function onMessageReceived(event: MessageEvent) {
   switch (event.data.type) {
@@ -67,6 +60,7 @@ function start() {
   home.start();
   serverSettings.start();
   localServer.start();
+  chat.start();
 
   splashScreen.fadeOut();
 }

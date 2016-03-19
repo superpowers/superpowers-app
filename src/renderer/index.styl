@@ -3,6 +3,7 @@
 @import "styles/resizeHandle";
 @import "styles/tabStrip";
 @import "styles/dialogs";
+@import "styles/ChatTab";
 
 body { display: flex; }
 
@@ -71,6 +72,52 @@ body > .sidebar {
   flex-flow: column;
 }
 
+body > .sidebar .me {
+  display: flex;
+  align-items: center;
+  padding: 0.5em;
+  border-bottom: 1px solid #ccc;
+
+  .picture {
+    background: #ddd;
+    border: 1px solid #ccc;
+    border-radius: 0.25em;
+    width: 50px;
+    height: 50px;
+    margin-right: 0.5em;
+  }
+
+  .info {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+  }
+
+  .name {
+    display: flex;
+    align-items: baseline;
+
+    .edit {
+      display: none;
+      margin-left: 0.25em;
+      font-size: smaller;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      opacity: 0.5;
+    }
+    &:hover .edit { display: initial; }
+
+    .value {
+      font-size: 24px;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  
+  .presence {}
+}
+
 body > .sidebar .servers-tree-view {
   flex: 1 1 0;
   position: relative;
@@ -109,7 +156,7 @@ body > .sidebar .local-server {
   .status { flex: 1 1 0; }
 }
 
-.main {
+body > .main {
   flex: 1 1 0;
   display: flex;
   flex-flow: column;
@@ -118,26 +165,22 @@ body > .sidebar .local-server {
     background: #eee;
     border-bottom: 1px solid #aaa;
   }
-
-  .panes {
-    flex: 1 1 0;
-    display: flex;
-  }
-}
-  
-.main .panes .home {
-  @import "home/index.styl";
 }
 
-.main .panes .server-settings {
-  @import "serverSettings/index.styl";
-}
-
-.main .panes > * {
+body .panes {
   flex: 1 1 0;
-  border: 0;
-}
+  display: flex;
+  
+  .home {
+    @import "home/index.styl";
+  }
 
-.main .panes > *:not(.active) {
-  display: none;
+  .server-settings {
+    @import "serverSettings/index.styl";
+  }
+
+  & > * {
+    flex: 1 1 0;
+    border: 0;
+  }
 }

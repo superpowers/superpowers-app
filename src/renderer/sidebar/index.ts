@@ -5,9 +5,9 @@ import * as i18n from "../../shared/i18n";
 
 import AddAddOrEditServerDialog from "./AddOrEditServerDialog";
 import * as settings from "../settings";
-import * as panes from "../panes";
+import openServer from "../tabs/openServer";
 
-new ResizeHandle(document.querySelector(".sidebar") as HTMLDivElement, "left");
+new ResizeHandle(document.querySelector("body > .sidebar") as HTMLDivElement, "left");
 
 const addServerBtn = document.querySelector(".add-server") as HTMLButtonElement;
 const editServerBtn = document.querySelector(".edit-server") as HTMLButtonElement;
@@ -135,5 +135,5 @@ function onServerActivate() {
   if (serversTreeView.selectedNodes.length === 0) return;
 
   const serverId = serversTreeView.selectedNodes[0].dataset["serverId"];
-  panes.openServer(settings.favoriteServersById[serverId]);
+  openServer(settings.favoriteServersById[serverId]);
 }

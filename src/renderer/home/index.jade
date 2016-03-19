@@ -1,23 +1,20 @@
-.top
+.main
+  .logo
+    h1 Superpowers
+    .tagline 2D+3D game making for indies. Free and open source,&nbsp;<b>finally</b>.
+  .news= t("common:states.loading")
+.sidebar
+  .chatrooms
+    header Chatrooms
+    ul
+      li <a href="#">International (English)</a>
+      li <a href="#">Salon français</a>
+      li <a href="#">(more)</a>
   .links
+    header Links
     ul
       li <a href="http://docs.superpowers-html5.com/">Documentation</a>
       li <a href="http://itch.io/engine/superpowers/community">Community Forums</a>
       li <a href="https://patreon.com/SparklinLabs">Patreon</a>
       li <a href="https://github.com/superpowers">Open Source</a>
       li <a href="ts3server://ts.superpowers-html5.com">TeamSpeak server</a>
-  .news= t("common:states.loading")
-
-.chat
-  template
-    .channel
-      .log
-      .input
-        textarea
-    .resize-handle.right
-    .sidebar
-      .users-tree-view
-
-  .tabs-bar
-    ol.tab-strip
-  .panes

@@ -1,7 +1,7 @@
 import * as childProcess from "child_process";
 import * as settings from "./settings";
 import * as i18n from "../shared/i18n";
-import { openServerSettings } from "./panes";
+import openServerSettings from "./tabs/openServerSettings";
 import { appendToLog } from "./serverSettings";
 
 let serverProcess: childProcess.ChildProcess;

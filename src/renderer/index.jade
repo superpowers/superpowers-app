@@ -4,8 +4,29 @@ html
     meta(charset="utf-8")
     title Superpowers
     link(rel="stylesheet",href="index.css")
+
+    template.chat-tab
+      .channel
+        .log
+        .input
+          textarea
+      .resize-handle.right
+      .sidebar
+        .users-tree-view
   body
     .sidebar
+      .me
+        .picture
+          img(src="images/superpowers-256.png",width="48",height="48")
+        .info
+          .name
+            .value Name
+            button.edit Edit
+          .presence
+            select
+              option Online
+              option Away
+              option Offline
       .servers-buttons.flat-button-strip
         button.add-server(title=t("sidebar:servers.add"), disabled,data-hotkey="control+N")
         button.edit-server(title=t("sidebar:servers.edit"),disabled)
@@ -24,9 +45,9 @@ html
           li(data-name="home").active.pinned
             img.icon(src="images/tabs/home.svg")
       .panes
-        .home.active(data-name="home")
+        .home(data-name="home")
           include home/index
-        .server-settings(data-name="server-settings",data-persist="true")
+        .server-settings(hidden,data-name="server-settings",data-persist="true")
           include serverSettings/index
 
     .loading
@@ -37,4 +58,8 @@ html
           progress
       .version
 
+    script.
+      window.addEventListener("keyup", (event) => {
+        if (event.keyCode === 123 /* F12 */) electron.remote.getCurrentWindow().webContents.openDevTools();
+      });
     script(src="index.js")

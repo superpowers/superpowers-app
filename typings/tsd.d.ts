@@ -6,3 +6,4 @@
 /// <reference path="lodash/lodash.d.ts" />
 /// <reference path="mkdirp/mkdirp.d.ts" />
 /// <reference path="slate-irc/slate-irc.d.ts" />
+/// <reference path="escape-html/escape-html.d.ts" />
