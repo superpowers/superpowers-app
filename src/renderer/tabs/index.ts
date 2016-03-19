@@ -46,7 +46,7 @@ function onTabClose(tabElement: HTMLLIElement) {
 
   tabElement.parentElement.removeChild(tabElement);
 
-  if (paneElt.dataset["persist"] === "true") paneElt.classList.remove("active");
+  if (paneElt.dataset["persist"] === "true") paneElt.hidden = true;
   else paneElt.parentElement.removeChild(paneElt);
 }
 

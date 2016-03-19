@@ -28,5 +28,5 @@ export default function openServerSettings() {
   const serverSettingsPaneElt = panesElt.querySelector(`:scope > div[data-name="server-settings"]`) as HTMLIFrameElement;
 
   serverSettingsTabElt.classList.add("active");
-  serverSettingsPaneElt.classList.add("active");
+  serverSettingsPaneElt.hidden = false;
 }

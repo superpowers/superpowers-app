@@ -47,6 +47,6 @@ export default function openServer(serverEntry: ServerEntry) {
   }
 
   serverTabElt.classList.add("active");
-  serverPaneElt.classList.add("active");
+  serverPaneElt.hidden = false;
 }
 
