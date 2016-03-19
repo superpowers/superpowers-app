@@ -8,6 +8,15 @@ tabStrip.on("activateTab", onTabActivate);
 tabStrip.on("closeTab", onTabClose);
 tabStrip.tabsRoot.addEventListener("click", onTabStripClick);
 
+document.addEventListener("keydown", (event: KeyboardEvent) => {
+  if (event.keyCode === 9 && event.ctrlKey) { // Ctrl+Tab
+    event.preventDefault();
+    if (event.shiftKey) onActivatePreviousTab();
+    else onActivateNextTab();
+  }
+});
+
+
 export function clearActiveTab() {
   const activeTabElt = tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement;
   if (activeTabElt != null) {
@@ -55,4 +64,28 @@ function onTabStripClick(event: MouseEvent) {
   if (target.tagName !== "BUTTON" || target.className !== "close") return;
 
   onTabClose(target.parentElement as HTMLLIElement);
+}
+
+function onActivatePreviousTab() {
+  const activeTabElt = tabStrip.tabsRoot.querySelector(".active");
+  for (let tabIndex = 0; tabStrip.tabsRoot.children.length; tabIndex++) {
+    const tabElt = tabStrip.tabsRoot.children[tabIndex];
+    if (tabElt === activeTabElt) {
+      const newTabIndex = (tabIndex === 0) ? tabStrip.tabsRoot.children.length - 1 : tabIndex - 1;
+      onTabActivate(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
+      return;
+    }
+  }
+}
+
+function onActivateNextTab() {
+  const activeTabElt = tabStrip.tabsRoot.querySelector(".active");
+  for (let tabIndex = 0; tabStrip.tabsRoot.children.length; tabIndex++) {
+    const tabElt = tabStrip.tabsRoot.children[tabIndex];
+    if (tabElt === activeTabElt) {
+      const newTabIndex = (tabIndex === tabStrip.tabsRoot.children.length - 1) ? 0 : tabIndex + 1;
+      onTabActivate(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
+      return;
+    }
+  }
 }
