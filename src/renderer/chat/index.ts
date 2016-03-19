@@ -10,13 +10,20 @@ let socket: net.Socket;
 const ircNetwork = { host: "irc.freenode.net", port: 6697 };
 let mentionRegex: RegExp;
 
-const statusChatTab = new ChatTab("status", { label: ircNetwork.host });
+const statusChatTab = new ChatTab("status", { label: ircNetwork.host, showTab: false });
+statusChatTab.paneElt.dataset["persist"] = "true";
+
 const channelChatTabs: { [name: string]: ChatTab } = {};
 // const privateChatTabs: { [name: string]: ChatTab } = {};
 
 export function start() {
   statusChatTab.addInfo(`Type /connect to join chat.`);
   // connect();
+}
+
+export function showStatus() {
+  statusChatTab.showTab();
+  tabs.onTabActivate(statusChatTab.tabElt);
 }
 
 export function connect() {

@@ -94,11 +94,17 @@ body > .sidebar .me {
   }
 
   .name {
+    font-size: 24px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .presence {
     display: flex;
     align-items: baseline;
 
-    .edit {
-      display: none;
+    .show-chat-status {
+      visibility: hidden;
       margin-left: 0.25em;
       font-size: smaller;
       border: 0;
@@ -106,16 +112,8 @@ body > .sidebar .me {
       box-shadow: none;
       opacity: 0.5;
     }
-    &:hover .edit { display: initial; }
-
-    .value {
-      font-size: 24px;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-    }
+    &:hover .show-chat-status { visibility: visible; }
   }
-  
-  .presence {}
 }
 
 body > .sidebar .servers-tree-view {

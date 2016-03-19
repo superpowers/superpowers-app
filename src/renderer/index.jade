@@ -19,14 +19,13 @@ html
         .picture
           img(src="images/superpowers-256.png",width="48",height="48")
         .info
-          .name
-            .value Name
-            button.edit Edit
+          .name Name
           .presence
             select
               option Online
               option Away
               option Offline
+            button.show-chat-status IRC Status
       .servers-buttons.flat-button-strip
         button.add-server(title=t("sidebar:servers.add"), disabled,data-hotkey="control+N")
         button.edit-server(title=t("sidebar:servers.edit"),disabled)

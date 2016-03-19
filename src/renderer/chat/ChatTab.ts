@@ -12,6 +12,7 @@ const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 export default class ChatTab {
   tabElt: HTMLLIElement;
   paneElt: HTMLDivElement;
+  label: string;
 
   logElt: HTMLDivElement;
   textAreaElt: HTMLTextAreaElement;
@@ -20,18 +21,10 @@ export default class ChatTab {
   usersTreeView: TreeView;
   users: string[] = [];
 
-  constructor(public target: string, options?: { label?: string; isChannel?: boolean; }) {
+  constructor(public target: string, options?: { label?: string; isChannel?: boolean; showTab?: boolean; }) {
     if (options == null) options = {};
-    if (options.label == null) options.label = target;
-
-    this.tabElt = document.createElement("li");
-    this.tabElt.dataset["name"] = `chat-${target}`;
-    tabStrip.tabsRoot.appendChild(this.tabElt);
-
-    const labelElt = document.createElement("div");
-    this.tabElt.appendChild(labelElt);
-    labelElt.className = "label";
-    labelElt.textContent = options.label;
+    this.label = (options.label != null) ? options.label : target;
+    if (options.showTab !== false) this.showTab();
 
     this.paneElt = document.createElement("div");
     this.paneElt.hidden = true;
@@ -60,6 +53,20 @@ export default class ChatTab {
       sidebarElt.parentElement.removeChild(sidebarElt.previousElementSibling); // resize handle
       sidebarElt.parentElement.removeChild(sidebarElt);
     }
+  }
+
+  showTab() {
+    if (this.tabElt == null) {
+      this.tabElt = document.createElement("li");
+      this.tabElt.dataset["name"] = `chat-${this.target}`;
+
+      const labelElt = document.createElement("div");
+      this.tabElt.appendChild(labelElt);
+      labelElt.className = "label";
+      labelElt.textContent = this.label;
+    } else if (this.tabElt.parentElement != null) return;
+
+    tabStrip.tabsRoot.appendChild(this.tabElt);
   }
 
   private linkify(text: string) {

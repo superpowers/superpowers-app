@@ -1,3 +1,5 @@
+import "./me";
+
 import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 import { ConfirmDialog } from "simple-dialogs";

@@ -9,6 +9,12 @@ tabStrip.on("closeTab", onTabClose);
 tabStrip.tabsRoot.addEventListener("click", onTabStripClick);
 
 document.addEventListener("keydown", (event: KeyboardEvent) => {
+  const ctrlOrCmd = event.ctrlKey || event.metaKey;
+
+  if (event.keyCode === 87 && ctrlOrCmd) { // Ctrl+W
+    onTabClose(tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement);
+  }
+
   if (event.keyCode === 9 && event.ctrlKey) { // Ctrl+Tab
     event.preventDefault();
     if (event.shiftKey) onActivatePreviousTab();
