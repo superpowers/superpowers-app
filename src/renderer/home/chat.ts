@@ -20,8 +20,6 @@ tabStrip.on("activateTab", onTabActivate);
 /*tabStrip.on("closeTab", onTabClose);
 tabStrip.tabsRoot.addEventListener("click", onTabStripClick);*/
 
-// TODO: Remove this when TypeScript supports HTMLTemplateElement
-interface HTMLTemplateElement extends HTMLElement { content: Node; }
 const tabTemplate = document.querySelector(".chat template") as HTMLTemplateElement;
 
 let socket: net.Socket;
