@@ -64,6 +64,10 @@ export default class ChatTab {
       this.tabElt.appendChild(labelElt);
       labelElt.className = "label";
       labelElt.textContent = this.label;
+
+      const closeButton = document.createElement("button");
+      closeButton.className = "close";
+      this.tabElt.appendChild(closeButton);
     } else if (this.tabElt.parentElement != null) return;
 
     tabStrip.tabsRoot.appendChild(this.tabElt);
