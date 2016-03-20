@@ -60,6 +60,11 @@ export default class ChatTab {
       this.tabElt = document.createElement("li");
       this.tabElt.dataset["name"] = `chat-${this.target}`;
 
+      const iconElt = document.createElement("img");
+      iconElt.className = "icon";
+      iconElt.src = "images/tabs/chat.svg";
+      this.tabElt.appendChild(iconElt);
+
       const labelElt = document.createElement("div");
       this.tabElt.appendChild(labelElt);
       labelElt.className = "label";
