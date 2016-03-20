@@ -1,0 +1,14 @@
+{
+  "name": "superpowers-app",
+  "version": false,
+  "ambientDependencies": {
+    "async": "registry:dt/async#1.4.2+20160316155526",
+    "electron-packager": "registry:dt/electron-packager#5.1.0+20160316155526",
+    "github-electron": "registry:dt/github-electron#0.36.3+20160319055237",
+    "lodash": "registry:dt/lodash#3.10.0+20160319050323",
+    "mkdirp": "registry:dt/mkdirp#0.3.0+20160317120654",
+    "node": "registry:dt/node#4.0.0+20160319033040",
+    "slate-irc": "registry:dt/slate-irc#0.0.0+20160223124646",
+    "yargs": "registry:dt/yargs#0.0.0+20160317120654"
+  }
+}
