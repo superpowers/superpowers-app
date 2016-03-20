@@ -47,7 +47,7 @@ function getServerConfig() {
   let defaultConfig: ServerConfig;
   try {
     /* tslint:disable */
-    defaultConfig = require(`${settings.userDataPath}/core/server/config.js`).defaults;
+    defaultConfig = require(`${settings.corePath}/server/config.js`).defaults;
     /* tslint:enable */
   } catch (err) {
     return null;
@@ -69,7 +69,7 @@ function getServerConfig() {
 }
 
 function onOpenProjectsFolderClick() {
-  electron.shell.showItemInFolder(settings.userDataPath);
+  electron.shell.showItemInFolder(`${settings.userDataPath}/projects`);
 }
 
 function onChangeAutoStartServer() {

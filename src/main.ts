@@ -1,9 +1,12 @@
 import * as electron from "electron";
 import * as i18n from "./shared/i18n";
-import getUserData from "./getUserData";
+import getPaths from "./getPaths";
+import getLanguageCode from "./getLanguageCode";
 import "./export";
 
+let corePath: string;
 let userDataPath: string;
+
 let mainWindow: Electron.BrowserWindow;
 let trayIcon: Electron.Tray;
 let trayMenu: Electron.Menu;
@@ -28,23 +31,23 @@ electron.ipcMain.on("new-standalone-window", onNewStandaloneWindow);
 function onAppReady() {
   electron.Menu.setApplicationMenu(null);
 
-  getUserData((dataPathErr, dataPath, languageCode) => {
-    if (languageCode == null) languageCode = electron.app.getLocale();
-    if (i18n.languageIds.indexOf(languageCode) === -1 && languageCode.indexOf("-") !== -1) languageCode = languageCode.split("-")[0];
-    if (i18n.languageIds.indexOf(languageCode) === -1) languageCode = "en";
+  getPaths((dataPathErr, pathToCore, pathToUserData) => {
+    userDataPath = pathToUserData;
+    corePath = pathToCore;
 
-    i18n.languageCode = languageCode;
-    i18n.load([ "startup", "tray" ], () => {
-      if (dataPathErr != null) {
-        electron.dialog.showErrorBox(i18n.t("startup:failedToStart"), i18n.t(dataPathErr.key, dataPathErr.variables));
-        electron.app.quit();
-        process.exit(1);
-        return;
-      }
+    getLanguageCode(userDataPath, (languageCode) => {
+      i18n.languageCode = languageCode;
+      i18n.load([ "startup", "tray" ], () => {
+        if (dataPathErr != null) {
+          electron.dialog.showErrorBox(i18n.t("startup:failedToStart"), i18n.t(dataPathErr.key, dataPathErr.variables));
+          electron.app.quit();
+          process.exit(1);
+          return;
+        }
 
-      userDataPath = dataPath;
-      setupTrayOrDock();
-      setupMainWindow();
+        setupTrayOrDock();
+        setupMainWindow();
+      });
     });
   });
 }
@@ -80,7 +83,7 @@ function setupMainWindow() {
   mainWindow.loadURL(`file://${__dirname}/renderer/${i18n.getLocalizedFilename("index.html")}`);
 
   mainWindow.webContents.on("did-finish-load", () => {
-    mainWindow.webContents.send("init", userDataPath, i18n.languageCode);
+    mainWindow.webContents.send("init", corePath, userDataPath, i18n.languageCode);
     mainWindow.show();
   });
 

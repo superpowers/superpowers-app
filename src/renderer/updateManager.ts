@@ -36,7 +36,7 @@ const components: { [name: string]: ComponentInfo } = {
 function fetchVersions(callback: (err: Error) => void) {
   // TODO: Check the various installed systems too
 
-  fs.readFile(`${settings.userDataPath}/core/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
+  fs.readFile(`${settings.corePath}/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
     if (err != null && err.code !== "ENOENT") throw err;
 
     if (corePackageJSON != null) {
@@ -223,7 +223,7 @@ function checkUpdates(callback: Function) {
 function installCore(callback: (error: string) => void) {
   splashScreen.setStatus(i18n.t("startup:status.installingCore"));
 
-  downloadRelease(components["core"].downloadURL, `${settings.userDataPath}/core`, (error) => {
+  downloadRelease(components["core"].downloadURL, settings.corePath, (error) => {
     if (error != null) {
       /* tslint:disable:no-unused-expression */
       new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error }), null, () => {

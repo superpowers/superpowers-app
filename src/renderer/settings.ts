@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as i18n from "../shared/i18n";
 
+export let corePath: string;
 export let userDataPath: string;
 
 export let favoriteServers: ServerEntry[];
@@ -9,8 +10,7 @@ export let favoriteServersById: { [id: string]: ServerEntry };
 export let recentProjects: { host: string; projectId: string; name: string; }[];
 export let autoStartServer: boolean;
 
-export function load(dataPath: string, callback: (err: Error) => void) {
-  userDataPath = dataPath;
+export function load(callback: (err: Error) => void) {
   const settingsPath = `${userDataPath}/settings.json`;
   console.log(`Loading settings from ${settingsPath}...`);
 

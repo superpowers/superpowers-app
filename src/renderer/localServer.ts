@@ -29,7 +29,7 @@ function startServer() {
   statusElt.textContent = i18n.t("server:status.starting");
   startStopServerButton.textContent = i18n.t("server:buttons.stop");
 
-  const serverPath = `${settings.userDataPath}/core/server/index.js`;
+  const serverPath = `${settings.corePath}/server/index.js`;
 
   const serverEnv: { [key: string]: string; } = {};
   serverEnv["ELECTRON_RUN_AS_NODE"] = "1";

@@ -24,11 +24,12 @@ function onMessageReceived(event: MessageEvent) {
 
 const namespaces = [ "common", "startup", "sidebar", "server", "dialogs", "home" ];
 
-function onInitialize(sender: any, userDataPath: string, languageCode: string) {
+function onInitialize(sender: any, corePath: string, userDataPath: string, languageCode: string) {
+  settings.corePath = corePath;
+  settings.userDataPath = userDataPath;
+
   i18n.languageCode = languageCode;
-  i18n.load(namespaces, () => {
-    settings.load(userDataPath, onSettingsLoaded);
-  });
+  i18n.load(namespaces, () => { settings.load(onSettingsLoaded); });
 }
 
 function onSettingsLoaded(err: Error) {
