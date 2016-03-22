@@ -16,7 +16,7 @@
     "lodash": "^4.0.0",
     "mkdirp": "^0.5.1",
     "resize-handle": "^4.0.0",
-    "simple-dialogs": "^1.0.1",
+    "simple-dialogs": "^1.1.0",
     "slate-irc": "^0.8.1",
     "tab-strip": "^2.2.0",
     "yargs": "^4.3.2",
