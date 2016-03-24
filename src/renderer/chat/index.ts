@@ -101,6 +101,11 @@ function onWelcome(name: string) {
   statusChatTab.addInfo(`Connected as ${irc.me}.`);
   setupMentionRegex();
 
+  if (settings.presence === "away") {
+    // TODO: Use this once https://github.com/slate/slate-irc/pull/38 is merged
+    // irc.away("Away");
+    irc.write(`AWAY :Away`);
+  }
 
   let defaultChannelName = "#superpowers-html5";
   if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
