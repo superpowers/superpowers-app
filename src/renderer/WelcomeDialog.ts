@@ -1,6 +1,6 @@
 import * as dialogs from "simple-dialogs";
 import * as i18n from "../shared/i18n";
-import { nicknamePattern } from "./chat";
+import { nicknamePatternString } from "./chat";
 
 type WelcomeResult = {
   nickname: string;
@@ -35,7 +35,7 @@ export default class WelcomeDialog extends dialogs.BaseDialog<WelcomeResult> {
     this.nicknameField.placeholder = i18n.t("welcome:nickname");
     this.nicknameField.required = true;
     this.nicknameField.maxLength = 16;
-    this.nicknameField.pattern = nicknamePattern.toString();
+    this.nicknameField.pattern = nicknamePatternString;
     nicknameGroup.appendChild(this.nicknameField);
     this.nicknameField.style.flex = "1 1 0";
 

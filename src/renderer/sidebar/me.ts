@@ -18,7 +18,7 @@ nameElt.addEventListener("click", (event) => {
     title: i18n.t("sidebar:setNickname.title"),
     initialValue: nameElt.textContent,
     validationLabel: i18n.t("common:actions.update"),
-    pattern: chat.nicknamePattern.toString(),
+    pattern: chat.nicknamePatternString,
     required: true
   };
 

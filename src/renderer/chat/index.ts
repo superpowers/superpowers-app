@@ -7,6 +7,7 @@ import * as tabs from "../tabs";
 import ChatTab from "./ChatTab";
 
 export const nicknamePattern = /^([A-Za-z][A-Za-z0-9_-]{1,15})$/;
+export const nicknamePatternString = nicknamePattern.toString().slice(1, -1);
 
 export let irc: SlateIRC.Client;
 let socket: net.Socket;
@@ -99,6 +100,7 @@ function setupMentionRegex() {
 function onWelcome(name: string) {
   statusChatTab.addInfo(`Connected as ${irc.me}.`);
   setupMentionRegex();
+
 
   let defaultChannelName = "#superpowers-html5";
   if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
