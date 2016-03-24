@@ -1,7 +1,29 @@
 {
+  "presence": {
+    "online": "Online",
+    "away": "Away",
+    "offline": "Offline"
+  },
+  
+  "chat": {
+    "showIrcStatus": "Show IRC Status"
+  },
+
   "servers": {
     "add": "Add server",
     "edit": "Edit server",
     "remove": "Remove server"
+  },
+
+	"addServer": {
+		"title": "Enter server details"
+	},
+
+	"editServer": {
+		"title": "Edit server details"
+	},
+
+  "setNickname": {
+    "title": "Set nickname"
   }
 }

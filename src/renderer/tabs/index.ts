@@ -4,15 +4,15 @@ const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 export const tabStrip = new TabStrip(tabsBarElt);
 export const panesElt = document.querySelector(".panes");
 
-tabStrip.on("activateTab", onTabActivate);
-tabStrip.on("closeTab", onTabClose);
+tabStrip.on("activateTab", onActivateTab);
+tabStrip.on("closeTab", onCloseTab);
 tabStrip.tabsRoot.addEventListener("click", onTabStripClick);
 
 document.addEventListener("keydown", (event: KeyboardEvent) => {
   const ctrlOrCmd = event.ctrlKey || event.metaKey;
 
   if (event.keyCode === 87 && ctrlOrCmd) { // Ctrl+W
-    onTabClose(tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement);
+    onCloseTab(tabStrip.tabsRoot.querySelector("li.active") as HTMLLIElement);
   }
 
   if (event.keyCode === 9 && event.ctrlKey) { // Ctrl+Tab
@@ -31,7 +31,7 @@ export function clearActiveTab() {
   }
 }
 
-export function onTabActivate(tabElt: HTMLLIElement) {
+export function onActivateTab(tabElt: HTMLLIElement) {
   clearActiveTab();
 
   tabElt.classList.add("active");
@@ -44,7 +44,7 @@ export function onTabActivate(tabElt: HTMLLIElement) {
   paneElt.hidden = false;
 }
 
-function onTabClose(tabElement: HTMLLIElement) {
+function onCloseTab(tabElement: HTMLLIElement) {
   if (tabElement.classList.contains("pinned")) return;
 
   const serverId = tabElement.dataset["serverId"];
@@ -56,7 +56,7 @@ function onTabClose(tabElement: HTMLLIElement) {
 
   if (tabElement.classList.contains("active")) {
     const activeTabElement = (tabElement.nextElementSibling != null) ? tabElement.nextElementSibling as HTMLLIElement : tabElement.previousElementSibling as HTMLLIElement;
-    if (activeTabElement != null) onTabActivate(activeTabElement);
+    if (activeTabElement != null) onActivateTab(activeTabElement);
   }
 
   tabElement.parentElement.removeChild(tabElement);
@@ -69,7 +69,7 @@ function onTabStripClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
   if (target.tagName !== "BUTTON" || target.className !== "close") return;
 
-  onTabClose(target.parentElement as HTMLLIElement);
+  tabStrip.emit("closeTab", target.parentElement as HTMLLIElement);
 }
 
 function onActivatePreviousTab() {
@@ -78,7 +78,7 @@ function onActivatePreviousTab() {
     const tabElt = tabStrip.tabsRoot.children[tabIndex];
     if (tabElt === activeTabElt) {
       const newTabIndex = (tabIndex === 0) ? tabStrip.tabsRoot.children.length - 1 : tabIndex - 1;
-      onTabActivate(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
+      onActivateTab(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
       return;
     }
   }
@@ -90,7 +90,7 @@ function onActivateNextTab() {
     const tabElt = tabStrip.tabsRoot.children[tabIndex];
     if (tabElt === activeTabElt) {
       const newTabIndex = (tabIndex === tabStrip.tabsRoot.children.length - 1) ? 0 : tabIndex + 1;
-      onTabActivate(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
+      onActivateTab(tabStrip.tabsRoot.children[newTabIndex] as HTMLLIElement);
       return;
     }
   }

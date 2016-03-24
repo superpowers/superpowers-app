@@ -38,7 +38,7 @@ function onAddServerClick(event: MouseEvent) {
   };
 
   /* tslint:disable:no-unused-expression */
-  new AddAddOrEditServerDialog(i18n.t("dialogs:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
+  new AddAddOrEditServerDialog(i18n.t("sidebar:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
     /* tslint:enable:no-unused-expression */
     if (newServer == null) return;
 
@@ -65,7 +65,7 @@ function onEditServerClick(event: MouseEvent) {
   };
 
   /* tslint:disable:no-unused-expression */
-  new AddAddOrEditServerDialog(i18n.t("dialogs:editServer.title"), addOrEditOptions, (updatedEntry) => {
+  new AddAddOrEditServerDialog(i18n.t("sidebar:editServer.title"), addOrEditOptions, (updatedEntry) => {
     /* tslint:enable:no-unused-expression */
     if (updatedEntry == null) return;
 

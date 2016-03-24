@@ -49,6 +49,11 @@ declare module "slate-irc" {
       new: string;
     }
 
+    interface AwayEvent {
+      nick: string;
+      message: string;
+    }
+
     interface QuitEvent {
       nick: string;
       hostmask: string;

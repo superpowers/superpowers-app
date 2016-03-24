@@ -5,10 +5,12 @@ import * as settings from "./settings";
 import * as splashScreen from "./splashScreen";
 import * as updateManager from "./updateManager";
 import * as sidebar from "./sidebar";
+import * as me from "./sidebar/me";
 import * as home from "./home";
 import * as serverSettings from "./serverSettings";
 import * as localServer from "./localServer";
 import * as chat from "./chat";
+import WelcomeDialog from "./WelcomeDialog";
 
 window.addEventListener("message", onMessageReceived);
 electron.ipcRenderer.on("init", onInitialize);
@@ -22,7 +24,11 @@ function onMessageReceived(event: MessageEvent) {
   }
 }
 
-const namespaces = [ "common", "startup", "sidebar", "server", "dialogs", "home" ];
+const namespaces = [
+  "common", "startup",
+  "sidebar", "server",
+  "welcome", "home"
+];
 
 function onInitialize(sender: any, corePath: string, userDataPath: string, languageCode: string) {
   settings.corePath = corePath;
@@ -61,7 +67,22 @@ function start() {
   home.start();
   serverSettings.start();
   localServer.start();
-  chat.start();
+
+  if (settings.nickname == null) {
+    /* tslint:disable:no-unused-expression */
+    new WelcomeDialog((result) => {
+      /* tslint:enable:no-unused-expression */
+      settings.nickname = result.nickname;
+      settings.presence = result.connectToChat ? "online" : "offline";
+      settings.scheduleSave();
+
+      me.start();
+      chat.start();
+    });
+  } else {
+    me.start();
+    chat.start();
+  }
 
   splashScreen.fadeOut();
 }

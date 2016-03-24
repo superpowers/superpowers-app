@@ -10,6 +10,9 @@ export let favoriteServersById: { [id: string]: ServerEntry };
 export let recentProjects: { host: string; projectId: string; name: string; }[];
 export let autoStartServer: boolean;
 
+export let nickname: string;
+export let presence: "online"|"away"|"offline";
+
 export function load(callback: (err: Error) => void) {
   const settingsPath = `${userDataPath}/settings.json`;
   console.log(`Loading settings from ${settingsPath}...`);
@@ -32,6 +35,9 @@ export function load(callback: (err: Error) => void) {
       recentProjects = [];
       autoStartServer = true;
 
+      nickname = null;
+      presence = "offline";
+
       callback(null);
       return;
     }
@@ -42,6 +48,9 @@ export function load(callback: (err: Error) => void) {
     recentProjects = data.recentProjects;
     autoStartServer = data.autoStartServer;
 
+    nickname = data.nickname;
+    presence = data.presence;
+
     callback(null);
   });
 }
@@ -51,7 +60,9 @@ export function scheduleSave() {
   const data = {
     favoriteServers,
     recentProjects,
-    autoStartServer
+    autoStartServer,
+    nickname,
+    presence
   };
 
   fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });

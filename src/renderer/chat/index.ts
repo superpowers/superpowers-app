@@ -1,9 +1,12 @@
 import * as net from "net";
 import * as tls from "tls";
 import * as SlateIRC from "slate-irc";
+import * as settings from "../settings";
 import * as i18n from "../../shared/i18n";
 import * as tabs from "../tabs";
 import ChatTab from "./ChatTab";
+
+export const nicknamePattern = /^([A-Za-z][A-Za-z0-9_-]{1,15})$/;
 
 export let irc: SlateIRC.Client;
 let socket: net.Socket;
@@ -16,17 +19,50 @@ statusChatTab.paneElt.dataset["persist"] = "true";
 const channelChatTabs: { [name: string]: ChatTab } = {};
 // const privateChatTabs: { [name: string]: ChatTab } = {};
 
+tabs.tabStrip.on("closeTab", onCloseTab);
+
 export function start() {
-  statusChatTab.addInfo(`Type /connect to join chat.`);
-  // connect();
+  if (settings.presence !== "offline") connect();
 }
 
 export function showStatus() {
   statusChatTab.showTab();
-  tabs.onTabActivate(statusChatTab.tabElt);
+  tabs.onActivateTab(statusChatTab.tabElt);
 }
 
-export function connect() {
+export function onPresenceUpdated() {
+  if (settings.presence !== "offline") {
+    if (socket == null) connect();
+    else {
+      // TODO: Use this once https://github.com/slate/slate-irc/pull/38 is merged
+      // irc.away(settings.presence === "away" ? "Away" : "");
+      irc.write(`AWAY :${settings.presence === "away" ? "Away" : ""}`);
+    }
+  } else {
+    disconnect();
+  }
+}
+
+export function onNicknameUpdated() {
+  if (socket == null) return;
+
+  if (irc.me !== settings.nickname) {
+    irc.nick(settings.nickname);
+  }
+}
+
+function onCloseTab(tabElement: HTMLLIElement) {
+  const name = tabElement.dataset["chatTarget"];
+  if (name == null) return;
+
+  const chatTab = channelChatTabs[name];
+  if (chatTab == null) return;
+
+  irc.part(name);
+  delete channelChatTabs[name];
+}
+
+function connect() {
   if (socket != null) return;
 
   statusChatTab.addInfo(`Connecting to ${ircNetwork.host}:${ircNetwork.port}...`);
@@ -40,6 +76,7 @@ export function connect() {
   irc.on("join", onJoin);
   irc.on("part", onPart);
   irc.on("nick", onNick);
+  irc.on("away", onAway);
   irc.on("quit", onQuit);
   irc.on("data", onData);
   irc.on("message", onMessage);
@@ -47,9 +84,8 @@ export function connect() {
   irc.on("disconnect", onDisconnect);
 
   // TODO: Read from settings and ask on first launch
-  const myInitialNick = `sup${10000 + Math.floor(Math.random() * 89999)}`;
-  irc.nick(myInitialNick);
-  irc.user(myInitialNick, myInitialNick);
+  irc.nick(settings.nickname);
+  irc.user(settings.nickname, settings.nickname);
 }
 
 export function disconnect() { cleanUp(null); }
@@ -101,6 +137,13 @@ function onNick(event: SlateIRC.NickEvent) {
   }
 }
 
+function onAway(event: SlateIRC.AwayEvent) {
+  for (const name in channelChatTabs) {
+    const chatTab = channelChatTabs[name];
+    if (chatTab.hasUser(event.nick)) chatTab.onAway(event);
+  }
+}
+
 function onQuit(event: SlateIRC.QuitEvent) {
   for (const name in channelChatTabs) {
     const chatTab = channelChatTabs[name];
@@ -127,7 +170,7 @@ function onMessage(event: SlateIRC.MessageEvent) {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "private");
     notify(`Private message from ${event.from}`, event.message, () => {
-      tabs.onTabActivate(statusChatTab.tabElt);
+      tabs.onActivateTab(statusChatTab.tabElt);
     });
   } else {
     const chatTab = channelChatTabs[event.to];
@@ -135,7 +178,7 @@ function onMessage(event: SlateIRC.MessageEvent) {
 
     if (mentionRegex != null && mentionRegex.test(event.message)) {
       notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
-        tabs.onTabActivate(chatTab.tabElt);
+        tabs.onActivateTab(chatTab.tabElt);
       });
     }
 
@@ -160,7 +203,7 @@ function onNotice(event: SlateIRC.MessageEvent) {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
     notify(`Private notice from ${event.from}`, event.message, () => {
-      tabs.onTabActivate(statusChatTab.tabElt);
+      tabs.onActivateTab(statusChatTab.tabElt);
     });
   } else {
     const chatTab = channelChatTabs[event.to];
@@ -168,7 +211,7 @@ function onNotice(event: SlateIRC.MessageEvent) {
 
     if (mentionRegex != null && mentionRegex.test(event.message)) {
       notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
-        tabs.onTabActivate(chatTab.tabElt);
+        tabs.onActivateTab(chatTab.tabElt);
       });
     }
 
@@ -188,4 +231,5 @@ function cleanUp(reason?: string) {
   irc = null;
 
   for (const name in channelChatTabs) channelChatTabs[name].onDisconnect(reason);
+  statusChatTab.onDisconnect(reason);
 }

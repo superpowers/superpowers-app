@@ -59,6 +59,7 @@ export default class ChatTab {
     if (this.tabElt == null) {
       this.tabElt = document.createElement("li");
       this.tabElt.dataset["name"] = `chat-${this.target}`;
+      this.tabElt.dataset["chatTarget"] = this.target;
 
       const iconElt = document.createElement("img");
       iconElt.className = "icon";
@@ -159,11 +160,6 @@ export default class ChatTab {
   }
 
   handleCommand(command: string, params: string) {
-    switch (command) {
-      case "disconnect": chat.disconnect(); return;
-      case "connect": chat.connect(); return;
-    }
-
     if (chat.irc != null) {
       switch (command) {
         case "nick":
@@ -198,9 +194,12 @@ export default class ChatTab {
 
   onDisconnect(reason: string) {
     this.addInfo(reason != null ? `Disconnected: ${reason}.` : "Disconnected.");
-    this.usersTreeView.clearSelection();
-    this.usersTreeView.treeRoot.innerHTML = "";
-    this.users.length = 0;
+
+    if (this.usersTreeView != null) {
+      this.usersTreeView.clearSelection();
+      this.usersTreeView.treeRoot.innerHTML = "";
+      this.users.length = 0;
+    }
   }
 
   onJoin(event: SlateIRC.JoinEvent) {
@@ -223,6 +222,11 @@ export default class ChatTab {
     this.addInfo(`${event.nick} has changed nick to ${event.new}.`);
     this.removeUserFromList(event.nick);
     this.addUserToList(event.new);
+  }
+
+  onAway(event: SlateIRC.AwayEvent) {
+    if (event.message.length > 0) this.addInfo(`${event.nick} is now away: ${event.message}.`);
+    else this.addInfo(`${event.nick} is now back: ${event.message}.`);
   }
 
   onQuit(event: SlateIRC.QuitEvent) {
