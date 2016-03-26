@@ -13,6 +13,10 @@ export function start() {
   presenceElt.value = settings.presence;
 }
 
+export function updatePresenceFromSettings() {
+  presenceElt.value = settings.presence;
+}
+
 nameElt.addEventListener("click", (event) => {
   const options: dialogs.PromptOptions = {
     title: i18n.t("sidebar:setNickname.title"),

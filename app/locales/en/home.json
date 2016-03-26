@@ -1,5 +1,26 @@
 {
   "title": "Home",
-  
-  "couldNotFetchNews": "Could not fetch latest news."
+
+  "tagline": "2D+3D game making for indies. Free and open source,&nbsp;<b>finally</b>.",
+
+  "news": {
+    "couldNotFetch": "Could not fetch latest news."
+  },
+
+  "chatrooms": {
+    "title": "Chatrooms",
+
+    "en": "English",
+    "fr": "French"
+  },
+
+  "links": {
+    "title": "Links",
+
+    "documentation": "Documentation",
+    "forums": "Community Forums",
+    "patreon": "Patreon",
+    "openSource": "Open Source",
+    "teamSpeak": "TeamSpeak server"
+  }
 }

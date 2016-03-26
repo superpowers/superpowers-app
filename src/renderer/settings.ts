@@ -12,10 +12,11 @@ export let autoStartServer: boolean;
 
 export let nickname: string;
 export let presence: "online"|"away"|"offline";
+export let savedChatrooms: string[];
 
 export function load(callback: (err: Error) => void) {
   const settingsPath = `${userDataPath}/settings.json`;
-  console.log(`Loading settings from ${settingsPath}...`);
+  console.log(`Loading settings from ${settingsPath}.`);
 
   fs.readFile(settingsPath, { encoding: "utf8" }, (err, dataJSON) => {
     if (err != null && err.code !== "ENOENT") {
@@ -37,6 +38,7 @@ export function load(callback: (err: Error) => void) {
 
       nickname = null;
       presence = "offline";
+      savedChatrooms = [];
 
       callback(null);
       return;
@@ -50,6 +52,7 @@ export function load(callback: (err: Error) => void) {
 
     nickname = data.nickname;
     presence = data.presence;
+    savedChatrooms = data.savedChatrooms;
 
     callback(null);
   });
@@ -62,7 +65,8 @@ export function scheduleSave() {
     recentProjects,
     autoStartServer,
     nickname,
-    presence
+    presence,
+    savedChatrooms
   };
 
   fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });

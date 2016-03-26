@@ -42,15 +42,14 @@ export default class ChatTab {
     const sidebarElt = this.paneElt.querySelector(".sidebar") as HTMLDivElement;
 
     if (options.isChannel) {
-      this.addInfo(`Joining ${this.target}...`);
-      chat.irc.join(this.target);
-
       /* tslint:disable:no-unused-expression */
       new ResizeHandle(sidebarElt, "right");
       /* tslint:enable:no-unused-expression */
       this.usersTreeView = new TreeView(this.paneElt.querySelector(".users-tree-view") as HTMLElement);
+
+      if (chat.irc != null && chat.irc.me != null) this.join();
     } else {
-      sidebarElt.parentElement.removeChild(sidebarElt.previousElementSibling); // resize handle
+      sidebarElt.parentElement.removeChild(sidebarElt.previousElementSibling); // Resize handle
       sidebarElt.parentElement.removeChild(sidebarElt);
     }
   }
@@ -77,6 +76,11 @@ export default class ChatTab {
     } else if (this.tabElt.parentElement != null) return;
 
     tabStrip.tabsRoot.appendChild(this.tabElt);
+  }
+
+  join() {
+    this.addInfo(`Joining ${this.target}...`);
+    chat.irc.join(this.target);
   }
 
   private linkify(text: string) {

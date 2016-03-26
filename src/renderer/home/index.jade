@@ -1,20 +1,26 @@
 .main
   .logo
     h1 Superpowers
-    .tagline 2D+3D game making for indies. Free and open source,&nbsp;<b>finally</b>.
+    .tagline!= t("home:tagline")
   .news= t("common:states.loading")
 .sidebar
   .chatrooms
-    header Chatrooms
+    header= t("home:chatrooms.title")
     ul
-      li <a href="#">International (English)</a>
-      li <a href="#">Salon français</a>
-      li <a href="#">(more)</a>
+      li
+        a(href="#",data-channel="#superpowers-html5")= t("home:chatrooms.en")
+      li
+        a(href="#",data-channel="#superpowers-html5-fr")= t("home:chatrooms.fr")
   .links
-    header Links
+    header= t("home:links.title")
     ul
-      li <a href="http://docs.superpowers-html5.com/">Documentation</a>
-      li <a href="http://itch.io/engine/superpowers/community">Community Forums</a>
-      li <a href="https://patreon.com/SparklinLabs">Patreon</a>
-      li <a href="https://github.com/superpowers">Open Source</a>
-      li <a href="ts3server://ts.superpowers-html5.com">TeamSpeak server</a>
+      li
+        a(href="http://docs.superpowers-html5.com/")= t("home:links.documentation")
+      li
+        a(href="http://itch.io/engine/superpowers/community")= t("home:links.forums")
+      li
+        a(href="https://patreon.com/SparklinLabs")= t("home:links.patreon")
+      li
+        a(href="https://github.com/superpowers")= t("home:links.openSource")
+      li
+        a(href="ts3server://ts.superpowers-html5.com")= t("home:links.teamSpeak")

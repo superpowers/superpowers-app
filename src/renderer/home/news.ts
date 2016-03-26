@@ -26,6 +26,6 @@ export function start() {
 function setupNews(html: string) {
   const newsElt = document.querySelector(".home .news") as HTMLDivElement;
 
-  if (html == null) newsElt.textContent = i18n.t("home:couldNotFetchNews");
+  if (html == null) newsElt.textContent = i18n.t("home:news.couldNotFetch");
   else newsElt.innerHTML = html;
 }

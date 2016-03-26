@@ -69,20 +69,30 @@ function start() {
   localServer.start();
 
   if (settings.nickname == null) {
-    /* tslint:disable:no-unused-expression */
-    new WelcomeDialog((result) => {
-      /* tslint:enable:no-unused-expression */
-      settings.nickname = result.nickname;
-      settings.presence = result.connectToChat ? "online" : "offline";
-      settings.scheduleSave();
-
-      me.start();
-      chat.start();
-    });
+    showWelcomeDialog();
   } else {
     me.start();
     chat.start();
   }
 
   splashScreen.fadeOut();
+}
+
+function showWelcomeDialog() {
+  /* tslint:disable:no-unused-expression */
+  new WelcomeDialog((result) => {
+    /* tslint:enable:no-unused-expression */
+    settings.nickname = result.nickname;
+    settings.presence = result.connectToChat ? "online" : "offline";
+
+    settings.savedChatrooms = [ "#superpowers-html5" ];
+    if (i18n.languageCode !== "en" && chat.languageChatRooms.indexOf(i18n.languageCode) !== -1) {
+      settings.savedChatrooms.push(`#superpowers-html5-${i18n.languageCode}`);
+    }
+
+    settings.scheduleSave();
+
+    me.start();
+    chat.start();
+  });
 }

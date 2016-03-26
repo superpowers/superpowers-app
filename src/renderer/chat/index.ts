@@ -1,13 +1,17 @@
 import * as net from "net";
 import * as tls from "tls";
 import * as SlateIRC from "slate-irc";
+
 import * as settings from "../settings";
-import * as i18n from "../../shared/i18n";
 import * as tabs from "../tabs";
+import * as sidebarMe from "../sidebar/me";
+
 import ChatTab from "./ChatTab";
 
 export const nicknamePattern = /^([A-Za-z][A-Za-z0-9_-]{1,15})$/;
 export const nicknamePatternString = nicknamePattern.toString().slice(1, -1);
+
+export const languageChatRooms = [ "fr" ];
 
 export let irc: SlateIRC.Client;
 let socket: net.Socket;
@@ -23,7 +27,10 @@ const channelChatTabs: { [name: string]: ChatTab } = {};
 tabs.tabStrip.on("closeTab", onCloseTab);
 
 export function start() {
-  if (settings.presence !== "offline") connect();
+  if (settings.presence !== "offline") {
+    connect();
+    for (const roomName of settings.savedChatrooms) join(roomName, false);
+  }
 }
 
 export function showStatus() {
@@ -59,8 +66,10 @@ function onCloseTab(tabElement: HTMLLIElement) {
   const chatTab = channelChatTabs[name];
   if (chatTab == null) return;
 
-  irc.part(name);
+  if (irc != null) irc.part(name);
   delete channelChatTabs[name];
+
+  settings.savedChatrooms.splice(settings.savedChatrooms.indexOf(name), 1);
 }
 
 function connect() {
@@ -84,7 +93,6 @@ function connect() {
   irc.on("notice", onNotice);
   irc.on("disconnect", onDisconnect);
 
-  // TODO: Read from settings and ask on first launch
   irc.nick(settings.nickname);
   irc.user(settings.nickname, settings.nickname);
 }
@@ -107,9 +115,10 @@ function onWelcome(name: string) {
     irc.write(`AWAY :Away`);
   }
 
-  let defaultChannelName = "#superpowers-html5";
-  if (i18n.languageCode !== "en") defaultChannelName = `#superpowers-html5-${i18n.languageCode}`;
-  join(defaultChannelName);
+  for (const name in channelChatTabs) {
+    const chatTab = channelChatTabs[name];
+    chatTab.join();
+  }
 
   return;
 }
@@ -118,9 +127,24 @@ function onMOTD(event: SlateIRC.MOTDEvent) {
   for (const line of event.motd) statusChatTab.addInfo(line);
 }
 
-export function join(channelName: string) {
-  const chatTab = new ChatTab(channelName, { isChannel: true });
-  channelChatTabs[chatTab.target] = chatTab;
+export function join(channelName: string, focus?: boolean) {
+  channelName = channelName.toLowerCase();
+  let chatTab = channelChatTabs[channelName];
+  if (chatTab == null) {
+    chatTab = new ChatTab(channelName, { isChannel: true });
+    channelChatTabs[chatTab.target] = chatTab;
+    settings.savedChatrooms.push(channelName);
+  }
+
+  if (settings.presence === "offline") {
+    settings.presence = "online";
+    sidebarMe.updatePresenceFromSettings();
+    connect();
+  }
+
+  settings.scheduleSave();
+
+  if (focus !== false) tabs.onActivateTab(chatTab.tabElt);
 }
 
 function onJoin(event: SlateIRC.JoinEvent) {
