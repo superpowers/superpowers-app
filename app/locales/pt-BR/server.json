@@ -1,0 +1,50 @@
+{
+  "myServer": "Meu Servidor",
+  "log": "Log do Servidor",
+
+  "status": {
+  	"starting": "Servidor iniciando...",
+  	"started": "Servidor rodando.",
+  	"stopping": "Servidor parando...",
+  	"stopped": "Servidor parado."
+  },
+
+  "buttons": {
+    "settings": "Configurações",
+    "start": "Iniciar",
+    "stop": "Parar"
+  },
+
+  "settings": {
+    "title": "Configurações do Servidor",
+    "error": "Não foi possível carregar as configurações do servidor",
+
+    "general": {
+      "title": "Geral",
+
+      "mainPort": "Porta Principal",
+      "buildPort": "Porta para Build",
+
+      "autoStart": "Iniciar o servidor automaticamente ao abrir o aplicativo"
+    },
+
+    "storage": {
+      "title": "Armazenamento",
+      "openProjectsFolder": "Abrir a pasta dos projetos",
+      "recentBuilds": "Builds recentes a serem mantidas"
+    },
+
+    "authentication": {
+      "title": "Autenticação",
+      "openToInternet": "Abrir o servidor para a Internet",
+
+      "guestAccount": "Habilitar contas temporárias de visitantes",
+      "localAccount": "Habilitar criação de conta local",
+      "externalServices": "Habilitar login com serviços externos"
+    }
+  },
+  
+  "systems": {
+    "title": "Sistemas e plugins"
+  }
+}
