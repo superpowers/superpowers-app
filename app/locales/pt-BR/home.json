@@ -1,0 +1,26 @@
+{
+  "title": "Home",
+
+  "tagline": "Criador de jogos 2D+3D para indies. Free & Open Source,&nbsp;<b>finalmente</b>.",
+
+  "news": {
+    "couldNotFetch": "Não foi possível obter as últimas notícias."
+  },
+
+  "chatrooms": {
+    "title": "Salas de Chat",
+
+    "en": "Inglês",
+    "fr": "Francês"
+  },
+
+  "links": {
+    "title": "Links",
+
+    "documentation": "Documentação",
+    "forums": "Fóruns da Comunidade",
+    "patreon": "Patreon",
+    "openSource": "Open Source",
+    "teamSpeak": "Servidor de TeamSpeak"
+  }
+}
