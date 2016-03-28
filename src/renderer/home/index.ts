@@ -13,5 +13,5 @@ function onChatroomClick(event: MouseEvent) {
   if (target.tagName !== "A") return;
 
   event.preventDefault();
-  chat.join(target.dataset["channel"]);
+  chat.join(target.dataset["channel"], true);
 }

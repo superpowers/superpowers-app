@@ -46,5 +46,5 @@ presenceElt.addEventListener("change", (event) => {
 
 showIrcStatusButton.addEventListener("click", (event) => {
   event.preventDefault();
-  chat.showStatus();
+  chat.openStatusTab();
 });

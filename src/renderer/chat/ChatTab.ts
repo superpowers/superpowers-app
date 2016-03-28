@@ -3,6 +3,7 @@ import * as ResizeHandle from "resize-handle";
 import * as TreeView from "dnd-tree-view";
 import { tabStrip, panesElt } from "../tabs";
 import * as chat from "./index";
+import * as tabs from  "../tabs";
 
 import * as escapeHTML from "escape-html";
 
@@ -24,7 +25,7 @@ export default class ChatTab {
   constructor(public target: string, options?: { label?: string; isChannel?: boolean; showTab?: boolean; }) {
     if (options == null) options = {};
     this.label = (options.label != null) ? options.label : target;
-    if (options.showTab !== false) this.showTab();
+    if (options.showTab !== false) this.showTab(false);
 
     this.paneElt = document.createElement("div");
     this.paneElt.hidden = true;
@@ -54,7 +55,7 @@ export default class ChatTab {
     }
   }
 
-  showTab() {
+  showTab(focus: boolean) {
     if (this.tabElt == null) {
       this.tabElt = document.createElement("li");
       this.tabElt.dataset["name"] = `chat-${this.target}`;
@@ -73,9 +74,10 @@ export default class ChatTab {
       const closeButton = document.createElement("button");
       closeButton.className = "close";
       this.tabElt.appendChild(closeButton);
-    } else if (this.tabElt.parentElement != null) return;
+    }
 
-    tabStrip.tabsRoot.appendChild(this.tabElt);
+    if (this.tabElt.parentElement == null) tabStrip.tabsRoot.appendChild(this.tabElt);
+    if (focus) tabs.onActivateTab(this.tabElt);
   }
 
   join() {

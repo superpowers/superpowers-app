@@ -33,9 +33,8 @@ export function start() {
   }
 }
 
-export function showStatus() {
-  statusChatTab.showTab();
-  tabs.onActivateTab(statusChatTab.tabElt);
+export function openStatusTab() {
+  statusChatTab.showTab(true);
 }
 
 export function onPresenceUpdated() {
@@ -144,7 +143,7 @@ export function join(channelName: string, focus?: boolean) {
 
   settings.scheduleSave();
 
-  if (focus !== false) tabs.onActivateTab(chatTab.tabElt);
+  chatTab.showTab(focus === true);
 }
 
 function onJoin(event: SlateIRC.JoinEvent) {
@@ -200,17 +199,13 @@ function onMessage(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me) {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "private");
-    notify(`Private message from ${event.from}`, event.message, () => {
-      tabs.onActivateTab(statusChatTab.tabElt);
-    });
+    notify(`Private message from ${event.from}`, event.message, () => { statusChatTab.showTab(true); });
   } else {
     const chatTab = channelChatTabs[event.to];
     if (chatTab == null) return;
 
     if (mentionRegex != null && mentionRegex.test(event.message)) {
-      notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
-        tabs.onActivateTab(chatTab.tabElt);
-      });
+      notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => { chatTab.showTab(true); });
     }
 
     chatTab.addMessage(event.from, event.message, null);
@@ -233,16 +228,14 @@ function onNotice(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me || event.to === "*") {
     // TODO: Open private chat tab
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
-    notify(`Private notice from ${event.from}`, event.message, () => {
-      tabs.onActivateTab(statusChatTab.tabElt);
-    });
+    if (event.to !== "*") notify(`Private notice from ${event.from}`, event.message, () => { statusChatTab.showTab(true); });
   } else {
     const chatTab = channelChatTabs[event.to];
     if (chatTab == null) return;
 
     if (mentionRegex != null && mentionRegex.test(event.message)) {
       notify(`Mentioned by ${event.from} in ${event.to}`, event.message, () => {
-        tabs.onActivateTab(chatTab.tabElt);
+        chatTab.showTab(true);
       });
     }
 
