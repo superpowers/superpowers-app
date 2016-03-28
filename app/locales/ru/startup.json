@@ -1,0 +1,26 @@
+{
+  "startingUp": "Запуск Superpowers...",
+  "failedToStart": "Не удалось запустить приложение",
+  "startAnyway": "Запустить в любом случае",
+
+  "errors": {
+    "missingEnvironmentVariables": "Не удалось найти требуемые переменные окружения: ${envVars}.",
+    "couldNotCreateUserDataFolder": "Не удалось создать папку пользовательских данных в ${userDataPath}. Причина: ${reason}.",
+    "couldNotLoadSettings": "Не удалось загрузить настройки из ${settingsPath}. Причина: ${reason}."
+  },
+
+  "updateAvailable": {
+    "app": "Доступен Superpowers ${latest} (вы запустили ${current}).",
+    "core": "Доступен Superpowers Core ${latest} (вы запустили ${current}).",
+    "askGameInstall": "Вы хотите установить сейчас систему \"Superpowers Game\"? Ее можно использовать для создания HTML5 2D+3D игровых проектов.",
+    "systems": "Доступны обновления для некоторых систем."
+  },
+
+  "status": {
+    "installingCore": "Установка последней версии Superpowers Core...",
+    "installingCoreSucceed": "Superpowers Core успешно установлено.",
+    "installingCoreFailed": "Не удалось установить Superpowers Core. ${error}",
+    "installingGame": "Установка последней версии системы Game...",
+    "installingGameFailed": "Не удалось установить систему Superpowers Game. ${error}"
+  }
+}
