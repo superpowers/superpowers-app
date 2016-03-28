@@ -129,8 +129,9 @@ export default class ChatTab {
     return this.users.indexOf(name) !== -1;
   }
 
-  addUserToList(name: string) {
-    if (this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${name}"]`) != null) return;
+  private addUser(name: string) {
+    if (this.users.indexOf(name) !== -1) return;
+    this.users.push(name);
 
     const userElt = document.createElement("li");
     userElt.dataset["nickname"] = name;
@@ -141,13 +142,13 @@ export default class ChatTab {
     userElt.appendChild(nicknameElt);
 
     this.usersTreeView.append(userElt, "item");
-    if(!this.hasUser(name)) this.users.push(name);
   }
 
-  removeUserFromList(name: string) {
-    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${name}"]`) as HTMLLIElement;
-    if (userElt == null) return;
+  private removeUser(name: string) {
+    if (this.users.indexOf(name) === -1) return;
+    this.users.splice(this.users.indexOf(name), 1);
 
+    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${name}"]`) as HTMLLIElement;
     this.usersTreeView.remove(userElt);
   }
 
@@ -211,24 +212,25 @@ export default class ChatTab {
 
   onJoin(event: SlateIRC.JoinEvent) {
     this.addInfo(`${event.nick} has joined ${event.channel}.`);
-    this.users.push(event.nick);
 
     if (event.nick === chat.irc.me) {
       // this.hasJoinedChannel = true;
       chat.irc.names(this.target, this.onChannelNamesReceived);
-    } else this.addUserToList(event.nick);
+    } else {
+      this.addUser(event.nick);
+    }
   }
 
   onPart(event: SlateIRC.PartEvent) {
     this.addInfo(`${event.nick} has parted ${event.channels[0]}.`);
-    this.removeUserFromList(event.nick);
-    this.users.splice(this.users.indexOf(event.nick), 1);
+    this.removeUser(event.nick);
   }
 
   onNick(event: SlateIRC.NickEvent) {
     this.addInfo(`${event.nick} has changed nick to ${event.new}.`);
-    this.removeUserFromList(event.nick);
-    this.addUserToList(event.new);
+
+    this.removeUser(event.nick);
+    this.addUser(event.new);
   }
 
   onAway(event: SlateIRC.AwayEvent) {
@@ -238,7 +240,7 @@ export default class ChatTab {
 
   onQuit(event: SlateIRC.QuitEvent) {
     this.addInfo(`${event.nick} has quit (${event.message}).`);
-    this.removeUserFromList(event.nick);
+    this.removeUser(event.nick);
   }
 
   private onTextAreaKeyDown = (event: KeyboardEvent) => {
@@ -247,21 +249,31 @@ export default class ChatTab {
     if (event.keyCode === 38 /* Up */) {
       if (this.previousMessage == null) return;
       if (this.textAreaElt.value.length > 0) return;
-      this.textAreaElt.value = this.previousMessage;
       event.preventDefault();
-    }else if(event.keyCode == 9 /* TAB */){        
-        let toComplete = "";
-        for(let i = this.textAreaElt.selectionStart - 1; i >= 0; --i){
-            if(this.textAreaElt.value.charAt(i) == " ") break;
-            toComplete = this.textAreaElt.value.charAt(i) + toComplete;
-        }
-        if(toComplete !== "")
-            for(let i = 0; i < this.users.length; ++i)
-                if(this.users[i].indexOf(toComplete) == 0)
-                    this.textAreaElt.value = this.textAreaElt.value.replace(toComplete, this.users[i]);
-        event.preventDefault();
+      this.textAreaElt.value = this.previousMessage;
+    } else if(event.keyCode === 9 /* Tab */) {
+      event.preventDefault();
+      this.doNicknameAutocomplete();
     }
   };
+
+  private doNicknameAutocomplete() {
+    const stubStartIndex = this.textAreaElt.value.lastIndexOf(" ", this.textAreaElt.selectionStart - 1) + 1;
+    const stubEndIndex =  this.textAreaElt.selectionStart;
+    const stub = this.textAreaElt.value.slice(stubStartIndex, stubEndIndex).toLowerCase();
+    if (stub.length === 0) return;
+
+    const matches: string[] = [];
+    for (const user of this.users) {
+      if (user.toLowerCase().indexOf(stub) === 0) matches.push(user);
+    }
+
+    if (matches.length === 1) {
+      this.textAreaElt.value = `${this.textAreaElt.value.slice(0, stubStartIndex)}${matches[0]} `;
+    } else if (matches.length > 1) {
+      this.addInfo(`Matching users: ${matches.join(", ")}.`);
+    }
+  }
 
   private onTextAreaKeyPress = (event: KeyboardEvent) => {
     if (event.keyCode === 13) {
@@ -281,8 +293,9 @@ export default class ChatTab {
       return;
     }
 
+    this.users.length = 0;
     this.usersTreeView.treeRoot.innerHTML = "";
     names.sort((a, b) => a.name.localeCompare(b.name));
-    for (const name of names) this.addUserToList(name.name);
+    for (const name of names) this.addUser(name.name);
   };
 }
