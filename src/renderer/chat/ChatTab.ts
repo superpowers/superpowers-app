@@ -139,6 +139,7 @@ export default class ChatTab {
     userElt.appendChild(nicknameElt);
 
     this.usersTreeView.append(userElt, "item");
+    if(!this.hasUser(name)) this.users.push(name);
   }
 
   removeUserFromList(name: string) {
@@ -246,6 +247,17 @@ export default class ChatTab {
       if (this.textAreaElt.value.length > 0) return;
       this.textAreaElt.value = this.previousMessage;
       event.preventDefault();
+    }else if(event.keyCode == 9 /* TAB */){        
+        let toComplete = "";
+        for(let i = this.textAreaElt.selectionStart - 1; i >= 0; --i){
+            if(this.textAreaElt.value.charAt(i) == " ") break;
+            toComplete = this.textAreaElt.value.charAt(i) + toComplete;
+        }
+        if(toComplete !== "")
+            for(let i = 0; i < this.users.length; ++i)
+                if(this.users[i].indexOf(toComplete) == 0)
+                    this.textAreaElt.value = this.textAreaElt.value.replace(toComplete, this.users[i]);
+        event.preventDefault();
     }
   };
 
