@@ -12,17 +12,7 @@ import * as localServer from "./localServer";
 import * as chat from "./chat";
 import WelcomeDialog from "./WelcomeDialog";
 
-window.addEventListener("message", onMessageReceived);
 electron.ipcRenderer.on("init", onInitialize);
-
-function onMessageReceived(event: MessageEvent) {
-  switch (event.data.type) {
-    case "new-standalone-window": {
-      electron.ipcRenderer.send("new-standalone-window", event.data.url, event.data.title);
-      break;
-    }
-  }
-}
 
 const namespaces = [
   "common", "startup",

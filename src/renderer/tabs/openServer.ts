@@ -1,7 +1,10 @@
-import { tabStrip, panesElt, clearActiveTab } from "./index";
+import * as fs from "fs";
+import * as electron from "electron";
+
 import fetch from "../../shared/fetch";
 import * as i18n from "../../shared/i18n";
-import * as fs from "fs";
+
+import { tabStrip, panesElt, clearActiveTab } from "./index";
 
 const { superpowers: { appApiVersion: appApiVersion } } = JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`, { encoding: "utf8" }));
 
@@ -112,6 +115,10 @@ function makeServerPane(serverEntry: ServerEntry) {
     function onLoad() {
       clearEventListeners();
       paneElt.removeChild(connectingElt);
+
+      webviewElt.addEventListener("new-window", (event) => {
+        electron.ipcRenderer.send("new-standalone-window", (event as any).url);
+      });
     }
 
     function onError() {
