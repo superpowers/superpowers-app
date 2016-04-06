@@ -1,6 +1,6 @@
 {
   "name": "superpowers-app",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "scripts": {
     "prebuild": "npm install",
     "build": "gulp --silent",
