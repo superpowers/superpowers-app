@@ -20,7 +20,15 @@
   "server": {
     "hostname": "Hostname",
     "port": "Port",
-    "label": "Label"
+    "label": "Label",
+
+    "connecting": "Connecting to ${host}...",
+    "tryAgain": "Try again",
+    "errors": {
+      "superpowersJSON": "Could not download ${host}/superpowers.json.",
+      "notSuperpowers": "The server at ${host} doesn't seem to be running Superpowers.",
+      "incompatibleVersion": "The server at ${host} runs an incompatible version of Superpowers (got app API version ${serverVersion}, expected ${appVersion})."
+    }
   }
 }
 

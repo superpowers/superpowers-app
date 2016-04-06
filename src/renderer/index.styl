@@ -178,8 +178,33 @@ body .panes {
     @import "serverSettings/index.styl";
   }
 
-  & > * {
-    flex: 1 1 0;
-    border: 0;
+  & > * { flex: 1 1 0; }
+
+  & > div[data-server-id] {
+    display: flex;
+    position: relative;
+
+    webview { flex: 1 1 0; }
+    .connecting {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-order: 1;
+
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+
+    .connecting div {
+      font-size: 2em;
+      color: #666;
+      padding: 1em;
+      text-align: center;
+    }
   }
 }

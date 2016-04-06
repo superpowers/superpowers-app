@@ -39,8 +39,8 @@ export function onActivateTab(tabElt: HTMLLIElement) {
   const paneName = tabElt.dataset["name"];
 
   let paneElt: HTMLElement;
-  if (serverId != null) paneElt = panesElt.querySelector(`:scope > iframe[data-server-id="${serverId}"]`) as HTMLIFrameElement;
-  else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLIFrameElement;
+  if (serverId != null) paneElt = panesElt.querySelector(`:scope > div[data-server-id="${serverId}"]`) as HTMLDivElement;
+  else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLDivElement;
   paneElt.hidden = false;
 }
 
@@ -51,8 +51,8 @@ function onCloseTab(tabElement: HTMLLIElement) {
   const paneName = tabElement.dataset["name"];
 
   let paneElt: HTMLElement;
-  if (serverId != null) paneElt = panesElt.querySelector(`iframe[data-server-id='${serverId}']`) as HTMLIFrameElement;
-  else paneElt = panesElt.querySelector(`*[data-name='${paneName}']`) as HTMLIFrameElement;
+  if (serverId != null) paneElt = panesElt.querySelector(`:scope > div[data-server-id='${serverId}']`) as HTMLDivElement;
+  else paneElt = panesElt.querySelector(`:scope > *[data-name='${paneName}']`) as HTMLDivElement;
 
   if (tabElement.classList.contains("active")) {
     const activeTabElement = (tabElement.nextElementSibling != null) ? tabElement.nextElementSibling as HTMLLIElement : tabElement.previousElementSibling as HTMLLIElement;

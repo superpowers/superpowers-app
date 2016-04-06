@@ -3,7 +3,7 @@
   "version": "0.0.0-dev",
   "main": "main.js",
   "superpowers": {
-    "electron": "0.36.9",
-    "appApiVersion": "2"
+    "electron": "0.37.4",
+    "appApiVersion": 3
   }
 }
