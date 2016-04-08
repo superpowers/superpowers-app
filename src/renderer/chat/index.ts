@@ -132,7 +132,7 @@ export function join(channelName: string, focus?: boolean) {
   if (chatTab == null) {
     chatTab = new ChatTab(channelName, { isChannel: true });
     channelChatTabs[chatTab.target] = chatTab;
-    settings.savedChatrooms.push(channelName);
+    if (settings.savedChatrooms.indexOf(channelName) === -1) settings.savedChatrooms.push(channelName);
   }
 
   if (settings.presence === "offline") {
