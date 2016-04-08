@@ -22,14 +22,17 @@ const statusChatTab = new ChatTab("status", { label: ircNetwork.host, showTab: f
 statusChatTab.paneElt.dataset["persist"] = "true";
 
 const channelChatTabs: { [name: string]: ChatTab } = {};
-// const privateChatTabs: { [name: string]: ChatTab } = {};
+const privateChatTabs: { [name: string]: ChatTab } = {};
 
 tabs.tabStrip.on("closeTab", onCloseTab);
 
 export function start() {
   if (settings.presence !== "offline") {
     connect();
-    for (const roomName of settings.savedChatrooms) join(roomName, false);
+    for (const roomName of settings.savedChatrooms) {
+      join(roomName, false);
+      channelChatTabs[roomName].addInfo("Connecting...");
+    }
   }
 }
 
@@ -63,18 +66,25 @@ function onCloseTab(tabElement: HTMLLIElement) {
   if (name == null) return;
 
   const chatTab = channelChatTabs[name];
-  if (chatTab == null) return;
+  if (chatTab != null) {
+    if (irc != null) irc.part(name);
+    delete channelChatTabs[name];
+    settings.savedChatrooms.splice(settings.savedChatrooms.indexOf(name), 1);
+    return;
+  }
 
-  if (irc != null) irc.part(name);
-  delete channelChatTabs[name];
-
-  settings.savedChatrooms.splice(settings.savedChatrooms.indexOf(name), 1);
+  const privateChatTab = privateChatTabs[name];
+  if (privateChatTab != null) {
+    delete privateChatTabs[name];
+  }
 }
 
 function connect() {
   if (socket != null) return;
 
   statusChatTab.addInfo(`Connecting to ${ircNetwork.host}:${ircNetwork.port}...`);
+  for (const name in channelChatTabs) channelChatTabs[name].addInfo("Connecting...");
+  for (const name in privateChatTabs) privateChatTabs[name].addInfo("Connecting...");
 
   socket = tls.connect({ host: ircNetwork.host, port: ircNetwork.port, rejectUnauthorized: false }) as any as net.Socket;
   socket.on("error", onSocketError);
@@ -114,16 +124,33 @@ function onWelcome(name: string) {
     irc.write(`AWAY :Away`);
   }
 
-  for (const name in channelChatTabs) {
-    const chatTab = channelChatTabs[name];
-    chatTab.join();
-  }
+  for (const name in channelChatTabs) channelChatTabs[name].join();
 
   return;
 }
 
 function onMOTD(event: SlateIRC.MOTDEvent) {
   for (const line of event.motd) statusChatTab.addInfo(line);
+}
+
+export function send(target: string, message: string) {
+  irc.send(target, message);
+
+  let chatTab: ChatTab;
+
+  if (target[0] === "#") {
+    chatTab = channelChatTabs[target];
+    if (chatTab == null) return false;
+  } else {
+    chatTab = privateChatTabs[target];
+    if (chatTab == null) {
+      chatTab = new ChatTab(target);
+      privateChatTabs[target] = chatTab;
+    }
+  }
+
+  chatTab.addMessage(irc.me, message, "me");
+  return true;
 }
 
 export function join(channelName: string, focus?: boolean) {
@@ -165,6 +192,13 @@ function onNick(event: SlateIRC.NickEvent) {
     const chatTab = channelChatTabs[name];
     if (chatTab.hasUser(event.nick)) chatTab.onNick(event);
   }
+
+  const privateChatTab = privateChatTabs[event.nick];
+  if (privateChatTab != null) {
+    delete privateChatTabs[event.nick];
+    privateChatTabs[event.new] = privateChatTab;
+    privateChatTab.updateTarget(event.new);
+  }
 }
 
 function onAway(event: SlateIRC.AwayEvent) {
@@ -172,6 +206,9 @@ function onAway(event: SlateIRC.AwayEvent) {
     const chatTab = channelChatTabs[name];
     if (chatTab.hasUser(event.nick)) chatTab.onAway(event);
   }
+
+  const privateChatTab = privateChatTabs[event.nick];
+  if (privateChatTab != null) privateChatTab.onAway(event);
 }
 
 function onQuit(event: SlateIRC.QuitEvent) {
@@ -179,6 +216,9 @@ function onQuit(event: SlateIRC.QuitEvent) {
     const chatTab = channelChatTabs[name];
     if (chatTab.hasUser(event.nick)) chatTab.onQuit(event);
   }
+
+  const privateChatTab = privateChatTabs[event.nick];
+  if (privateChatTab != null) privateChatTab.onQuit(event);
 }
 
 const ignoredCommands = [
@@ -197,9 +237,14 @@ function onData(event: SlateIRC.DataEvent) {
 
 function onMessage(event: SlateIRC.MessageEvent) {
   if (event.to === irc.me) {
-    // TODO: Open private chat tab
-    statusChatTab.addMessage(`(private) ${event.from}`, event.message, "private");
-    notify(`Private message from ${event.from}`, event.message, () => { statusChatTab.showTab(true); });
+    let privateChatTab = privateChatTabs[event.from];
+    if (privateChatTab == null) {
+      privateChatTab = new ChatTab(event.from);
+      privateChatTabs[event.from] = privateChatTab;
+    }
+
+    privateChatTab.addMessage(event.from, event.message, "private");
+    notify(`Private message from ${event.from}`, event.message, () => { privateChatTab.showTab(true); });
   } else {
     const chatTab = channelChatTabs[event.to];
     if (chatTab == null) return;
@@ -225,10 +270,20 @@ function notify(title: string, body: string, callback: Function) {
 }
 
 function onNotice(event: SlateIRC.MessageEvent) {
-  if (event.to === irc.me || event.to === "*") {
-    // TODO: Open private chat tab
+  if (event.to === "*") {
     statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
-    if (event.to !== "*") notify(`Private notice from ${event.from}`, event.message, () => { statusChatTab.showTab(true); });
+    return;
+  }
+
+  if (event.to === irc.me) {
+    let privateChatTab = privateChatTabs[event.from];
+    if (privateChatTab == null) {
+      privateChatTab = new ChatTab(event.from);
+      privateChatTabs[event.from] = privateChatTab;
+    }
+
+    privateChatTab.addMessage(event.from, event.message, "notice");
+    notify(`Private notice from ${event.from}`, event.message, () => { privateChatTab.showTab(true); });
   } else {
     const chatTab = channelChatTabs[event.to];
     if (chatTab == null) return;

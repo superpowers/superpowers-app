@@ -13,7 +13,7 @@ const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 export default class ChatTab {
   tabElt: HTMLLIElement;
   paneElt: HTMLDivElement;
-  label: string;
+  private label: string;
 
   logElt: HTMLDivElement;
   textAreaElt: HTMLTextAreaElement;
@@ -52,6 +52,19 @@ export default class ChatTab {
     } else {
       sidebarElt.parentElement.removeChild(sidebarElt.previousElementSibling); // Resize handle
       sidebarElt.parentElement.removeChild(sidebarElt);
+    }
+  }
+
+  updateTarget(target: string) {
+    this.target = target;
+    this.paneElt.dataset["name"] = `chat-${target}`;
+
+    this.label = target;
+
+    if (this.tabElt != null) {
+      this.tabElt.dataset["name"] = `chat-${this.target}`;
+      this.tabElt.dataset["chatTarget"] = this.target;
+      this.tabElt.querySelector(".label").textContent = this.label;
     }
   }
 
@@ -152,19 +165,15 @@ export default class ChatTab {
     this.usersTreeView.remove(userElt);
   }
 
-  send(msg: string) {
-    const result = commandRegex.exec(msg);
+  send(message: string) {
+    const result = commandRegex.exec(message);
     if (result != null) {
       this.handleCommand(result[1].toLocaleLowerCase(), result[2]);
       return;
     }
 
-    if (chat.irc == null) {
-      this.addInfo("You are not connected.");
-    } else {
-      chat.irc.send(this.target, msg);
-      this.addMessage(chat.irc.me, msg, "me");
-    }
+    if (chat.irc == null) this.addInfo("You are not connected.");
+    else chat.send(this.target, message);
   }
 
   handleCommand(command: string, params: string) {
@@ -182,7 +191,10 @@ export default class ChatTab {
 
           const target = params.slice(0, index);
           const message = params.slice(index + 1);
-          chat.irc.send(target, message);
+          if (!chat.send(target, message)) {
+            this.addInfo(`/msg: Can't send message to ${target}.`);
+            return;
+          }
         } break;
         case "join": {
           if (params.length === 0 || params[0] !== "#" || params.indexOf(" ") !== -1) {
