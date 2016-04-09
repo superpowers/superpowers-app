@@ -27,6 +27,7 @@ electron.app.on("activate", () => { restoreMainWindow(); });
 electron.app.on("before-quit", () => { shouldQuit = true;  });
 
 electron.ipcMain.on("new-standalone-window", onNewStandaloneWindow);
+electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 
 function onAppReady() {
   electron.Menu.setApplicationMenu(null);
