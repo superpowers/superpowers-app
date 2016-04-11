@@ -2,7 +2,7 @@ import * as electron from "electron";
 import * as i18n from "./shared/i18n";
 import getPaths from "./getPaths";
 import getLanguageCode from "./getLanguageCode";
-import "./export";
+import "./ipc";
 
 let corePath: string;
 let userDataPath: string;
@@ -10,23 +10,14 @@ let userDataPath: string;
 let mainWindow: Electron.BrowserWindow;
 let trayIcon: Electron.Tray;
 let trayMenu: Electron.Menu;
-const standaloneWindowsById: { [id: string]: Electron.BrowserWindow } = {};
 
-let shouldQuit = electron.app.makeSingleInstance((args, workingDirectory) => {
-  restoreMainWindow();
-  return true;
-});
+let shouldQuit = false;
 
-if (shouldQuit) {
-  electron.app.quit();
-  process.exit(0);
-}
-
+if (electron.app.makeSingleInstance(restoreMainWindow)) { electron.app.quit(); process.exit(0); }
 electron.app.on("ready", onAppReady);
 electron.app.on("activate", () => { restoreMainWindow(); });
 electron.app.on("before-quit", () => { shouldQuit = true;  });
 
-electron.ipcMain.on("new-standalone-window", onNewStandaloneWindow);
 electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 
 function onAppReady() {
@@ -108,24 +99,10 @@ function onCloseMainWindow(event: Event) {
 }
 
 function restoreMainWindow() {
-  if (mainWindow == null) return;
+  if (mainWindow == null) return true;
   if (!mainWindow.isVisible()) mainWindow.show();
   if (mainWindow.isMinimized()) mainWindow.restore();
   mainWindow.focus();
-}
 
-function onNewStandaloneWindow(event: Electron.IPCMainEvent, url: string, title: string) {
-  const standaloneWindow = new electron.BrowserWindow({
-    title, icon: `${__dirname}/superpowers.ico`,
-    width: 1000, height: 600,
-    minWidth: 800, minHeight: 480,
-    useContentSize: true, autoHideMenuBar: true
-  });
-
-  const windowId = standaloneWindow.id;
-  standaloneWindowsById[windowId] = standaloneWindow;
-
-  standaloneWindow.on("closed", () => { delete standaloneWindowsById[windowId]; });
-  standaloneWindow.webContents.on("will-navigate", (event: Event) => { event.preventDefault(); });
-  standaloneWindow.loadURL(url);
+  return true;
 }

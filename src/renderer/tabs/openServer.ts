@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as electron from "electron";
 
 import fetch from "../../shared/fetch";
 import * as i18n from "../../shared/i18n";
@@ -106,6 +105,7 @@ function makeServerPane(serverEntry: ServerEntry) {
     }
 
     const webviewElt = document.createElement("webview");
+    webviewElt.preload = `${__dirname}/../../SupApp/index.js`;
 
     function clearEventListeners() {
       webviewElt.removeEventListener("did-finish-load", onLoad);
@@ -115,10 +115,6 @@ function makeServerPane(serverEntry: ServerEntry) {
     function onLoad() {
       clearEventListeners();
       paneElt.removeChild(connectingElt);
-
-      webviewElt.addEventListener("new-window", (event) => {
-        electron.ipcRenderer.send("new-standalone-window", (event as any).url);
-      });
     }
 
     function onError() {
@@ -130,7 +126,7 @@ function makeServerPane(serverEntry: ServerEntry) {
     webviewElt.addEventListener("did-finish-load", onLoad);
     webviewElt.addEventListener("did-fail-load", onError);
 
-    (webviewElt as any).src = `http://${host}`;
+    webviewElt.src = `http://${host}`;
     paneElt.appendChild(webviewElt);
   }
 
