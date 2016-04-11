@@ -22,7 +22,7 @@ function onChooseFolder(event: Electron.IpcMainEvent) {
     const outputFolder = directory[0];
     let isFolderEmpty = false;
     try { isFolderEmpty = fs.readdirSync(outputFolder).length === 0; }
-    catch (e) { event.sender.send("choose-folder-callback", `Error while checking if folder was empty: ${e.message}`, null); return; }
+    catch (e) { event.sender.send("choose-folder-callback", `Error while checking if folder is empty: ${e.message}`, null); return; }
     if (!isFolderEmpty) { event.sender.send("choose-folder-callback", "Folder must be empty.", null); return; }
 
     event.sender.send("choose-folder-callback", null, outputFolder);
@@ -41,9 +41,13 @@ function onPublishProject(event: Electron.IpcMainEvent, options: PublishOptions)
   exportWindow.webContents.addListener("did-finish-load", startExport);
 
   function startExport() {
-    exportWindow.webContents.openDevTools();
     exportWindow.webContents.removeListener("did-finish-load", startExport);
     exportWindow.webContents.send("set-export-status", { title: "Superpowers — Exporting...", text: "Exporting..." });
+
+    let isFolderEmpty = false;
+    try { isFolderEmpty = fs.readdirSync(options.outputFolder).length === 0; }
+    catch (e) { exportWindow.webContents.send("set-export-status", { text: `Error while checking if output folder is empty: ${e.message}` }); return; }
+    if (!isFolderEmpty) { exportWindow.webContents.send("set-export-status", { text: "Output folder must be empty." }); return; }
 
     exportWindow.setProgressBar(0);
     let progress = 0;
