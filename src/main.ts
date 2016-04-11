@@ -13,6 +13,16 @@ let trayMenu: Electron.Menu;
 
 let shouldQuit = false;
 
+
+/* tslint:disable */
+const expectedElectronVersion = require(`${__dirname}/package.json`).superpowers.electron;
+/* tslint:enable */
+const electronVersion = (process.versions as any).electron as string;
+
+if (electronVersion !== expectedElectronVersion) {
+  console.log(`WARNING: Running Electron v${electronVersion}, but expected v${expectedElectronVersion}.`);
+}
+
 if (electron.app.makeSingleInstance(restoreMainWindow)) { electron.app.quit(); process.exit(0); }
 electron.app.on("ready", onAppReady);
 electron.app.on("activate", () => { restoreMainWindow(); });
