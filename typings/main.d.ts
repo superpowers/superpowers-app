@@ -1,6 +1,6 @@
 /// <reference path="main/ambient/async/index.d.ts" />
-/// <reference path="main/ambient/escape-html/index.d.ts" />
 /// <reference path="main/ambient/electron-packager/index.d.ts" />
+/// <reference path="main/ambient/escape-html/index.d.ts" />
 /// <reference path="main/ambient/github-electron/index.d.ts" />
 /// <reference path="main/ambient/lodash/index.d.ts" />
 /// <reference path="main/ambient/mkdirp/index.d.ts" />
