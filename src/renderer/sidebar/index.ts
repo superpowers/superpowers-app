@@ -118,7 +118,7 @@ function addServer(serverEntry: ServerEntry) {
   serverElt.appendChild(hostElt);
 }
 
-function onServerDrop(dropInfo: { target: HTMLLIElement; where: string; }, orderedNodes: HTMLLIElement[]) {
+function onServerDrop(event: DragEvent, dropLocation: TreeView.DropLocation, orderedNodes: HTMLLIElement[]) {
   // TODO
   return false;
 }
