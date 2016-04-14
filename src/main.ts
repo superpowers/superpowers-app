@@ -11,8 +11,6 @@ let mainWindow: Electron.BrowserWindow;
 let trayIcon: Electron.Tray;
 let trayMenu: Electron.Menu;
 
-let shouldQuit = false;
-
 
 /* tslint:disable */
 const expectedElectronVersion = require(`${__dirname}/package.json`).superpowers.electron;
@@ -23,11 +21,25 @@ if (electronVersion !== expectedElectronVersion) {
   console.log(`WARNING: Running Electron v${electronVersion}, but expected v${expectedElectronVersion}.`);
 }
 
-if (electron.app.makeSingleInstance(restoreMainWindow)) { electron.app.quit(); process.exit(0); }
+if (electron.app.makeSingleInstance(restoreMainWindow)) { electron.app.exit(0); }
+
 electron.app.on("ready", onAppReady);
 electron.app.on("activate", () => { restoreMainWindow(); });
-electron.app.on("before-quit", () => { shouldQuit = true;  });
 
+let isQuitting = false;
+let isReadyToQuit = false;
+electron.app.on("before-quit", () => {
+  if (!isQuitting) {
+    mainWindow.webContents.send("quit");
+    isQuitting = true;
+    event.preventDefault();
+    return;
+  }
+
+  if (!isReadyToQuit) event.preventDefault();
+});
+
+electron.ipcMain.on("ready-to-quit", () => { isReadyToQuit = true; electron.app.quit(); });
 electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 
 function onAppReady() {
@@ -58,7 +70,7 @@ function setupTrayOrDock() {
   trayMenu = electron.Menu.buildFromTemplate([
     { label: i18n.t("tray:dashboard"), type: "normal", click: () => { restoreMainWindow(); } },
     { type: "separator" },
-    { label: i18n.t("tray:exit"), type: "normal", click: () => { shouldQuit = true; electron.app.quit(); } }
+    { label: i18n.t("tray:exit"), type: "normal", click: () => { electron.app.quit(); } }
   ]);
 
   // TODO: Insert 5 most recently used servers
@@ -98,7 +110,7 @@ function setupMainWindow() {
 }
 
 function onCloseMainWindow(event: Event) {
-  if (shouldQuit) return;
+  if (isQuitting) return;
 
   event.preventDefault();
 
@@ -109,6 +121,8 @@ function onCloseMainWindow(event: Event) {
 }
 
 function restoreMainWindow() {
+  if (isQuitting) return;
+
   if (mainWindow == null) return true;
   if (!mainWindow.isVisible()) mainWindow.show();
   if (mainWindow.isMinimized()) mainWindow.restore();

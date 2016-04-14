@@ -52,7 +52,14 @@ function startServer() {
   serverProcess.stderr.on("data", (data: any) => { appendToLog(String(data)); });
 }
 
-function stopServer() {
+let shutdownCallback: Function;
+export function shutdown(callback: Function) {
+  if (serverProcess == null) { callback(); return; }
+  shutdownCallback = callback;
+  stopServer();
+}
+
+export function stopServer() {
   if (serverProcess == null) return;
 
   statusElt.textContent = i18n.t("server:status.stopping");
@@ -69,6 +76,11 @@ function onServerExit() {
   startStopServerButton.disabled = false;
 
   appendToLog("\n");
+
+  if (shutdownCallback != null) {
+    shutdownCallback();
+    shutdownCallback = null;
+  }
 }
 
 function onServerMessage(msg: any) {

@@ -13,6 +13,7 @@ import * as chat from "./chat";
 import WelcomeDialog from "./WelcomeDialog";
 
 electron.ipcRenderer.on("init", onInitialize);
+electron.ipcRenderer.on("quit", onQuit);
 
 const namespaces = [
   "common", "startup",
@@ -26,6 +27,10 @@ function onInitialize(sender: any, corePath: string, userDataPath: string, langu
 
   i18n.languageCode = languageCode;
   i18n.load(namespaces, () => { settings.load(onSettingsLoaded); });
+}
+
+function onQuit() {
+  localServer.shutdown(() => { electron.ipcRenderer.send("ready-to-quit"); });
 }
 
 function onSettingsLoaded(err: Error) {
