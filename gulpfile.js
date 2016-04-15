@@ -18,7 +18,7 @@ for (const languageCode of languageCodes) {
   gulp.task(`jade-index-${languageCode}`, () => {
     const result = gulp.src("./src/renderer/index.jade").pipe(jade({ locals: { t: i18n.makeT(locale) } }));
     if (languageCode !== "en") result.pipe(rename({ extname: `.${languageCode}.html` }));
-    return result.pipe(gulp.dest("app/renderer"));
+    return result.pipe(gulp.dest("public/renderer"));
   });
 
   tasks.push(`jade-index-${languageCode}`);
@@ -27,7 +27,7 @@ for (const languageCode of languageCodes) {
 // Stylus
 const stylus = require("gulp-stylus");
 
-gulp.task("stylus-index", () => gulp.src("./src/renderer/index.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("app/renderer")));
+gulp.task("stylus-index", () => gulp.src("./src/renderer/index.styl").pipe(stylus({ compress: true })).pipe(gulp.dest("public/renderer")));
 tasks.push("stylus-index");
 
 // TypeScript
@@ -46,7 +46,7 @@ gulp.task("typescript", () => {
     .pipe(ts(tsProject))
     .on("error", () => { failed = true; })
     .on("end", () => { if (failed) throw new Error("There were TypeScript errors."); });
-  return tsResult.js.pipe(gulp.dest("./app"));
+  return tsResult.js.pipe(gulp.dest("./public"));
 });
 tasks.push("typescript");
 

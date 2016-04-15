@@ -3,7 +3,7 @@
 const yargs = require("yargs");
 
 const fs = require("fs");
-exports.localesPath = `${__dirname}/../app/locales`;
+exports.localesPath = `${__dirname}/../public/locales`;
 
 let fallbackLocale = null;
 

@@ -4,7 +4,7 @@
   "scripts": {
     "prebuild": "npm install",
     "build": "gulp --silent",
-    "start": "electron app --core-path=\"../core\"",
+    "start": "electron public --core-path=\"../core\"",
     "package": "node scripts/package.js"
   },
   "license": "ISC",

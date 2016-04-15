@@ -1,6 +1,6 @@
 **/node_modules
-app/**/*.js
-app/**/*.css
-app/**/*.html
+public/**/*.js
+public/**/*.css
+public/**/*.html
 src/**/*.js
 packages/*

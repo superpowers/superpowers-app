@@ -3,6 +3,6 @@
     "target": "es5",
     "module": "commonjs",
     "noImplicitAny": true,
-    "outDir": "../app"
+    "outDir": "../public"
   }
 }
