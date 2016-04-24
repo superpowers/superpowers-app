@@ -30,6 +30,7 @@ let isQuitting = false;
 let isReadyToQuit = false;
 electron.app.on("before-quit", (event) => {
   if (!isQuitting) {
+    console.log("Stopping local server, if any...");
     mainWindow.webContents.send("quit");
     isQuitting = true;
     event.preventDefault();
@@ -39,7 +40,12 @@ electron.app.on("before-quit", (event) => {
   if (!isReadyToQuit) event.preventDefault();
 });
 
-electron.ipcMain.on("ready-to-quit", () => { isReadyToQuit = true; electron.app.quit(); });
+electron.ipcMain.on("ready-to-quit", () => {
+  console.log("Exited cleanly.");
+  isReadyToQuit = true;
+  electron.app.quit();
+});
+
 electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 
 function onAppReady() {
