@@ -4,6 +4,7 @@ import * as ResizeHandle from "resize-handle";
 import * as settings from "../settings";
 
 new ResizeHandle(document.querySelector(".server-log") as HTMLDivElement, "bottom");
+import "./log";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
 
@@ -13,10 +14,6 @@ const autoStartServerElt = settingsElt.querySelector("#auto-start-server-checkbo
 
 const openProjectsFolderElt = settingsElt.querySelector(".projects-folder button") as HTMLButtonElement;
 const maxRecentBuildsElt = settingsElt.querySelector(".max-recent-builds input") as HTMLInputElement;
-
-const logTextarea = settingsElt.querySelector(".server-log textarea") as HTMLTextAreaElement;
-const clearServerLogButton = settingsElt.querySelector(".server-log button.clear") as HTMLButtonElement;
-clearServerLogButton.addEventListener("click", onClearLogButtonClick);
 
 export function start() {
   const serverConfig = getServerConfig();
@@ -75,15 +72,4 @@ function onOpenProjectsFolderClick() {
 function onChangeAutoStartServer() {
   settings.autoStartServer = autoStartServerElt.checked;
   settings.scheduleSave();
-}
-
-export function appendToLog(text: string) {
-  logTextarea.value += text;
-  setTimeout(() => { logTextarea.scrollTop = logTextarea.scrollHeight; }, 0);
-}
-
-function onClearLogButtonClick(event: MouseEvent) {
-  event.preventDefault();
-
-  logTextarea.value = "";
 }
