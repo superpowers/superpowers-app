@@ -52,8 +52,20 @@
   .systems
     header= t("server:systems.title")
     .content
-      .systems-tree-view
-      .system-info
+      // https://pbs.twimg.com/media/CdyDJAcXIAIfXLw.jpg:large
+      .registry
+        .actions
+          button.refresh Refresh
+          input(type="search")
+        .tree-view-container
+      .details
+        .actions
+          button Install
+          button Update
+        .info
+          .name
+          .description
+          .links
 
 .resize-handle.bottom
 .server-log.collapsable

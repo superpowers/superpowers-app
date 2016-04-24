@@ -1,9 +1,8 @@
 import * as fs from "fs";
 import * as electron from "electron";
-import * as ResizeHandle from "resize-handle";
 import * as settings from "../settings";
 
-new ResizeHandle(document.querySelector(".server-log") as HTMLDivElement, "bottom");
+import "./systems";
 import "./log";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;

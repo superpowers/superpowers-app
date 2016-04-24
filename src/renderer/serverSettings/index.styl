@@ -74,6 +74,30 @@
   .content { flex: 1 1 0; }
 }
 
+.systems .content {
+  display: flex;
+  flex-flow: column;
+
+  .registry {
+    flex: 1 1 0;
+    display: flex;
+    flex-flow: column;
+    .tree-view-container {
+      flex: 1 1 0;
+      position: relative;
+      border: 1px solid #ccc;
+      .tree { position: absolute; }
+    }
+  }
+
+  .details {
+    min-height: 100px;
+    display: flex;
+    flex-flow: column;
+    .info { flex: 1 1 0; }
+  }
+}
+
 .collapsable {
   display: flex;
   flex-flow: column;
