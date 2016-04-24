@@ -28,7 +28,7 @@ electron.app.on("activate", () => { restoreMainWindow(); });
 
 let isQuitting = false;
 let isReadyToQuit = false;
-electron.app.on("before-quit", () => {
+electron.app.on("before-quit", (event) => {
   if (!isQuitting) {
     mainWindow.webContents.send("quit");
     isQuitting = true;
