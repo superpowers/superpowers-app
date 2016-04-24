@@ -30,15 +30,19 @@ let isQuitting = false;
 let isReadyToQuit = false;
 electron.app.on("before-quit", (event) => {
   if (!isQuitting) {
-    console.log("Stopping local server, if any...");
-    mainWindow.webContents.send("quit");
-    isQuitting = true;
     event.preventDefault();
+    startCleanExit();
     return;
   }
 
   if (!isReadyToQuit) event.preventDefault();
 });
+
+function startCleanExit() {
+  console.log("Exiting cleanly...");
+  mainWindow.webContents.send("quit");
+  isQuitting = true;
+}
 
 electron.ipcMain.on("ready-to-quit", () => {
   console.log("Exited cleanly.");
@@ -67,10 +71,31 @@ function onAppReady() {
 
         setupTrayOrDock();
         setupMainWindow();
+
+        // NOTE: Disabled for now, see below
+        // process.on("SIGINT", onSigInt);
       });
     });
   });
 }
+
+// NOTE: Electron v0.37.7 doesn't really support
+// attaching a SIGINT handler (at least on Windows).
+// The process will be killed while the handler is still running.
+// See https://github.com/electron/electron/issues/5273
+/*
+let sigIntCount = 0;
+function onSigInt() {
+  sigIntCount++;
+  if (sigIntCount === 3) {
+    console.log("Forcing abrupt exit.");
+    process.exit(0);
+  }
+
+  if (isQuitting) return;
+  startCleanExit();
+}
+*/
 
 function setupTrayOrDock() {
   trayMenu = electron.Menu.buildFromTemplate([
