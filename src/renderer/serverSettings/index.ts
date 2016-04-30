@@ -65,7 +65,7 @@ function getServerConfig() {
 }
 
 function onOpenProjectsFolderClick() {
-  electron.shell.showItemInFolder(`${settings.userDataPath}/projects`);
+  electron.shell.openExternal(`${settings.userDataPath}/projects/`);
 }
 
 function onChangeAutoStartServer() {
