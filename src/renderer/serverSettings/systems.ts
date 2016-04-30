@@ -41,7 +41,8 @@ function onRegistryReceived(event: any) {
     const system = systemsByName[systemName];
 
     const systemElt = html("li");
-    html("div", "label", { parent: systemElt, textContent: `${systemName} (Latest: v${system.version}, Installed: v${system.localVersion})` });
+    const local = system.localVersion != null ? `Installed: v${system.localVersion}` : "Not Installed";
+    html("div", "label", { parent: systemElt, textContent: `${systemName} (Latest: v${system.version}, ${local})` });
 
     treeView.append(systemElt, "group");
 
@@ -49,7 +50,7 @@ function onRegistryReceived(event: any) {
       const plugins = system.plugins[authorName];
 
       const authorElt = html("li");
-      html("div", "label", { parent: authorElt, textContent: `${authorName} (${plugins.length} plugins)` });
+      html("div", "label", { parent: authorElt, textContent: `${authorName} (${Object.keys(plugins).length} plugins)` });
       treeView.append(authorElt, "group", systemElt);
 
       for (const pluginName in plugins) {
