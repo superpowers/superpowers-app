@@ -55,13 +55,14 @@
       // https://pbs.twimg.com/media/CdyDJAcXIAIfXLw.jpg:large
       .registry
         .actions
-          button.refresh Refresh
+          button.refresh= t("common:actions.refresh")
           input(type="search")
         .tree-view-container
       .details
         .actions
-          button Install
-          button Update
+          button.install-uninstall(disabled)= t("common:actions.install")
+          button.update(disabled)= t("common:actions.update")
+          label.progress
         .info
           .name
           .description

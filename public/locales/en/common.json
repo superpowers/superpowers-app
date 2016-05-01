@@ -9,7 +9,9 @@
     "save": "Save",
     "download": "Download",
     "install": "Install",
+    "uninstall": "Uninstall",
     "open": "Open",
+    "refresh": "Refresh",
     "update": "Update"
   },
 
