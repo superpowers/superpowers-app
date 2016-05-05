@@ -21,7 +21,7 @@ export function load(contextNames: string[], callback: () => void) {
   });
 }
 
-export function t(key: string, variables?: { [name: string]: string; }) {
+export function t(key: string, variables?: { [name: string]: string|number; }) {
   let result = genericT(contexts, key, variables);
   if (result == null) result = genericT(fallbackContexts, key, variables);
   return result != null ? result : key;
@@ -43,7 +43,7 @@ function loadContext(languageCode: string, contexts: { [name: string]: I18nConte
   });
 }
 
-function genericT(contexts: { [name: string]: I18nContext; }, key: string, variables?: { [name: string]: string; }) {
+function genericT(contexts: { [name: string]: I18nContext; }, key: string, variables?: { [name: string]: string|number; }) {
   const [ contextName, keys ] = key.split(":");
   const keyParts = keys.split(".");
 
@@ -59,7 +59,7 @@ function genericT(contexts: { [name: string]: I18nContext; }, key: string, varia
   else return key;
 }
 
-function insertVariables(text: string, variables: { [key: string]: string }) {
+function insertVariables(text: string, variables: { [key: string]: string|number; }) {
   let index = 0;
   do {
     index = text.indexOf("${", index);
