@@ -72,7 +72,7 @@ namespace SupApp {
     if (options == null) options = {};
 
     if (options.size == null && options.minSize == null) {
-      options.size = { width: 1000, height: 600 };
+      options.size = { width: 1280, height: 800 };
       options.minSize = { width: 800, height: 480 };
     }
 
