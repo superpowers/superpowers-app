@@ -1,0 +1,26 @@
+{
+  "startingUp": "Superpowers in avviamento...",
+  "failedToStart": "Non è stato possibile lanciare l'app",
+  "startAnyway": "Lancia comunque",
+
+  "errors": {
+    "missingEnvironmentVariables": "non è stato possibile trovare le variabili d'ambiente: ${envVars}.",
+    "couldNotCreateUserDataFolder": "Non è stato possibile creare la cartella dati utente ${userDataPath}. Motivo: ${reason}.",
+    "couldNotLoadSettings": "Non è stato possibile caricare le impostazioni da ${settingsPath}. Motivo: ${reason}."
+  },
+
+  "updateAvailable": {
+    "app": "E' disponibile Superpowers ${latest} (la tua versione è ${current}).",
+    "core": "E' disponibile Superpowers Core ${latest} (la tua versione è ${current}).",
+    "askGameInstall": "Vuoi installare \"Superpowers Game\" system? Può essere utilizzato per creare giochi 2D+3D in HTML5.",
+    "systems": "Sono disponibili degli aggiornamenti per alcuni sistemi."
+  },
+
+  "status": {
+    "installingCore": "Installazione della più recente versione di Superpowers Core...",
+    "installingCoreSucceed": "Superpowers Core installato correttamente.",
+    "installingCoreFailed": "Installazione di Superpowers Core fallita. ${error}",
+    "installingGame": "Installazione del più recente Game system...",
+    "installingGameFailed": "Installazione di Game system fallita. ${error}"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "title": "Home",
+
+  "tagline": "Realizzazione di giochi indie in 2D+3D. Gratis ed open source,&nbsp;<b>finalmente</b>.",
+
+  "news": {
+    "couldNotFetch": "Non è stato possibile recuperare le notizie più recenti."
+  },
+
+  "chatrooms": {
+    "title": "Chatrooms",
+
+    "en": "Inglese",
+    "fr": "Francese"
+  },
+
+  "links": {
+    "title": "Links",
+
+    "documentation": "Documentazione",
+    "forums": "Forum della Community",
+    "patreon": "Patreon",
+    "openSource": "Open Source",
+    "teamSpeak": "TeamSpeak server"
+  }
+}
