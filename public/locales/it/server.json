@@ -1,0 +1,50 @@
+{
+  "myServer": "Il mio Server",
+  "log": "Server log",
+
+  "status": {
+  	"starting": "Server in avviamento...",
+  	"started": "Server in funzione.",
+  	"stopping": "Server in interruzione...",
+  	"stopped": "Server arrestato."
+  },
+
+  "buttons": {
+    "settings": "Impostazioni",
+    "start": "Avvia",
+    "stop": "Ferma"
+  },
+
+  "settings": {
+    "title": "Impostazioni del server",
+    "error": "Non è stato possibile caricare le impostazioni del server",
+
+    "general": {
+      "title": "Generale",
+
+      "mainPort": "Porta principale",
+      "buildPort": "Porta di compilazione",
+
+      "autoStart": "Avvia il server autmaticamente quando l'app viene lanciata"
+    },
+
+    "storage": {
+      "title": "Spazio di archiviazione",
+      "openProjectsFolder": "Apri la cartella dei progetti",
+      "recentBuilds": "Compilazioni recenti da mantenere"
+    },
+
+    "authentication": {
+      "title": "Autenticazione",
+      "openToInternet": "Apri il server in internet",
+
+      "guestAccount": "Abilita account ospite temporanei",
+      "localAccount": "Abilita la creazione di account locali",
+      "externalServices": "Abilita l'accesso con servizi esterni"
+    }
+  },
+  
+  "systems": {
+    "title": "Sistemi e plugin"
+  }
+}
