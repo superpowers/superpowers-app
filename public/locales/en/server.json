@@ -18,6 +18,7 @@
   "settings": {
     "title": "Server Settings",
     "error": "Could not load server settings",
+    "serverMustBeStopped": "Server must be stopped before editing settings.",
 
     "general": {
       "title": "General",
@@ -37,6 +38,7 @@
     "authentication": {
       "title": "Authentication",
       "openToInternet": "Open server to the Internet",
+      "password": "Password",
 
       "guestAccount": "Enable temporary guest accounts",
       "localAccount": "Enable local account creation",

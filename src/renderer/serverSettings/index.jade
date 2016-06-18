@@ -1,7 +1,7 @@
 .top
   .error(hidden)= t("server:settings.error")
   .disabled.dialog(hidden)
-    label Server must be stopped before editing settings.
+    label= t("server:settings.serverMustBeStopped")
   .settings
     section.general
       header= t("server:settings.general.title")
@@ -36,9 +36,15 @@
       table
         tr
           td
-            .checkbox
-              input#open-server-to-internet-checkbox(type="checkbox")
-              label(for="open-server-to-internet-checkbox")= t("server:settings.authentication.openToInternet")
+            ol
+              li.checkbox
+                input#open-server-to-internet-checkbox(type="checkbox")
+                label(for="open-server-to-internet-checkbox")= t("server:settings.authentication.openToInternet")
+              li.password(hidden)
+                label= t("server:settings.authentication.password")
+                input(type="password")
+                button= t("common:actions.show")
+
         tr
           td
             ol

@@ -30,6 +30,9 @@ function onInitialize(sender: any, corePath: string, userDataPath: string, langu
 }
 
 function onQuit() {
+  serverSettings.applyScheduledSave();
+  settings.applyScheduledSave();
+
   localServer.shutdown(() => { electron.ipcRenderer.send("ready-to-quit"); });
 }
 

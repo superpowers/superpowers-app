@@ -58,8 +58,15 @@ export function load(callback: (err: Error) => void) {
   });
 }
 
-// TODO: Schedule a save with a short timeout if one isn't already planned, rather than saving right away
+let scheduleSaveTimeoutId: NodeJS.Timer;
 export function scheduleSave() {
+  if (scheduleSaveTimeoutId != null) return;
+  scheduleSaveTimeoutId = setTimeout(applyScheduledSave, 30 * 1000);
+}
+
+export function applyScheduledSave() {
+  if (scheduleSaveTimeoutId == null) return;
+
   const data = {
     favoriteServers,
     recentProjects,
@@ -69,5 +76,8 @@ export function scheduleSave() {
     savedChatrooms
   };
 
-  fs.writeFile(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
+  fs.writeFileSync(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
+
+  clearTimeout(scheduleSaveTimeoutId);
+  scheduleSaveTimeoutId = null;
 }

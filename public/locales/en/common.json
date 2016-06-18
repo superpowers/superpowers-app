@@ -12,7 +12,9 @@
     "uninstall": "Uninstall",
     "open": "Open",
     "refresh": "Refresh",
-    "update": "Update"
+    "update": "Update",
+    "show": "Show",
+    "hide": "Hide"
   },
 
   "states": {

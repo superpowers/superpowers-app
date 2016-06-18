@@ -30,7 +30,9 @@ function startServer() {
 
   statusElt.textContent = i18n.t("server:status.starting");
   startStopServerButton.textContent = i18n.t("server:buttons.stop");
+
   serverSettings.enable(false);
+  serverSettings.applyScheduledSave();
 
   serverProcess = forkServerProcess([ "start" ]);
   serverProcess.on("exit", onServerExit);
