@@ -22,22 +22,18 @@ updateButton.addEventListener("click", onUpdateClick);
 const progressLabel = systemsPaneElt.querySelector(".details .actions .progress") as HTMLLabelElement;
 
 let serverProcess: ChildProcess;
+
+interface ItemData { version: string; downloadURL: string; localVersion: string; isLocalDev: boolean; };
+interface SystemData extends ItemData {
+  repository: string;
+  plugins: { [authorName: string]: { [pluginName: string]: ItemData; } };
+}
+
 let registry: {
   version: number;
-  core: {
-    version: string;
-    downloadURL: string;
-    localVersion: string;
-    isLocalDev: boolean;
-  }
-  systems: { [sytemId: string]: {
-    repository: string;
-    version: string;
-    downloadURL: string;
-    localVersion: string;
-    isLocalDev: boolean;
-    plugins: { [author: string]: { [name: string]: string } }
-} } };
+  core: ItemData;
+  systems: { [sytemId: string]: SystemData }
+};
 
 function refreshRegistry() {
   if (serverProcess != null) return;
@@ -71,7 +67,7 @@ function onRegistryReceived(event: any) {
   for (const systemId in systemsById) {
     const system = systemsById[systemId];
 
-    const systemElt = html("li", { dataset: { systemId }});
+    const systemElt = html("li", { dataset: { systemId } });
     html("div", "label", { parent: systemElt });
     treeView.append(systemElt, "group");
 
@@ -85,11 +81,11 @@ function onRegistryReceived(event: any) {
       treeView.append(authorElt, "group", systemElt);
 
       for (const pluginName in plugins) {
-        // const plugin = plugins[pluginName];
-
-        const pluginElt = html("li");
-        html("div", "label", { parent: pluginElt, textContent: `${pluginName}` });
+        const pluginElt = html("li", { dataset: { systemId, authorName, pluginName } });
+        html("div", "label", { parent: pluginElt });
         treeView.append(pluginElt, "item", authorElt);
+
+        updatePluginLabel(systemId, authorName, pluginName);
       }
     }
   }
@@ -102,6 +98,13 @@ function updateSystemLabel(systemId: string) {
   systemLabeElt.textContent = `${systemId} (Latest: v${system.version}, ${local})`;
 }
 
+function updatePluginLabel(systemId: string, authorName: string, pluginName: string) {
+  const pluginLabeElt = treeView.treeRoot.querySelector(`li[data-system-id=${systemId}][data-author-name=${authorName}][data-plugin-name=${pluginName}] .label`) as HTMLLabelElement;
+  const plugin = registry.systems[systemId].plugins[authorName][pluginName];
+  const local = plugin.isLocalDev ? "Installed: DEV" : (plugin.localVersion != null ? `Installed: v${plugin.localVersion}` : "Not Installed");
+  pluginLabeElt.textContent = `${pluginName} (Latest: v${plugin.version}, ${local})`;
+}
+
 function onSelectionChange() {
   if (serverProcess != null || treeView.selectedNodes.length !== 1) {
     installOrUninstallButton.disabled = true;
@@ -110,8 +113,13 @@ function onSelectionChange() {
   }
 
   const systemId = treeView.selectedNodes[0].dataset["systemId"];
+  const authorName = treeView.selectedNodes[0].dataset["authorName"];
+  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
+
   const system = systemId != null ? registry.systems[systemId] : null;
-  if (system == null || system.isLocalDev) {
+  const plugin = system != null && authorName != null ? system.plugins[authorName][pluginName] : null;
+
+  if (system == null || (plugin == null && system.isLocalDev) || (plugin != null && plugin.isLocalDev)) {
     installOrUninstallButton.disabled = true;
     updateButton.disabled = true;
     installOrUninstallButton.textContent = i18n.t("common:actions.install");
@@ -119,12 +127,12 @@ function onSelectionChange() {
   }
 
   installOrUninstallButton.disabled = false;
-  if (system.localVersion == null) {
+  if ((plugin == null && system.localVersion == null) || (plugin != null && plugin.localVersion == null)) {
     installOrUninstallButton.textContent = i18n.t("common:actions.install");
     updateButton.disabled = true;
   } else {
     installOrUninstallButton.textContent = i18n.t("common:actions.uninstall");
-    updateButton.disabled = system.version === system.localVersion;
+    updateButton.disabled = (plugin == null && system.version === system.localVersion) || (plugin != null && plugin.version === plugin.localVersion);
   }
 }
 
@@ -136,10 +144,17 @@ function onInstallOrUninstallClick() {
   updateButton.disabled = true;
 
   const systemId = treeView.selectedNodes[0].dataset["systemId"];
-  const system = registry.systems[systemId];
-  const action = system.localVersion == null ? "install" : "uninstall";
+  const authorName = treeView.selectedNodes[0].dataset["authorName"];
+  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
 
-  serverProcess = forkServerProcess([ action, systemId, "--force", `--download-url=${system.downloadURL}` ]);
+  const system = registry.systems[systemId];
+  const plugin = authorName != null ? system.plugins[authorName][pluginName] : null;
+
+  const action = (plugin == null && system.localVersion == null) || (plugin != null && plugin.localVersion == null) ? "install" : "uninstall";
+  const path = (plugin == null ? systemId : `${systemId}:${authorName}/${pluginName}`);
+  const downloadURL = plugin != null ? plugin.downloadURL : system.downloadURL;
+
+  serverProcess = forkServerProcess([ action, path, "--force", `--download-url=${downloadURL}` ]);
   progressLabel.textContent = `Running...`;
 
   serverProcess.on("message", onOperationProgress);
@@ -149,8 +164,13 @@ function onInstallOrUninstallClick() {
     progressLabel.textContent = "";
 
     if (statusCode === 0) {
-      system.localVersion = action === "install" ? system.version : null;
-      updateSystemLabel(systemId);
+      if (plugin == null) {
+        system.localVersion = action === "install" ? system.version : null;
+        updateSystemLabel(systemId);
+      } else {
+        plugin.localVersion = action === "install" ? plugin.version : null;
+        updatePluginLabel(systemId, authorName, pluginName);
+      }
     }
 
     refreshButton.disabled = false;
@@ -166,9 +186,15 @@ function onUpdateClick() {
   updateButton.disabled = true;
 
   const systemId = treeView.selectedNodes[0].dataset["systemId"];
-  const system = registry.systems[systemId];
+  const authorName = treeView.selectedNodes[0].dataset["authorName"];
+  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
 
-  serverProcess = forkServerProcess([ "update", systemId, "--force", `--download-url=${system.downloadURL}` ]);
+  const system = registry.systems[systemId];
+  const plugin = authorName != null ? system.plugins[authorName][pluginName] : null;
+  const path = (plugin == null ? systemId : `${systemId}:${authorName}/${pluginName}`);
+  const downloadURL = plugin != null ? plugin.downloadURL : system.downloadURL;
+
+  serverProcess = forkServerProcess([ "update", path, "--force", `--download-url=${downloadURL}` ]);
   progressLabel.textContent = `Running...`;
 
   serverProcess.on("message", onOperationProgress);
@@ -177,8 +203,13 @@ function onUpdateClick() {
     progressLabel.textContent = "";
 
     if (statusCode === 0) {
-      system.localVersion =  system.version;
-      updateSystemLabel(systemId);
+      if (plugin == null) {
+        system.localVersion = system.version;
+        updateSystemLabel(systemId);
+      } else {
+        plugin.localVersion = plugin.version;
+        updatePluginLabel(systemId, authorName, pluginName);
+      }
     }
 
     refreshButton.disabled = false;
