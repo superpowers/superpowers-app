@@ -8,6 +8,7 @@
   display: flex;
   min-height: 200px;
   overflow: hidden;
+  position: relative;
 
   > .error { padding: 1em; }
 
@@ -22,6 +23,13 @@
   > .systems {
     flex: 1 1 0;
     padding: 1em;
+  }
+
+  .disabled label {
+    margin: auto;
+    background-color: white;
+    padding: 0.75em;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
   }
 }
 

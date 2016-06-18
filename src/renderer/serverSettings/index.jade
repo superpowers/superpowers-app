@@ -1,5 +1,7 @@
 .top
   .error(hidden)= t("server:settings.error")
+  .disabled.dialog(hidden)
+    label Server must be stopped before editing settings.
   .settings
     section.general
       header= t("server:settings.general.title")

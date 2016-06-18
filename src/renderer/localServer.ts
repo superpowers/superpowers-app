@@ -3,6 +3,7 @@ import forkServerProcess from "./forkServerProcess";
 import * as settings from "./settings";
 import * as i18n from "../shared/i18n";
 import openServerSettings from "./tabs/openServerSettings";
+import * as serverSettings from "./serverSettings";
 import { append as appendToLog } from "./serverSettings/log";
 
 let serverProcess: ChildProcess;
@@ -29,6 +30,7 @@ function startServer() {
 
   statusElt.textContent = i18n.t("server:status.starting");
   startStopServerButton.textContent = i18n.t("server:buttons.stop");
+  serverSettings.enable(false);
 
   serverProcess = forkServerProcess([ "start" ]);
   serverProcess.on("exit", onServerExit);
@@ -59,6 +61,7 @@ function onServerExit() {
   statusElt.textContent = i18n.t("server:status.stopped");
   startStopServerButton.textContent = i18n.t("server:buttons.start");
   startStopServerButton.disabled = false;
+  serverSettings.enable(true);
 
   appendToLog("\n");
 

@@ -6,6 +6,7 @@ import "./systems";
 import "./log";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
+const disabledElt = settingsElt.querySelector(".disabled") as HTMLDivElement;
 
 const mainPortElt = settingsElt.querySelector(".main-port input") as HTMLInputElement;
 const buildPortElt = settingsElt.querySelector(".build-port input") as HTMLInputElement;
@@ -31,6 +32,10 @@ export function start() {
   autoStartServerElt.addEventListener("change", onChangeAutoStartServer);
 
   openProjectsFolderElt.addEventListener("click", onOpenProjectsFolderClick);
+}
+
+export function enable(enabled: boolean) {
+  disabledElt.hidden = enabled;
 }
 
 interface ServerConfig {
