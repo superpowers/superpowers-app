@@ -198,7 +198,11 @@ function checkUpdates(callback: Function) {
     return;
   }
 
-  if (core.latest === core.current) { callback(null); return; }
+  let isLocalCoreDev = true;
+  try { if (!fs.lstatSync(`${settings.corePath}/.git`).isDirectory()) isLocalCoreDev = false; }
+  catch (err) { isLocalCoreDev = false; }
+
+  if (isLocalCoreDev || core.latest === core.current) { callback(null); return; }
 
   const label = i18n.t("startup:updateAvailable.core", { latest: core.latest, current: core.current });
   const options = {
