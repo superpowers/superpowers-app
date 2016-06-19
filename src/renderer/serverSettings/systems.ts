@@ -15,25 +15,41 @@ const refreshButton = systemsPaneElt.querySelector(".registry .actions .refresh"
 refreshButton.addEventListener("click", refreshRegistry);
 
 const installOrUninstallButton = systemsPaneElt.querySelector(".details .actions .install-uninstall") as HTMLButtonElement;
-installOrUninstallButton.addEventListener("click", onInstallOrUninstallClick);
+installOrUninstallButton.addEventListener("click", () => { installOrUninstall(); });
 const updateButton = systemsPaneElt.querySelector(".details .actions .update") as HTMLButtonElement;
 updateButton.addEventListener("click", onUpdateClick);
 
 const progressLabel = systemsPaneElt.querySelector(".details .actions .progress") as HTMLLabelElement;
 
 let serverProcess: ChildProcess;
+let registry: Registry;
 
-interface ItemData { version: string; downloadURL: string; localVersion: string; isLocalDev: boolean; };
+type Registry = {
+  version: number;
+  core: ItemData;
+  systems: { [sytemId: string]: SystemData }
+}
+interface ItemData {
+  version: string;
+  downloadURL: string;
+  localVersion: string;
+  isLocalDev: boolean; };
 interface SystemData extends ItemData {
   repository: string;
   plugins: { [authorName: string]: { [pluginName: string]: ItemData; } };
 }
 
-let registry: {
-  version: number;
-  core: ItemData;
-  systems: { [sytemId: string]: SystemData }
-};
+type RegistryCallback = (registry: Registry) => void;
+
+let getRegistryCallbacks: RegistryCallback[] = [];
+export function getRegistry(callback: RegistryCallback) {
+  if (registry != null) {
+    callback(registry);
+  } else {
+    getRegistryCallbacks.push(callback);
+    refreshRegistry();
+  }
+}
 
 export function refreshRegistry() {
   if (serverProcess != null) return;
@@ -51,6 +67,16 @@ export function refreshRegistry() {
     serverProcess = null;
 
     refreshButton.disabled = false;
+  });
+}
+
+export function installGameSystem(callback: Function) {
+  getRegistry((registry) => {
+    treeView.clearSelection();
+    const systemElt = treeView.treeRoot.querySelector(`li[data-system-id=game]`) as HTMLLIElement;
+    treeView.addToSelection(systemElt);
+
+    installOrUninstall(callback);
   });
 }
 
@@ -89,6 +115,9 @@ function onRegistryReceived(event: any) {
       }
     }
   }
+
+  for (const getRegistryCallback of getRegistryCallbacks) getRegistryCallback(registry);
+  getRegistryCallbacks.length = 0;
 }
 
 function updateSystemLabel(systemId: string) {
@@ -136,7 +165,7 @@ function onSelectionChange() {
   }
 }
 
-function onInstallOrUninstallClick() {
+function installOrUninstall(callback?: Function) {
   if (serverProcess != null) return;
 
   refreshButton.disabled = true;
@@ -175,6 +204,8 @@ function onInstallOrUninstallClick() {
 
     refreshButton.disabled = false;
     onSelectionChange();
+
+    if (callback != null) callback();
   });
 }
 

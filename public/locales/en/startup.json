@@ -12,7 +12,6 @@
   "updateAvailable": {
     "app": "Superpowers ${latest} is available (you're running ${current}).",
     "core": "Superpowers Core ${latest} is available (you're running ${current}).",
-    "askGameInstall": "Do you want to install the \"Superpowers Game\" system now? It can be used to create HTML5 2D+3D game projects.",
     "systems": "There are updates available for some systems."
   },
 

@@ -57,6 +57,9 @@ html
           progress
       .version
 
+    .waiting-game-install.dialog(hidden)
+      label= t("welcome:askGameInstall.waiting")
+
     script.
       window.addEventListener("keyup", (event) => {
         if (event.keyCode === 123 /* F12 */) electron.remote.getCurrentWindow().webContents.openDevTools();

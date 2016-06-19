@@ -29,8 +29,7 @@ interface ComponentInfo {
 
 const components: { [name: string]: ComponentInfo } = {
   "app": { repository: "superpowers/superpowers-app", current: appVersion, latest: null },
-  "core": { repository: "superpowers/superpowers-core", current: null, latest: null },
-  "game": { repository: "superpowers/superpowers-game", current: null, latest: null }
+  "core": { repository: "superpowers/superpowers-core", current: null, latest: null }
 };
 
 function fetchVersions(callback: (err: Error) => void) {
@@ -155,7 +154,7 @@ function checkAppUpdate(callback: Function) {
   });
 }
 
-function checkUpdates(callback: Function) {
+function checkUpdates(callback: (err: string) => void) {
   const core = components["core"];
   if (core.latest == null) { callback(null); return; }
 
@@ -165,36 +164,7 @@ function checkUpdates(callback: Function) {
 
   // First installation
   if (core.current == null) {
-    installCore((err) => {
-      if (err != null) return;
-
-      const label = i18n.t("startup:updateAvailable.askGameInstall");
-      const options = {
-        validationLabel: i18n.t("common:actions.install"),
-        cancelLabel: i18n.t("common:actions.skip")
-      };
-      /* tslint:disable:no-unused-expression */
-      new dialogs.ConfirmDialog(label, options, (installGame) => {
-      /* tslint:enable:no-unused-expression */
-        if (installGame) {
-          splashScreen.setStatus(i18n.t("startup:status.installingGame"));
-          // FIXME: Use common stuff from the core folder
-          downloadRelease(components["game"].downloadURL, `${settings.userDataPath}/systems/game`, (error) => {
-            if (error != null) {
-              /* tslint:disable:no-unused-expression */
-              new dialogs.InfoDialog(i18n.t("startup:status.installingGameFailed", { error }), null, () => {
-                /* tslint:enable:no-unused-expression */
-                callback(error);
-              });
-            } else {
-              callback(null);
-            }
-          });
-          return;
-        }
-        callback();
-      });
-    });
+    installCore(callback);
     return;
   }
 
@@ -215,10 +185,10 @@ function checkUpdates(callback: Function) {
     /* tslint:enable:no-unused-expression */
     if (shouldUpdate) {
       // FIXME: Use common stuff from the core folder
-      installCore(() => { callback(); });
+      installCore(() => { callback(null); });
       return;
     }
-    callback();
+    callback(null);
   });
 
   return;

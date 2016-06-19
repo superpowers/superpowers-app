@@ -1,5 +1,7 @@
 import * as electron from "electron";
 import * as dialogs from "simple-dialogs";
+import * as async from "async";
+
 import * as i18n from "../shared/i18n";
 import * as settings from "./settings";
 import * as splashScreen from "./splashScreen";
@@ -8,6 +10,8 @@ import * as sidebar from "./sidebar";
 import * as me from "./sidebar/me";
 import * as home from "./home";
 import * as serverSettings from "./serverSettings";
+import * as serverSettingsSystems from "./serverSettings/systems";
+import openServerSettings from "./tabs/openServerSettings";
 import * as localServer from "./localServer";
 import * as chat from "./chat";
 import WelcomeDialog from "./WelcomeDialog";
@@ -64,19 +68,19 @@ function start() {
   sidebar.start();
   home.start();
   serverSettings.start();
-  localServer.start();
 
   if (settings.nickname == null) {
-    showWelcomeDialog();
+    async.series([ showWelcomeDialog, installFirstSystem ]);
   } else {
     me.start();
     chat.start();
+    localServer.start();
   }
 
   splashScreen.fadeOut();
 }
 
-function showWelcomeDialog() {
+function showWelcomeDialog(callback: Function) {
   /* tslint:disable:no-unused-expression */
   new WelcomeDialog((result) => {
     /* tslint:enable:no-unused-expression */
@@ -92,5 +96,60 @@ function showWelcomeDialog() {
 
     me.start();
     chat.start();
+
+    setTimeout(callback, 500);
+  });
+}
+
+function installFirstSystem(callback: Function) {
+  const label = i18n.t("welcome:askGameInstall.prompt");
+  const options = {
+    header: i18n.t("welcome:askGameInstall.title"),
+    validationLabel: i18n.t("common:actions.install"),
+    cancelLabel: i18n.t("common:actions.skip")
+  };
+  /* tslint:disable:no-unused-expression */
+  new dialogs.ConfirmDialog(label, options, (installGame) => {
+  /* tslint:enable:no-unused-expression */
+    if (installGame) {
+      const waitingGameInstallElt = document.querySelector(".waiting-game-install") as HTMLDivElement;
+
+      async.series([
+        (cb) => {
+          openServerSettings();
+          serverSettingsSystems.installGameSystem(cb);
+          waitingGameInstallElt.hidden = false;
+        },
+        (cb) => {
+          waitingGameInstallElt.hidden = true;
+
+          const label = i18n.t("welcome:serverInformation.info");
+          const options = {
+            haeder: i18n.t("welcome:serverInformation.title"),
+            closeLabel: i18n.t("welcome:serverInformation.gotIt")
+          };
+
+          /* tslint:disable:no-unused-expression */
+          new dialogs.InfoDialog(label, options, cb);
+        },
+        (cb) => {
+          const label = i18n.t("welcome:sidebarInformation.info");
+          const options = {
+            header: i18n.t("welcome:sidebarInformation.title")
+          }
+
+          /* tslint:disable:no-unused-expression */
+          new dialogs.InfoDialog(label, options, cb);
+        },
+        (cb) => {
+          localServer.start();
+          callback();
+        }
+      ]);
+
+    } else {
+      localServer.start();
+      callback();
+    }
   });
 }
