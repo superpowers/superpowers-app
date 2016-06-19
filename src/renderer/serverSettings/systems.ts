@@ -35,7 +35,7 @@ let registry: {
   systems: { [sytemId: string]: SystemData }
 };
 
-function refreshRegistry() {
+export function refreshRegistry() {
   if (serverProcess != null) return;
 
   registry = null;

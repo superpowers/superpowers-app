@@ -3,7 +3,7 @@ import * as electron from "electron";
 import * as settings from "../settings";
 import * as i18n from "../../shared/i18n";
 
-import "./systems";
+import * as systems from "./systems";
 import "./log";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
@@ -48,6 +48,8 @@ export function start() {
   passwordElt.value = serverConfig.password;
   passwordElt.addEventListener("input", scheduleSave);
   showOrHidePasswordElt.addEventListener("click", onShowOrHidePassword);
+
+  systems.refreshRegistry();
 }
 
 export function enable(enabled: boolean) {
