@@ -141,6 +141,11 @@ namespace SupApp {
   }
 
   export function writeFile(filename: string, data: any, options: any, callback: (err: NodeJS.ErrnoException) => void) {
+    if (callback == null && typeof options === "function") {
+      callback = options;
+      options = null;
+    }
+
     checkPathAuthorization(filename, (normalizedFilename, authorized) => {
       if (!authorized) {
         callback(new Error(`Access to "${normalizedFilename}" hasn't been authorized.`));
