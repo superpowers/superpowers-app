@@ -1,12 +1,8 @@
 import * as electron from "electron";
 
-import * as dummy_fs from "fs";
-import * as dummy_mkdirp from "mkdirp";
-import * as dummy_childProcess from "child_process";
-
-const fs: typeof dummy_fs = electron.remote.require("fs");
-const fsMkdirp: typeof dummy_mkdirp = electron.remote.require("mkdirp");
-const childProcess: typeof dummy_childProcess = electron.remote.require("child_process");
+import * as  fs from "fs";
+import * as fsMkdirp from "mkdirp";
+import * as childProcess from "child_process";
 
 const currentWindow = electron.remote.getCurrentWindow();
 
@@ -156,7 +152,7 @@ namespace SupApp {
     });
   }
 
-  export function spawnChildProcess(filename: string, callback: (err: Error, childProcess?: dummy_childProcess.ChildProcess) => void) {
+  export function spawnChildProcess(filename: string, callback: (err: Error, childProcess?: childProcess.ChildProcess) => void) {
     checkPathAuthorization(filename, (normalizedFilename, authorized) => {
       if (!authorized) {
         callback(new Error(`Access to "${normalizedFilename}" hasn't been authorized.`));
