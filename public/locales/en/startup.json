@@ -12,7 +12,7 @@
   "updateAvailable": {
     "app": "Superpowers ${latest} is available (you're running ${current}).",
     "core": "Superpowers Core ${latest} is available (you're running ${current}).",
-    "systems": "There are updates available for some systems."
+    "systemsAndPlugins": "The following items have update available: ${systemsAndPlugins}."
   },
 
   "status": {

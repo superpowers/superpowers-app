@@ -70,15 +70,16 @@ function start() {
   home.start();
   serverSettings.start();
 
-  if (settings.nickname == null) {
-    async.series([ showWelcomeDialog, installFirstSystem ]);
-  } else {
-    me.start();
-    chat.start();
-    localServer.start();
-  }
+  splashScreen.fadeOut(() => {
+    if (settings.nickname == null) {
+      async.series([ showWelcomeDialog, installFirstSystem ]);
+    } else {
+      me.start();
+      chat.start();
 
-  splashScreen.fadeOut();
+      updateSystemsAndPlugins();
+    }
+  });
 }
 
 function showWelcomeDialog(callback: Function) {
@@ -156,5 +157,42 @@ function installFirstSystem(callback: Function) {
         callback();
       }
     ]);
+  });
+}
+
+function updateSystemsAndPlugins() {
+  serverSettingsSystems.getRegistry((registry) => {
+    const systemsAndPlugins: string[] = [];
+    for (const systemId in registry.systems) {
+      const system = registry.systems[systemId];
+      if (!system.isLocalDev && system.localVersion != null && system.version !== system.localVersion) systemsAndPlugins.push(systemId);
+
+      for (const authorName in system.plugins) {
+        for (const pluginName in system.plugins[authorName]) {
+          const plugin = system.plugins[authorName][pluginName];
+          if (!plugin.isLocalDev && plugin.localVersion != null && plugin.version !== plugin.localVersion) systemsAndPlugins.push(`${systemId}:${authorName}/${pluginName}`);
+        }
+      }
+    }
+
+    if (systemsAndPlugins.length === 0) { localServer.start(); return; }
+
+    const label = i18n.t("startup:updateAvailable.systemsAndPlugins", { systemsAndPlugins: systemsAndPlugins.join(", ") });
+    const options = {
+      validationLabel: i18n.t("common:actions.update"),
+      cancelLabel: i18n.t("common:actions.skip")
+    };
+
+    /* tslint:disable:no-unused-expression */
+    new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
+      /* tslint:enable:no-unused-expression */
+
+      if (shouldUpdate) {
+        openServerSettings();
+        serverSettingsSystems.updateAll(() => { localServer.start(); });
+      } else {
+        localServer.start();
+      }
+    });
   });
 }

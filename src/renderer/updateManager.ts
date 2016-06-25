@@ -22,7 +22,7 @@ if (appVersion === "0.0.0-dev") {
 } else appVersion = `v${appVersion}`;
 
 export function checkForUpdates(callback: (err: Error) => void) {
-  async.series([ checkAppUpdate, checkUpdates ], callback);
+  async.series([ checkAppUpdate, checkCoreUpdate ], callback);
 }
 
 function checkAppUpdate(callback: (err: Error) => void) {
@@ -52,7 +52,7 @@ function checkAppUpdate(callback: (err: Error) => void) {
   });
 }
 
-function checkUpdates(callback: (err: Error) => void) {
+function checkCoreUpdate(callback: (err: Error) => void) {
   fs.readFile(`${settings.corePath}/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
     if (err != null && err.code !== "ENOENT") throw err;
 
@@ -69,15 +69,11 @@ function checkUpdates(callback: (err: Error) => void) {
           callback(null);
         }
       });
-      return;
+    } else {
+      systemServerSettings.getRegistry((registry) => {
+        updateCore(registry, callback);
+      });
     }
-
-    systemServerSettings.getRegistry((registry) => {
-      async.series([
-        (cb) => { updateCore(registry, cb); },
-        (cb) => { updateSystemsAndPlugins(registry, cb); }
-      ], callback);
-    });
   });
 
   return;
@@ -214,23 +210,5 @@ function updateCore(registry: systemServerSettings.Registry, callback: Function)
     }, (progress) => {
       splashScreen.setProgressValue(progress);
     });
-  });
-}
-
-function updateSystemsAndPlugins(registry: systemServerSettings.Registry, callback: Function) {
-  // TODO
-
-  // const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
-  const label = "Update systems and plugins?";
-  const options = {
-    validationLabel: i18n.t("common:actions.update"),
-    cancelLabel: i18n.t("common:actions.skip")
-  };
-
-  /* tslint:disable:no-unused-expression */
-  new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
-    /* tslint:enable:no-unused-expression */
-
-    callback();
   });
 }

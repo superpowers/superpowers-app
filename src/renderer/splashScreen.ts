@@ -38,7 +38,10 @@ export function setProgressMax(max: number) {
   progressBarElt.max = max;
 }
 
-export function fadeOut() {
+let fadeOutCallback: Function;
+export function fadeOut(callback: Function) {
+  fadeOutCallback = callback;
+
   if (splashInAnim != null) onAppReady = playOutAnimation;
   else playOutAnimation();
 }
@@ -60,6 +63,7 @@ function playOutAnimation() {
 
     loadingOutAnim.addEventListener("finish", () => {
       loadingElt.parentElement.removeChild(loadingElt);
+      fadeOutCallback();
     });
   });
 }

@@ -111,6 +111,38 @@ export function installGameSystem(callback: Function) {
   });
 }
 
+export function updateAll(callback: Function) {
+  // FIXME: Update every items instead of first found one
+  getRegistry((registry) => {
+    let item: { path: string, downloadURL: string };
+    for (const systemId in registry.systems) {
+      const system = registry.systems[systemId];
+      if (!system.isLocalDev && system.localVersion != null && system.version !== system.localVersion) {
+        item = { path: systemId, downloadURL: system.downloadURL };
+        break;
+      }
+
+      for (const authorName in system.plugins) {
+        for (const pluginName in system.plugins[authorName]) {
+          const plugin = system.plugins[authorName][pluginName];
+          if (!plugin.isLocalDev && plugin.localVersion != null && plugin.version !== plugin.localVersion) {
+            item = { path: `${systemId}:${authorName}/${pluginName}`, downloadURL: plugin.downloadURL };
+            break;
+          }
+        }
+        if (item != null) break;
+      }
+    }
+
+    if (item == null) { callback(); return; }
+
+    action("update", item.path, item.downloadURL, () => {
+      progressLabel.textContent = "";
+      callback();
+    }, (progress) => { progressLabel.textContent = `${progress}%`; });
+  });
+}
+
 function onRegistryReceived(event: any) {
   if (event.type !== "registry") {
     // TODO: Whoops?! Handle error?
