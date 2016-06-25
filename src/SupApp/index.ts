@@ -148,7 +148,18 @@ namespace SupApp {
         return;
       }
 
+      // This hack is required because buffers might be passed from another JS context
+      // (for example, from the build dialog). The other JS context will have its own Buffer object
+      // and fs.writeFile uses `instanceof` to check if the object is a buffer, so it would fail.
+      let oldProto: any;
+      if (data._isBuffer) {
+        oldProto = data.__proto__;
+        data.__proto__ = Buffer.prototype;
+      }
+
       fs.writeFile(normalizedFilename, data, options, callback);
+
+      if (data._isBuffer) data.__proto__ = oldProto;
     });
   }
 
