@@ -6,6 +6,7 @@ import * as dialogs from "simple-dialogs";
 import * as mkdirp from "mkdirp";
 import * as dummy_https from "https";
 import * as settings from "./settings";
+import * as systemServerSettings from "./serverSettings/systems";
 import * as i18n from "../shared/i18n";
 import * as splashScreen from "./splashScreen";
 import fetch from "../shared/fetch";
@@ -20,161 +21,177 @@ if (appVersion === "0.0.0-dev") {
   appVersion = `v${JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`, { encoding: "utf8" })).version}-dev`;
 } else appVersion = `v${appVersion}`;
 
-interface ComponentInfo {
-  repository: string;
-  current: string;
-  latest: string;
-  downloadURL?: string;
+export function checkForUpdates(callback: (err: Error) => void) {
+  async.series([ checkAppUpdate, checkUpdates ], callback);
 }
 
-const components: { [name: string]: ComponentInfo } = {
-  "app": { repository: "superpowers/superpowers-app", current: appVersion, latest: null },
-  "core": { repository: "superpowers/superpowers-core", current: null, latest: null }
-};
+function checkAppUpdate(callback: (err: Error) => void) {
+  if (electron.remote.app.getVersion() === "0.0.0-dev") { callback(null); return; }
 
-function fetchVersions(callback: (err: Error) => void) {
-  // TODO: Check the various installed systems too
+  fetch(`https://api.github.com/repos/superpowers/superpowers-app/releases/latest`, "json", (err, lastRelease) => {
+    if (err != null) { callback(err); return; }
+    if (lastRelease.tag_name === appVersion) { callback(null); return; }
 
-  fs.readFile(`${settings.corePath}/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
-    if (err != null && err.code !== "ENOENT") throw err;
+    const label = i18n.t("startup:updateAvailable.app", { latest: lastRelease.tag_name, current: appVersion });
+    const options = {
+      validationLabel: i18n.t("common:actions.download"),
+      cancelLabel: i18n.t("common:actions.skip")
+    };
 
-    if (corePackageJSON != null) {
-      const corePackage = JSON.parse(corePackageJSON);
-      components["core"].current = `v${corePackage.version}`;
-    }
+    /* tslint:disable:no-unused-expression */
+    new dialogs.ConfirmDialog(label, options, (shouldDownload) => {
+      /* tslint:enable:no-unused-expression */
+      if (shouldDownload) {
+        electron.shell.openExternal("https://github.com/superpowers/superpowers-app/releases/latest");
+        electron.remote.app.quit();
+        return;
+      }
 
-    async.each(Object.keys(components), (name, cb) => {
-      fetch(`https://api.github.com/repos/${components[name].repository}/releases/latest`, "json", (err, lastRelease) => {
-        if (err != null) { cb(err); return; }
-        components[name].latest = lastRelease.tag_name as string;
-        components[name].downloadURL = lastRelease.assets[0].browser_download_url as string;
-        cb();
-      });
-    }, callback);
+      callback(null);
+    });
   });
 }
 
-function downloadRelease(downloadURL: string, downloadPath: string, callback: (err: string) => void) {
-  splashScreen.setProgressVisible(true);
-  splashScreen.setProgressValue(null);
+function checkUpdates(callback: (err: Error) => void) {
+  fs.readFile(`${settings.corePath}/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
+    if (err != null && err.code !== "ENOENT") throw err;
 
-  https.get({
-    hostname: "github.com",
-    path: downloadURL,
-    headers: { "user-agent": "Superpowers" }
-  }, (res) => {
-    if (res.statusCode !== 200) {
-      callback(`Unexpected status code: ${res.statusCode}`);
+    // First installation
+    if (corePackageJSON == null) {
+      installCore((error) => {
+        if (error != null) {
+          /* tslint:disable:no-unused-expression */
+          new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error: error.message }), null, () => {
+            /* tslint:enable:no-unused-expression */
+            callback(error);
+          });
+        } else {
+          callback(null);
+        }
+      });
       return;
     }
 
-    const size = parseInt(res.headers["content-length"], 10);
-    splashScreen.setProgressMax(size * 2);
-    splashScreen.setProgressValue(0);
-    let downloaded = 0;
+    systemServerSettings.getRegistry((registry) => {
+      async.series([
+        (cb) => { updateCore(registry, cb); },
+        (cb) => { updateSystemsAndPlugins(registry, cb); }
+      ], callback);
+    });
+  });
 
-    const buffers: Buffer[] = [];
-    res.on("data", (data: Buffer) => { buffers.push(data); downloaded += data.length; splashScreen.setProgressValue(downloaded); });
+  return;
+}
+
+export function getCoreDownloadURL(callback: (err: Error, downloadURL?: string) => any) {
+  const registryUrl = "https://raw.githubusercontent.com/superpowers/superpowers-registry/master/registry.json";
+  const request = https.get(registryUrl, (res) => {
+    if (res.statusCode !== 200) {
+      callback(new Error(`Unexpected status code: ${res.statusCode}`));
+      return;
+    }
+
+    let content = "";
+    res.on("data", (chunk: string) => { content += chunk; });
     res.on("end", () => {
-      const zipBuffer = Buffer.concat(buffers);
+      let registry: any;
+      try { registry = JSON.parse(content); }
+      catch (err) {
+        callback(new Error(`Could not parse registry as JSON`));
+        return;
+      }
 
-      yauzl.fromBuffer(zipBuffer, { lazyEntries: true }, (err: Error, zipFile: any) => {
-        if (err != null) throw err;
+      callback(null, registry.core.downloadURL);
+    });
+  });
 
-        splashScreen.setProgressMax(zipFile.entryCount * 2);
-        splashScreen.setProgressValue(zipFile.entryCount);
-        let entriesProcessed = 0;
+  request.on("error", (err: Error) => {
+    callback(err);
+  });
+}
 
-        const rootFolderName = path.parse(downloadURL).name;
+function installCore(callback: (error: Error) => void) {
+  splashScreen.setStatus(i18n.t("startup:status.installingCore"));
 
-        zipFile.readEntry();
-        zipFile.on("entry", (entry: any) => {
-          if (entry.fileName.indexOf(rootFolderName) !== 0) throw new Error(`Found file outside of root folder: ${entry.fileName} (${rootFolderName})`);
+  splashScreen.setProgressVisible(true);
+  splashScreen.setProgressValue(null);
 
-          const filename = path.join(downloadPath, entry.fileName.replace(rootFolderName, ""));
-          if (/\/$/.test(entry.fileName)) {
-            mkdirp(filename, (err) => {
-              if (err != null) throw err;
-              entriesProcessed++;
-              splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
-              zipFile.readEntry();
-            });
-          } else {
-            zipFile.openReadStream(entry, (err: Error, readStream: NodeJS.ReadableStream) => {
-              if (err) throw err;
+  getCoreDownloadURL((err, downloadURL) => {
+    if (err != null) { callback(err); return; }
 
-              mkdirp(path.dirname(filename), (err: Error) => {
+    https.get({
+      hostname: "github.com",
+      path: downloadURL,
+      headers: { "user-agent": "Superpowers" }
+    }, (res) => {
+      if (res.statusCode !== 200) {
+        callback(new Error(`Unexpected status code: ${res.statusCode}`));
+        return;
+      }
+
+      const size = parseInt(res.headers["content-length"], 10);
+      splashScreen.setProgressMax(size * 2);
+      splashScreen.setProgressValue(0);
+      let downloaded = 0;
+
+      const buffers: Buffer[] = [];
+      res.on("data", (data: Buffer) => { buffers.push(data); downloaded += data.length; splashScreen.setProgressValue(downloaded); });
+      res.on("end", () => {
+        const zipBuffer = Buffer.concat(buffers);
+
+        yauzl.fromBuffer(zipBuffer, { lazyEntries: true }, (err: Error, zipFile: any) => {
+          if (err != null) throw err;
+
+          splashScreen.setProgressMax(zipFile.entryCount * 2);
+          splashScreen.setProgressValue(zipFile.entryCount);
+          let entriesProcessed = 0;
+
+          const rootFolderName = path.parse(downloadURL).name;
+
+          zipFile.readEntry();
+          zipFile.on("entry", (entry: any) => {
+            if (entry.fileName.indexOf(rootFolderName) !== 0) throw new Error(`Found file outside of root folder: ${entry.fileName} (${rootFolderName})`);
+
+            const filename = path.join(settings.corePath, entry.fileName.replace(rootFolderName, ""));
+            if (/\/$/.test(entry.fileName)) {
+              mkdirp(filename, (err) => {
+                if (err != null) throw err;
+                entriesProcessed++;
+                splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
+                zipFile.readEntry();
+              });
+            } else {
+              zipFile.openReadStream(entry, (err: Error, readStream: NodeJS.ReadableStream) => {
                 if (err) throw err;
-                readStream.pipe(fs.createWriteStream(filename));
-                readStream.on("end", () => {
-                  entriesProcessed++;
-                  splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
-                  zipFile.readEntry();
+
+                mkdirp(path.dirname(filename), (err: Error) => {
+                  if (err) throw err;
+                  readStream.pipe(fs.createWriteStream(filename));
+                  readStream.on("end", () => {
+                    entriesProcessed++;
+                    splashScreen.setProgressValue(zipFile.entryCount + entriesProcessed);
+                    zipFile.readEntry();
+                  });
                 });
               });
-            });
-          }
-        });
+            }
+          });
 
-        zipFile.on("end", () => {
-          splashScreen.setProgressVisible(false);
-          callback(null);
+          zipFile.on("end", () => {
+            splashScreen.setProgressVisible(false);
+            splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
+            callback(null);
+          });
         });
       });
     });
   });
 }
 
-export function checkForUpdates(callback: Function) {
-  async.series([ fetchVersions, checkAppUpdate, checkUpdates ],
-  (err) => { callback(); });
-}
+function updateCore(registry: systemServerSettings.Registry, callback: Function) {
+  if (registry.core.isLocalDev || registry.core.version === registry.core.localVersion) { callback(); return; }
 
-function checkAppUpdate(callback: Function) {
-  const app = components["app"];
-  if (electron.remote.app.getVersion() === "0.0.0-dev") { callback(); return; }
-  if (app.latest == null || app.latest === app.current) { callback(); return; }
-
-  const label = i18n.t("startup:updateAvailable.app", { latest: app.latest, current: app.current });
-  const options = {
-    validationLabel: i18n.t("common:actions.download"),
-    cancelLabel: i18n.t("common:actions.skip")
-  };
-
-  /* tslint:disable:no-unused-expression */
-  new dialogs.ConfirmDialog(label, options, (shouldDownload) => {
-    /* tslint:enable:no-unused-expression */
-    if (shouldDownload) {
-      electron.shell.openExternal("http://superpowers-html5.com/");
-      electron.remote.app.quit();
-      return;
-    }
-
-    callback();
-  });
-}
-
-function checkUpdates(callback: (err: string) => void) {
-  const core = components["core"];
-  if (core.latest == null) { callback(null); return; }
-
-  // TEMPORARY: Don't offer installing superpowers-core v0.x
-  // since it's not compatible
-  if (core.latest[1] === "0") { callback(null); return; }
-
-  // First installation
-  if (core.current == null) {
-    installCore(callback);
-    return;
-  }
-
-  let isLocalCoreDev = true;
-  try { if (!fs.lstatSync(`${settings.corePath}/.git`).isDirectory()) isLocalCoreDev = false; }
-  catch (err) { isLocalCoreDev = false; }
-
-  if (isLocalCoreDev || core.latest === core.current) { callback(null); return; }
-
-  const label = i18n.t("startup:updateAvailable.core", { latest: core.latest, current: core.current });
+  const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
   const options = {
     validationLabel: i18n.t("common:actions.update"),
     cancelLabel: i18n.t("common:actions.skip")
@@ -183,30 +200,37 @@ function checkUpdates(callback: (err: string) => void) {
   /* tslint:disable:no-unused-expression */
   new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
     /* tslint:enable:no-unused-expression */
-    if (shouldUpdate) {
-      // FIXME: Use common stuff from the core folder
-      installCore(() => { callback(null); });
-      return;
-    }
-    callback(null);
-  });
+    if (!shouldUpdate) { callback(null); return; }
 
-  return;
+    splashScreen.setStatus(i18n.t("startup:status.installingCore"));
+    splashScreen.setProgressVisible(true);
+    splashScreen.setProgressMax(100);
+    splashScreen.setProgressValue(null);
+
+    systemServerSettings.action("update", "core", registry.core.downloadURL, () => {
+      splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
+      splashScreen.setProgressVisible(false);
+      callback();
+    }, (progress) => {
+      splashScreen.setProgressValue(progress);
+    });
+  });
 }
 
-function installCore(callback: (error: string) => void) {
-  splashScreen.setStatus(i18n.t("startup:status.installingCore"));
+function updateSystemsAndPlugins(registry: systemServerSettings.Registry, callback: Function) {
+  // TODO
 
-  downloadRelease(components["core"].downloadURL, settings.corePath, (error) => {
-    if (error != null) {
-      /* tslint:disable:no-unused-expression */
-      new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error }), null, () => {
-        /* tslint:enable:no-unused-expression */
-        callback(error);
-      });
-    } else {
-      splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
-      callback(null);
-    }
+  // const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
+  const label = "Update systems and plugins?";
+  const options = {
+    validationLabel: i18n.t("common:actions.update"),
+    cancelLabel: i18n.t("common:actions.skip")
+  };
+
+  /* tslint:disable:no-unused-expression */
+  new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
+    /* tslint:enable:no-unused-expression */
+
+    callback();
   });
 }
