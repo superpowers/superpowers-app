@@ -124,9 +124,6 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
     const process = serverProcessById[id] = forkServerProcess([ command, id, "--force", `--download-url=${registryItem.downloadURL}` ]);
     updateUI();
 
-    // FIXME: The update on the core fails somehow if we remove this line
-    process.stdout.on("data", (data: any) => { /* NOTHING */ });
-
     process.on("message", (event: any) => {
       if (event.type === "error") {
         /* tslint:disable:no-unused-expression */

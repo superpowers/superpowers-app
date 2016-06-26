@@ -5,6 +5,8 @@ import * as fs from "fs";
 import * as dialogs from "simple-dialogs";
 import * as mkdirp from "mkdirp";
 import * as dummy_https from "https";
+
+import forkServerProcess from "./forkServerProcess";
 import * as settings from "./settings";
 import * as systemServerSettings from "./serverSettings/systems";
 import * as i18n from "../shared/i18n";
@@ -198,14 +200,34 @@ function updateCore(callback: (error: Error) => void) {
       splashScreen.setProgressMax(100);
       splashScreen.setProgressValue(null);
 
-      callback(null);
-      // systemServerSettings.action("update", "core", registry.core.downloadURL, () => {
-      //   splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
-      //   splashScreen.setProgressVisible(false);
-      //   callback();
-      // }, (progress) => {
-      //   splashScreen.setProgressValue(progress);
-      // });
+      const process = forkServerProcess([ "update", "core", "--force", `--download-url=${registry.core.downloadURL}` ]);
+
+      // FIXME: The update on the core fails somehow if we remove this line
+      process.stdout.on("data", (data: any) => { /* NOTHING */ });
+
+      process.on("message", (event: any) => {
+        if (event.type === "error") {
+          /* tslint:disable:no-unused-expression */
+          new dialogs.InfoDialog(event.message);
+          /* tslint:enable:no-unused-expression */
+          return;
+        }
+
+        if (event.type !== "progress") {
+          // TODO: Whoops?! Handle error?
+          console.log(event);
+          return;
+        }
+
+        splashScreen.setProgressValue(event.value);
+      });
+
+      process.on("exit", (statusCode: number) => {
+        splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
+        splashScreen.setProgressVisible(false);
+
+        callback(statusCode !== 0 ? new Error("Update failed") : null);
+      });
     });
   });
 }
