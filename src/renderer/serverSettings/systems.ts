@@ -152,7 +152,6 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
 export function updateAll(callback?: Function) {
   getRegistry((registry) => {
     async.each(Object.keys(registry.systems), (systemId, cb) => {
-      console.log("system", systemId);
       const system = registry.systems[systemId];
       async.parallel([
         (systemCb) => {
