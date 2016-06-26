@@ -141,9 +141,23 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
     process.on("exit", (statusCode: number) => {
       progressElt.textContent = "";
       delete serverProcessById[id];
-      if (statusCode === 0) registryItem.localVersion = command === "uninstall" ? null : registryItem.version;
-      updateUI();
 
+      if (statusCode === 0) {
+        if (command === "uninstall") {
+          registryItem.localVersion = null;
+          if (item.pluginName == null) {
+            for (const authorName in registry.systems[item.systemId].plugins) {
+              for (const pluginName in registry.systems[item.systemId].plugins[authorName]) {
+                registry.systems[item.systemId].plugins[authorName][pluginName].localVersion = null;
+              }
+            }
+          }
+        } else {
+          registryItem.localVersion = registryItem.version;
+        }
+      }
+
+      updateUI();
       if (callback != null) callback(statusCode === 0);
     });
   });
@@ -194,15 +208,16 @@ function updateUI() {
 
     const [ systemId, pluginPath ] = id.split(":");
     const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
-    const registryItem = pluginName != null ? registry.systems[systemId].plugins[authorName][pluginName] : registry.systems[systemId];
+    const registrySystem = registry.systems[systemId];
+    const registryItem = pluginName != null ? registrySystem.plugins[authorName][pluginName] : registrySystem;
 
-    installOrUninstallButton.disabled = serverProcessById[id] != null || registryItem.isLocalDev;
+    installOrUninstallButton.disabled = serverProcessById[id] != null || registryItem.isLocalDev || (pluginName != null && registrySystem.localVersion == null);
     updateButton.disabled = serverProcessById[id] != null || registryItem.isLocalDev || registryItem.localVersion == null || registryItem.version === registryItem.localVersion;
 
     const installOrUninstallAction = registryItem.isLocalDev || registryItem.localVersion == null ? "install" : "uninstall";
     installOrUninstallButton.textContent = i18n.t(`common:actions.${installOrUninstallAction}`);
 
-    installedLabel.textContent = i18n.t("server:systems.installed", { installed: registryItem.isLocalDev ? "DEV" : (registryItem.localVersion != null ? registryItem.localVersion : "")});
+    installedLabel.textContent = i18n.t("server:systems.installed", { installed: registryItem.isLocalDev ? "DEV" : (registryItem.localVersion == null ? "NONE" : registryItem.localVersion)});
     latestLabel.textContent = i18n.t("server:systems.latest", { latest: registryItem.version });
 
     // TODO: Update system details (version, description, ...)
