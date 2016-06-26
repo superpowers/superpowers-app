@@ -37,9 +37,7 @@ function onAddServerClick(event: MouseEvent) {
     initialLabelValue: ""
   };
 
-  /* tslint:disable:no-unused-expression */
   new AddAddOrEditServerDialog(i18n.t("sidebar:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
-    /* tslint:enable:no-unused-expression */
     if (newServer == null) return;
 
     let id = 0;
@@ -64,9 +62,7 @@ function onEditServerClick(event: MouseEvent) {
     initialLabelValue: serverEntry.label
   };
 
-  /* tslint:disable:no-unused-expression */
   new AddAddOrEditServerDialog(i18n.t("sidebar:editServer.title"), addOrEditOptions, (updatedEntry) => {
-    /* tslint:enable:no-unused-expression */
     if (updatedEntry == null) return;
 
     serverEntry.hostname = updatedEntry.hostname;
@@ -83,9 +79,7 @@ function onEditServerClick(event: MouseEvent) {
 }
 
 function onRemoveServerClick(event: MouseEvent) {
-  /* tslint:disable:no-unused-expression */
   new ConfirmDialog("Are you sure you want to remove the server?", { validationLabel: "Remove" }, (confirm) => {
-    /* tslint:enable:no-unused-expression */
     if (!confirm) return;
 
     const selectedServerId = serversTreeView.selectedNodes[0].dataset["serverId"];

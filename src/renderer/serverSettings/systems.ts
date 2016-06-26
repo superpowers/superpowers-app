@@ -126,9 +126,7 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
 
     process.on("message", (event: any) => {
       if (event.type === "error") {
-        /* tslint:disable:no-unused-expression */
         new dialogs.InfoDialog(event.message);
-        /* tslint:enable:no-unused-expression */
         return;
       }
 

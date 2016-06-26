@@ -43,9 +43,7 @@ export default class ChatTab {
     const sidebarElt = this.paneElt.querySelector(".sidebar") as HTMLDivElement;
 
     if (options.isChannel) {
-      /* tslint:disable:no-unused-expression */
       new ResizeHandle(sidebarElt, "right");
-      /* tslint:enable:no-unused-expression */
       this.usersTreeView = new TreeView(this.paneElt.querySelector(".users-tree-view") as HTMLElement);
 
       if (chat.irc != null && chat.irc.me != null) this.join();

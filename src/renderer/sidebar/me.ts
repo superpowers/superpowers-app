@@ -26,9 +26,7 @@ nameElt.addEventListener("click", (event) => {
     required: true
   };
 
-  /* tslint:disable:no-unused-expression */
   new dialogs.PromptDialog("Enter a new nickname", options, (newNickname) => {
-    /* tslint:enable:no-unused-expression */
     if (newNickname != null) {
       nameElt.textContent = settings.nickname = newNickname;
       settings.scheduleSave();

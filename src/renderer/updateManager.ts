@@ -40,9 +40,7 @@ function checkAppUpdate(callback: (err: Error) => void) {
       cancelLabel: i18n.t("common:actions.skip")
     };
 
-    /* tslint:disable:no-unused-expression */
     new dialogs.ConfirmDialog(label, options, (shouldDownload) => {
-      /* tslint:enable:no-unused-expression */
       if (shouldDownload) {
         electron.shell.openExternal("https://github.com/superpowers/superpowers-app/releases/latest");
         electron.remote.app.quit();
@@ -61,11 +59,7 @@ function checkCoreUpdate(callback: (err: Error) => void) {
     const coreFunction = corePackageJSON == null ? firstCoreInstall : updateCore;
     coreFunction((error) => {
       if (error != null) {
-        /* tslint:disable:no-unused-expression */
-        new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error: error.message }), null, () => {
-          /* tslint:enable:no-unused-expression */
-          callback(error);
-        });
+        new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error: error.message }), null, () => { callback(error); });
       } else {
         callback(null);
       }
@@ -190,9 +184,7 @@ function updateCore(callback: (error: Error) => void) {
       cancelLabel: i18n.t("common:actions.skip")
     };
 
-    /* tslint:disable:no-unused-expression */
     new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
-      /* tslint:enable:no-unused-expression */
       if (!shouldUpdate) { callback(null); return; }
 
       splashScreen.setStatus(i18n.t("startup:status.installingCore"));
@@ -207,9 +199,7 @@ function updateCore(callback: (error: Error) => void) {
 
       process.on("message", (event: any) => {
         if (event.type === "error") {
-          /* tslint:disable:no-unused-expression */
           new dialogs.InfoDialog(event.message);
-          /* tslint:enable:no-unused-expression */
           return;
         }
 

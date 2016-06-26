@@ -49,9 +49,7 @@ function onSettingsLoaded(err: Error) {
       cancelLabel: i18n.t("common:actions.close")
     };
 
-    /* tslint:disable:no-unused-expression */
     new dialogs.ConfirmDialog(label, options, (shouldProceed) => {
-      /* tslint:enable:no-unused-expression */
       if (!shouldProceed) {
         electron.remote.app.quit();
         return;
@@ -83,9 +81,7 @@ function start() {
 }
 
 function showWelcomeDialog(callback: Function) {
-  /* tslint:disable:no-unused-expression */
   new WelcomeDialog((result) => {
-    /* tslint:enable:no-unused-expression */
     settings.nickname = result.nickname;
     settings.presence = result.connectToChat ? "online" : "offline";
 
@@ -110,9 +106,8 @@ function installFirstSystem(callback: Function) {
     validationLabel: i18n.t("common:actions.install"),
     cancelLabel: i18n.t("common:actions.skip")
   };
-  /* tslint:disable:no-unused-expression */
+
   new dialogs.ConfirmDialog(label, options, (installGame) => {
-  /* tslint:enable:no-unused-expression */
     if (!installGame) {
       localServer.start();
       callback();
@@ -136,7 +131,6 @@ function installFirstSystem(callback: Function) {
           closeLabel: i18n.t("welcome:serverInformation.gotIt")
         };
 
-        /* tslint:disable:no-unused-expression */
         new dialogs.InfoDialog(label, options, cb);
       },
       (cb) => {
@@ -147,7 +141,6 @@ function installFirstSystem(callback: Function) {
           header: i18n.t("welcome:sidebarInformation.title")
         };
 
-        /* tslint:disable:no-unused-expression */
         new dialogs.InfoDialog(label, options, cb);
       },
       (cb) => {
@@ -183,10 +176,7 @@ function updateSystemsAndPlugins() {
       cancelLabel: i18n.t("common:actions.skip")
     };
 
-    /* tslint:disable:no-unused-expression */
     new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
-      /* tslint:enable:no-unused-expression */
-
       if (shouldUpdate) {
         openServerSettings();
         serverSettingsSystems.updateAll(() => { localServer.start(); });
