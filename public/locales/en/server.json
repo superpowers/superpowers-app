@@ -6,7 +6,8 @@
   	"starting": "Server starting...",
   	"started": "Server running.",
   	"stopping": "Server stopping...",
-  	"stopped": "Server stopped."
+  	"stopped": "Server stopped.",
+    "updating": "Server updating..."
   },
 
   "buttons": {

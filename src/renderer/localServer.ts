@@ -10,7 +10,7 @@ let serverProcess: ChildProcess;
 
 const localServerElt = document.querySelector(".local-server") as HTMLDivElement;
 const statusElt = localServerElt.querySelector(".status") as HTMLDivElement;
-export const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
+const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
 const settingsButton = localServerElt.querySelector(".settings") as HTMLButtonElement;
 
 export function start() {
@@ -46,6 +46,11 @@ export function shutdown(callback: Function) {
   if (serverProcess == null) { callback(); return; }
   shutdownCallback = callback;
   stopServer();
+}
+
+export function setServerUpdating(updating: boolean) {
+  startStopServerButton.disabled = updating;
+  statusElt.textContent = i18n.t(`server:status.${updating ? "updating" : "stopped"}`);
 }
 
 export function stopServer() {

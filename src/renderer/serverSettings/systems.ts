@@ -4,7 +4,7 @@ import * as TreeView from "dnd-tree-view";
 import * as dialogs from "simple-dialogs";
 import html from "../html";
 import * as i18n from "../../shared/i18n";
-import { startStopServerButton } from "../localServer";
+import * as localServer from "../localServer";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
 const systemsPaneElt = settingsElt.querySelector(".systems") as HTMLDivElement;
@@ -183,11 +183,13 @@ function updateUI() {
   if (registryServerProcess != null) {
     refreshButton.disabled = true;
     detailsElt.hidden = true;
-    startStopServerButton.disabled = false;
+    localServer.setServerUpdating(false);
     return;
   }
 
-  refreshButton.disabled = startStopServerButton.disabled = Object.keys(serverProcessById).length > 0;
+  const updating = Object.keys(serverProcessById).length > 0;
+  refreshButton.disabled = updating;
+  localServer.setServerUpdating(updating);
 
   const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
   if (id != null) {
