@@ -56,24 +56,18 @@ function checkCoreUpdate(callback: (err: Error) => void) {
   fs.readFile(`${settings.corePath}/package.json`, { encoding: "utf8" }, (err, corePackageJSON) => {
     if (err != null && err.code !== "ENOENT") throw err;
 
-    // First installation
-    if (corePackageJSON == null) {
-      installCore((error) => {
-        if (error != null) {
-          /* tslint:disable:no-unused-expression */
-          new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error: error.message }), null, () => {
-            /* tslint:enable:no-unused-expression */
-            callback(error);
-          });
-        } else {
-          callback(null);
-        }
-      });
-    } else {
-      systemServerSettings.getRegistry((registry) => {
-        updateCore(registry, callback);
-      });
-    }
+    const coreFunction = corePackageJSON == null ? firstCoreInstall : updateCore;
+    coreFunction((error) => {
+      if (error != null) {
+        /* tslint:disable:no-unused-expression */
+        new dialogs.InfoDialog(i18n.t("startup:status.installingCoreFailed", { error: error.message }), null, () => {
+          /* tslint:enable:no-unused-expression */
+          callback(error);
+        });
+      } else {
+        callback(null);
+      }
+    });
   });
 
   return;
@@ -106,7 +100,7 @@ export function getCoreDownloadURL(callback: (err: Error, downloadURL?: string) 
   });
 }
 
-function installCore(callback: (error: Error) => void) {
+function firstCoreInstall(callback: (error: Error) => void) {
   splashScreen.setStatus(i18n.t("startup:status.installingCore"));
 
   splashScreen.setProgressVisible(true);
@@ -184,31 +178,34 @@ function installCore(callback: (error: Error) => void) {
   });
 }
 
-function updateCore(registry: systemServerSettings.Registry, callback: Function) {
-  if (registry.core.isLocalDev || registry.core.version === registry.core.localVersion) { callback(); return; }
+function updateCore(callback: (error: Error) => void) {
+  systemServerSettings.getRegistry((registry) => {
+    if (registry.core.isLocalDev || registry.core.version === registry.core.localVersion) { callback(null); return; }
 
-  const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
-  const options = {
-    validationLabel: i18n.t("common:actions.update"),
-    cancelLabel: i18n.t("common:actions.skip")
-  };
+    const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
+    const options = {
+      validationLabel: i18n.t("common:actions.update"),
+      cancelLabel: i18n.t("common:actions.skip")
+    };
 
-  /* tslint:disable:no-unused-expression */
-  new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
-    /* tslint:enable:no-unused-expression */
-    if (!shouldUpdate) { callback(null); return; }
+    /* tslint:disable:no-unused-expression */
+    new dialogs.ConfirmDialog(label, options, (shouldUpdate) => {
+      /* tslint:enable:no-unused-expression */
+      if (!shouldUpdate) { callback(null); return; }
 
-    splashScreen.setStatus(i18n.t("startup:status.installingCore"));
-    splashScreen.setProgressVisible(true);
-    splashScreen.setProgressMax(100);
-    splashScreen.setProgressValue(null);
+      splashScreen.setStatus(i18n.t("startup:status.installingCore"));
+      splashScreen.setProgressVisible(true);
+      splashScreen.setProgressMax(100);
+      splashScreen.setProgressValue(null);
 
-    systemServerSettings.action("update", "core", registry.core.downloadURL, () => {
-      splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
-      splashScreen.setProgressVisible(false);
-      callback();
-    }, (progress) => {
-      splashScreen.setProgressValue(progress);
+      callback(null);
+      // systemServerSettings.action("update", "core", registry.core.downloadURL, () => {
+      //   splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
+      //   splashScreen.setProgressVisible(false);
+      //   callback();
+      // }, (progress) => {
+      //   splashScreen.setProgressValue(progress);
+      // });
     });
   });
 }

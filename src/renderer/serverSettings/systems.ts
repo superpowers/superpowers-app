@@ -4,25 +4,32 @@ import * as TreeView from "dnd-tree-view";
 import * as dialogs from "simple-dialogs";
 import html from "../html";
 import * as i18n from "../../shared/i18n";
+import { startStopServerButton } from "../localServer";
 
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
 const systemsPaneElt = settingsElt.querySelector(".systems") as HTMLDivElement;
 
-const treeView = new TreeView(systemsPaneElt.querySelector(".tree-view-container") as HTMLDivElement);
-treeView.addListener("selectionChange", onSelectionChange);
+const treeView = new TreeView(systemsPaneElt.querySelector(".tree-view-container") as HTMLDivElement, { multipleSelection: false });
+treeView.addListener("selectionChange", updateUI);
 
 const refreshButton = systemsPaneElt.querySelector(".registry .actions .refresh") as HTMLButtonElement;
 refreshButton.addEventListener("click", refreshRegistry);
+const updateAllButton = systemsPaneElt.querySelector(".registry .actions .update-all") as HTMLButtonElement;
+updateAllButton.addEventListener("click", () => { updateAll(); });
 
-const installOrUninstallButton = systemsPaneElt.querySelector(".details .actions .install-uninstall") as HTMLButtonElement;
+const detailsElt = systemsPaneElt.querySelector(".details .content") as HTMLDivElement;
+
+const installOrUninstallButton = detailsElt.querySelector(".header .install-uninstall") as HTMLButtonElement;
 installOrUninstallButton.addEventListener("click", installOrUninstallClick);
-const updateButton = systemsPaneElt.querySelector(".details .actions .update") as HTMLButtonElement;
+const updateButton = detailsElt.querySelector(".header .update") as HTMLButtonElement;
 updateButton.addEventListener("click", onUpdateClick);
 
-const progressLabel = systemsPaneElt.querySelector(".details .actions .progress") as HTMLLabelElement;
+const installedLabel = detailsElt.querySelector(".header .installed") as HTMLLabelElement;
+const latestLabel = detailsElt.querySelector(".header .latest") as HTMLLabelElement;
 
-let serverProcess: ChildProcess;
 let registry: Registry;
+let registryServerProcess: ChildProcess;
+const serverProcessById: { [id: string]: ChildProcess } = {};
 
 export type Registry = {
   version: number;
@@ -52,94 +59,18 @@ export function getRegistry(callback: RegistryCallback) {
 }
 
 export function refreshRegistry() {
-  if (serverProcess != null) return;
+  if (registryServerProcess != null) return;
 
   registry = null;
   treeView.clear();
 
-  refreshButton.disabled = true;
-  installOrUninstallButton.disabled = true;
-  updateButton.disabled = true;
+  registryServerProcess = forkServerProcess([ "registry" ]);
+  updateUI();
 
-  serverProcess = forkServerProcess([ "registry" ]);
-  serverProcess.on("message", onRegistryReceived);
-  serverProcess.on("exit", () => {
-    serverProcess = null;
-
-    refreshButton.disabled = false;
-  });
-}
-
-export function action(command: string, item: string, downloadURL: string, callback: (succeed: boolean) => void, progressCallback: (progress: number) => void) {
-  serverProcess = forkServerProcess([ command, item, "--force", `--download-url=${downloadURL}` ]);
-
-  // FIXME: The update on the core fails somehow if we remove this line
-  serverProcess.stdout.on("data", (data: any) => { /* NOTHING */ });
-
-  serverProcess.on("message", (event: any) => {
-    if (event.type === "error") {
-      /* tslint:disable:no-unused-expression */
-      new dialogs.InfoDialog(event.message);
-      /* tslint:enable:no-unused-expression */
-      return;
-    }
-
-    if (event.type !== "progress") {
-      // TODO: Whoops?! Handle error?
-      console.log(event);
-      return;
-    }
-
-    progressCallback(event.value);
-  });
-  serverProcess.on("exit", (statusCode: number) => {
-    serverProcess = null;
-    callback(statusCode === 0);
-  });
-}
-
-export function installGameSystem(callback: Function) {
-  getRegistry((registry) => {
-    treeView.clearSelection();
-    const systemElt = treeView.treeRoot.querySelector(`li[data-system-id=game]`) as HTMLLIElement;
-    treeView.addToSelection(systemElt);
-
-    action("install", "game", registry.systems["game"].downloadURL, (succeed) => {
-      progressLabel.textContent = "";
-      callback();
-    }, (progress) => { progressLabel.textContent = `${progress}%`; });
-  });
-}
-
-export function updateAll(callback: Function) {
-  // FIXME: Update every items instead of first found one
-  getRegistry((registry) => {
-    let item: { path: string, downloadURL: string };
-    for (const systemId in registry.systems) {
-      const system = registry.systems[systemId];
-      if (!system.isLocalDev && system.localVersion != null && system.version !== system.localVersion) {
-        item = { path: systemId, downloadURL: system.downloadURL };
-        break;
-      }
-
-      for (const authorName in system.plugins) {
-        for (const pluginName in system.plugins[authorName]) {
-          const plugin = system.plugins[authorName][pluginName];
-          if (!plugin.isLocalDev && plugin.localVersion != null && plugin.version !== plugin.localVersion) {
-            item = { path: `${systemId}:${authorName}/${pluginName}`, downloadURL: plugin.downloadURL };
-            break;
-          }
-        }
-        if (item != null) break;
-      }
-    }
-
-    if (item == null) { callback(); return; }
-
-    action("update", item.path, item.downloadURL, () => {
-      progressLabel.textContent = "";
-      callback();
-    }, (progress) => { progressLabel.textContent = `${progress}%`; });
+  registryServerProcess.on("message", onRegistryReceived);
+  registryServerProcess.on("exit", () => {
+    registryServerProcess = null;
+    updateUI();
   });
 }
 
@@ -156,11 +87,10 @@ function onRegistryReceived(event: any) {
   for (const systemId in systemsById) {
     const system = systemsById[systemId];
 
-    const systemElt = html("li", { dataset: { systemId } });
-    html("div", "label", { parent: systemElt });
+    const systemElt = html("li", { dataset: { id: systemId } });
+    html("div", "label", { parent: systemElt, textContent: systemId });
+    html("div", "progress", { parent: systemElt });
     treeView.append(systemElt, "group");
-
-    updateSystemLabel(systemId);
 
     for (const authorName in system.plugins) {
       const plugins = system.plugins[authorName];
@@ -170,11 +100,10 @@ function onRegistryReceived(event: any) {
       treeView.append(authorElt, "group", systemElt);
 
       for (const pluginName in plugins) {
-        const pluginElt = html("li", { dataset: { systemId, authorName, pluginName } });
-        html("div", "label", { parent: pluginElt });
+        const pluginElt = html("li", { dataset: { id: `${systemId}:${authorName}/${pluginName}` } });
+        html("div", "label", { parent: pluginElt, textContent: pluginName });
+        html("div", "progress", { parent: pluginElt });
         treeView.append(pluginElt, "item", authorElt);
-
-        updatePluginLabel(systemId, authorName, pluginName);
       }
     }
   }
@@ -183,142 +112,126 @@ function onRegistryReceived(event: any) {
   getRegistryCallbacks.length = 0;
 }
 
-function updateSystemLabel(systemId: string) {
-  const systemLabeElt = treeView.treeRoot.querySelector(`li[data-system-id=${systemId}] .label`) as HTMLLabelElement;
-  const system = registry.systems[systemId];
-  const local = system.isLocalDev ? "Installed: DEV" : (system.localVersion != null ? `Installed: v${system.localVersion}` : "Not Installed");
-  systemLabeElt.textContent = `${systemId} (Latest: v${system.version}, ${local})`;
+type ActionItem = { systemId: string; authorName?: string; pluginName?: string };
+export function action(command: string, item: ActionItem, callback?: (succeed: boolean) => void) {
+  getRegistry((registry) => {
+    const id = item.pluginName != null ? `${item.systemId}:${item.authorName}/${item.pluginName}` : item.systemId;
+
+    const progressElt = treeView.treeRoot.querySelector(`li[data-id="${id}"] .progress`) as HTMLDivElement;
+    const registryItem = item.pluginName != null ? registry.systems[item.systemId].plugins[item.authorName][item.pluginName] : registry.systems[item.systemId];
+
+    progressElt.textContent = "...";
+    const process = serverProcessById[id] = forkServerProcess([ command, id, "--force", `--download-url=${registryItem.downloadURL}` ]);
+    updateUI();
+
+    // FIXME: The update on the core fails somehow if we remove this line
+    process.stdout.on("data", (data: any) => { /* NOTHING */ });
+
+    process.on("message", (event: any) => {
+      if (event.type === "error") {
+        /* tslint:disable:no-unused-expression */
+        new dialogs.InfoDialog(event.message);
+        /* tslint:enable:no-unused-expression */
+        return;
+      }
+
+      if (event.type !== "progress") {
+        // TODO: Whoops?! Handle error?
+        console.log(event);
+        return;
+      }
+
+      progressElt.textContent = `${event.value}%`;
+    });
+    process.on("exit", (statusCode: number) => {
+      progressElt.textContent = "";
+      delete serverProcessById[id];
+      if (statusCode === 0) registryItem.localVersion = command === "uninstall" ? null : registryItem.version;
+      updateUI();
+
+      if (callback != null) callback(statusCode === 0);
+    });
+  });
 }
 
-function updatePluginLabel(systemId: string, authorName: string, pluginName: string) {
-  const pluginLabeElt = treeView.treeRoot.querySelector(`li[data-system-id=${systemId}][data-author-name=${authorName}][data-plugin-name=${pluginName}] .label`) as HTMLLabelElement;
-  const plugin = registry.systems[systemId].plugins[authorName][pluginName];
-  const local = plugin.isLocalDev ? "Installed: DEV" : (plugin.localVersion != null ? `Installed: v${plugin.localVersion}` : "Not Installed");
-  pluginLabeElt.textContent = `${pluginName} (Latest: v${plugin.version}, ${local})`;
+export function updateAll(callback?: Function) {
+  getRegistry((registry) => {
+    async.each(Object.keys(registry.systems), (systemId, cb) => {
+      console.log("system", systemId);
+      const system = registry.systems[systemId];
+      async.parallel([
+        (systemCb) => {
+          if (!system.isLocalDev && system.localVersion != null && system.version !== system.localVersion)
+            action("update", { systemId }, () => { systemCb(); });
+          else
+            systemCb();
+        }, (pluginsCb) => {
+          async.each(Object.keys(system.plugins), (authorName, authorCb) => {
+            const pluginsByName = system.plugins[authorName];
+            async.each(Object.keys(pluginsByName), (pluginName, pluginCb) => {
+              const plugin = system.plugins[authorName][pluginName];
+              if (!plugin.isLocalDev && plugin.localVersion != null && plugin.version !== plugin.localVersion)
+                action("update", { systemId, authorName, pluginName }, () => { pluginCb(); });
+              else
+                pluginCb();
+            }, authorCb);
+          }, pluginsCb);
+        }
+      ], cb);
+    }, () => { if (callback != null) callback(); });
+  });
 }
 
-function onSelectionChange() {
-  if (serverProcess != null || treeView.selectedNodes.length !== 1) {
-    installOrUninstallButton.disabled = true;
-    updateButton.disabled = true;
+function updateUI() {
+  if (registryServerProcess != null) {
+    refreshButton.disabled = true;
+    detailsElt.hidden = true;
+    startStopServerButton.disabled = false;
     return;
   }
 
-  const systemId = treeView.selectedNodes[0].dataset["systemId"];
-  const authorName = treeView.selectedNodes[0].dataset["authorName"];
-  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
+  refreshButton.disabled = startStopServerButton.disabled = Object.keys(serverProcessById).length > 0;
 
-  const system = systemId != null ? registry.systems[systemId] : null;
-  const plugin = system != null && authorName != null ? system.plugins[authorName][pluginName] : null;
+  const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
+  if (id != null) {
+    detailsElt.hidden = false;
 
-  if (system == null || (plugin == null && system.isLocalDev) || (plugin != null && plugin.isLocalDev)) {
-    installOrUninstallButton.disabled = true;
-    updateButton.disabled = true;
-    installOrUninstallButton.textContent = i18n.t("common:actions.install");
-    return;
-  }
+    const [ systemId, pluginPath ] = id.split(":");
+    const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
+    const registryItem = pluginName != null ? registry.systems[systemId].plugins[authorName][pluginName] : registry.systems[systemId];
 
-  installOrUninstallButton.disabled = false;
-  if ((plugin == null && system.localVersion == null) || (plugin != null && plugin.localVersion == null)) {
-    installOrUninstallButton.textContent = i18n.t("common:actions.install");
-    updateButton.disabled = true;
+    installOrUninstallButton.disabled = serverProcessById[id] != null || registryItem.isLocalDev;
+    updateButton.disabled = serverProcessById[id] != null || registryItem.isLocalDev || registryItem.localVersion == null || registryItem.version === registryItem.localVersion;
+
+    const installOrUninstallAction = registryItem.isLocalDev || registryItem.localVersion == null ? "install" : "uninstall";
+    installOrUninstallButton.textContent = i18n.t(`common:actions.${installOrUninstallAction}`);
+
+    installedLabel.textContent = i18n.t("server:systems.installed", { installed: registryItem.isLocalDev ? "DEV" : (registryItem.localVersion != null ? registryItem.localVersion : "")});
+    latestLabel.textContent = i18n.t("server:systems.latest", { latest: registryItem.version });
+
+    // TODO: Update system details (version, description, ...)
   } else {
-    installOrUninstallButton.textContent = i18n.t("common:actions.uninstall");
-    updateButton.disabled = (plugin == null && system.version === system.localVersion) || (plugin != null && plugin.version === plugin.localVersion);
+    detailsElt.hidden = true;
   }
 }
 
 function installOrUninstallClick() {
-  if (serverProcess != null) return;
+  const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
+  if (id == null || serverProcessById[id] != null) return;
 
-  refreshButton.disabled = true;
-  installOrUninstallButton.disabled = true;
-  updateButton.disabled = true;
+  const [ systemId, pluginPath ] = id.split(":");
+  const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
+  const registryItem = pluginName != null ? registry.systems[systemId].plugins[authorName][pluginName] : registry.systems[systemId];
 
-  const systemId = treeView.selectedNodes[0].dataset["systemId"];
-  const authorName = treeView.selectedNodes[0].dataset["authorName"];
-  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
-
-  const system = registry.systems[systemId];
-  const plugin = authorName != null ? system.plugins[authorName][pluginName] : null;
-
-  const item = (plugin == null ? systemId : `${systemId}:${authorName}/${pluginName}`);
-  const downloadURL = plugin != null ? plugin.downloadURL : system.downloadURL;
-
-  progressLabel.textContent = `Running...`;
-
-  if ((plugin == null && system.localVersion == null) || (plugin != null && plugin.localVersion == null)) {
-    action("install", item, downloadURL, (succeed) => {
-      progressLabel.textContent = "";
-
-      if (succeed) {
-        if (plugin == null) {
-          system.localVersion = system.version;
-          updateSystemLabel(systemId);
-        } else {
-          plugin.localVersion = plugin.version;
-          updatePluginLabel(systemId, authorName, pluginName);
-        }
-      }
-
-      refreshButton.disabled = false;
-      onSelectionChange();
-
-    }, (progress) => { progressLabel.textContent = `${progress}%`; });
-  } else {
-    action("uninstall", item, downloadURL, (succeed) => {
-      progressLabel.textContent = "";
-
-      if (succeed) {
-        if (plugin == null) {
-          system.localVersion = null;
-          updateSystemLabel(systemId);
-        } else {
-          plugin.localVersion = null;
-          updatePluginLabel(systemId, authorName, pluginName);
-        }
-      }
-
-      refreshButton.disabled = false;
-      onSelectionChange();
-
-    }, (progress) => { progressLabel.textContent = `${progress}%`; });
-  }
+  action(registryItem.localVersion == null ? "install" : "uninstall", { systemId, authorName, pluginName });
 }
 
 function onUpdateClick() {
-  if (serverProcess != null) return;
+  const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
+  if (id == null || serverProcessById[id] != null) return;
 
-  refreshButton.disabled = true;
-  installOrUninstallButton.disabled = true;
-  updateButton.disabled = true;
+  const [ systemId, pluginPath ] = id.split(":");
+  const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
 
-  const systemId = treeView.selectedNodes[0].dataset["systemId"];
-  const authorName = treeView.selectedNodes[0].dataset["authorName"];
-  const pluginName = treeView.selectedNodes[0].dataset["pluginName"];
-
-  const system = registry.systems[systemId];
-  const plugin = authorName != null ? system.plugins[authorName][pluginName] : null;
-  const item = (plugin == null ? systemId : `${systemId}:${authorName}/${pluginName}`);
-  const downloadURL = plugin != null ? plugin.downloadURL : system.downloadURL;
-
-  progressLabel.textContent = `Running...`;
-
-  action("update", item, downloadURL, (succeed) => {
-    progressLabel.textContent = "";
-
-    if (succeed) {
-      if (plugin == null) {
-        system.localVersion = system.version;
-        updateSystemLabel(systemId);
-      } else {
-        plugin.localVersion = plugin.version;
-        updatePluginLabel(systemId, authorName, pluginName);
-      }
-    }
-
-    refreshButton.disabled = false;
-    onSelectionChange();
-
-  }, (progress) => { progressLabel.textContent = `${progress}%`; });
+  action("update", { systemId, authorName, pluginName });
 }

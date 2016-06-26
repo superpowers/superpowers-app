@@ -47,6 +47,9 @@
   },
   
   "systems": {
-    "title": "Systems and plugins"
+    "title": "Systems and plugins",
+    "updateAll": "Update all",
+    "installed": "Installed: ${installed}",
+    "latest": "Latest: ${latest}"
   }
 }

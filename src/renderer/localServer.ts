@@ -10,7 +10,7 @@ let serverProcess: ChildProcess;
 
 const localServerElt = document.querySelector(".local-server") as HTMLDivElement;
 const statusElt = localServerElt.querySelector(".status") as HTMLDivElement;
-const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
+export const startStopServerButton = localServerElt.querySelector(".start-stop") as HTMLButtonElement;
 const settingsButton = localServerElt.querySelector(".settings") as HTMLButtonElement;
 
 export function start() {

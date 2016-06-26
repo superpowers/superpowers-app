@@ -97,6 +97,7 @@
       position: relative;
       border: 1px solid #ccc;
       .tree { position: absolute; }
+      .progress { margin-left: auto; }
     }
   }
 
@@ -104,8 +105,11 @@
     min-height: 100px;
     display: flex;
     flex-flow: column;
+    .header {
+      display: flex;
+      label { margin: auto; }
+    }
     .info { flex: 1 1 0; }
-    .progress { margin-left: 0.5em; }
   }
 }
 

@@ -64,17 +64,19 @@
       .registry
         .actions
           button.refresh= t("common:actions.refresh")
-          input(type="search")
+          button.update-all= t("server:systems.updateAll")
         .tree-view-container
       .details
-        .actions
-          button.install-uninstall(disabled)= t("common:actions.install")
-          button.update(disabled)= t("common:actions.update")
-          label.progress
-        .info
-          .name
-          .description
-          .links
+        .content(hidden)
+          .header
+            button.install-uninstall= t("common:actions.install")
+            button.update= t("common:actions.update")
+            label.installed
+            label.latest
+          .info
+            .name
+            .description
+            .links
 
 .resize-handle.bottom
 .server-log.collapsable

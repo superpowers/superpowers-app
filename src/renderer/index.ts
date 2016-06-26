@@ -124,7 +124,7 @@ function installFirstSystem(callback: Function) {
     async.series([
       (cb) => {
         openServerSettings();
-        serverSettingsSystems.installGameSystem(cb);
+        serverSettingsSystems.action("install", { systemId: "game" }, () => { cb(); });
         waitingGameInstallElt.hidden = false;
       },
       (cb) => {
