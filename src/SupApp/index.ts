@@ -78,9 +78,11 @@ function onPathAuthorizationChecked(event: Electron.IpcRendererEvent, ipcId: str
 }
 
 namespace SupApp {
-  export function getCurrentWindow() { return currentWindow; }
-  export function getIpc() { return electron.ipcRenderer; }
+  export function onMessage(messageType: string, callback: Function) {
+    electron.ipcRenderer.addListener(`sup-app-message-${messageType}`, (event, ...args) => { callback(...args); });
+  }
 
+  export function getCurrentWindow() { return currentWindow; }
   export function showMainWindow() { electron.ipcRenderer.send("show-main-window"); }
 
   export function openWindow(url: string, options?: OpenWindowOptions) {
