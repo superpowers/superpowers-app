@@ -66,7 +66,7 @@ function onCheckPathAuthorization(event: Electron.IpcMainEvent, secretKey: strin
   const authorizations = getAuthorizationsForOrigin(origin);
 
   let canReadWrite = authorizations.rwFiles.indexOf(normalizedPath) !== -1;
-  let canExecute = authorizations.exeFiles.indexOf(normalizedPath) !== -1
+  let canExecute = authorizations.exeFiles.indexOf(normalizedPath) !== -1;
 
   if (!canReadWrite) {
     for (const authorizedFolderPath of authorizations.folders) {

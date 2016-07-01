@@ -178,7 +178,7 @@ namespace SupApp {
       if (err != null) { callback(err, null); return; }
 
       const ipcId = getNextIpcId();
-      ipcCallbacks[ipcId] = () => { callback(err, tempFolderPath); };
+      ipcCallbacks[ipcId] = () => { callback(null, tempFolderPath); };
       electron.ipcRenderer.send("authorize-folder", secretKey, ipcId, window.location.origin, tempFolderPath);
     });
   }
