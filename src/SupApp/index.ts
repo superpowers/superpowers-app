@@ -1,10 +1,19 @@
+import * as crypto from "crypto";
 import * as electron from "electron";
-
-import * as  fs from "fs";
+import * as async from "async";
+import * as fs from "fs";
 import * as fsMkdirp from "mkdirp";
 import * as childProcess from "child_process";
+import * as os from "os";
 
 const currentWindow = electron.remote.getCurrentWindow();
+
+const tmpRoot = os.tmpdir();
+const tmpCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+const getRandomTmpCharacter = () => tmpCharacters[Math.floor(Math.random() * tmpCharacters.length)];
+
+const secretKey = crypto.randomBytes(48).toString("hex");;
+electron.ipcRenderer.send("setup-key", secretKey);
 
 let nextIpcId = 0;
 function getNextIpcId(): string {
@@ -16,11 +25,13 @@ const ipcCallbacks: { [id: string]: Function } = {};
 
 electron.ipcRenderer.on("choose-folder-callback", onFolderChosen);
 electron.ipcRenderer.on("choose-file-callback", onFileChosen);
+electron.ipcRenderer.on("authorize-folder-callback", onFolderAuthorized);
 electron.ipcRenderer.on("check-path-authorization-callback", onPathAuthorizationChecked);
 
-type ChooseFolderCallback = (err: string, folder: string) => void;
-type ChooseFileCallback = (err: string, filename: string) => void;
-type CheckPathAuthorizationCallback = (normalizedPath: string, authorized: boolean) => void;
+type ChooseFolderCallback = (folder: string) => void;
+type ChooseFileCallback = (filename: string) => void;
+type AuthorizeFolderCallback = () => void;
+type CheckPathAuthorizationCallback = (normalizedPath: string, access: "readWrite"|"execute") => void;
 
 interface OpenWindowOptions {
   size?: { width: number; height: number; };
@@ -28,34 +39,42 @@ interface OpenWindowOptions {
   resizable?: boolean;
 }
 
-function onFolderChosen(event: Electron.IpcRendererEvent, ipcId: string, err: string, folderPath: string) {
+function onFolderChosen(event: Electron.IpcRendererEvent, ipcId: string, folderPath: string) {
   const callback = ipcCallbacks[ipcId] as ChooseFolderCallback;
   if (callback == null) return;
   delete ipcCallbacks[ipcId];
 
-  callback(err, folderPath);
+  callback(folderPath);
 }
 
-function onFileChosen(event: Electron.IpcRendererEvent, ipcId: string, err: string, filename: string) {
+function onFileChosen(event: Electron.IpcRendererEvent, ipcId: string, filename: string) {
   const callback = ipcCallbacks[ipcId] as ChooseFileCallback;
   if (callback == null) return;
   delete ipcCallbacks[ipcId];
 
-  callback(err, filename);
+  callback(filename);
+}
+
+function onFolderAuthorized(event: Electron.IpcRendererEvent, ipcId: string) {
+  const callback = ipcCallbacks[ipcId] as AuthorizeFolderCallback;
+  if (callback == null) return;
+  delete ipcCallbacks[ipcId];
+
+  callback();
 }
 
 function checkPathAuthorization(pathToCheck: string, callback: CheckPathAuthorizationCallback) {
   const ipcId = getNextIpcId();
   ipcCallbacks[ipcId] = callback;
-  electron.ipcRenderer.send("check-path-authorization", ipcId, window.location.origin, pathToCheck);
+  electron.ipcRenderer.send("check-path-authorization", secretKey, ipcId, window.location.origin, pathToCheck);
 }
 
-function onPathAuthorizationChecked(event: Electron.IpcRendererEvent, ipcId: string, checkedPath: string, authorized: boolean) {
+function onPathAuthorizationChecked(event: Electron.IpcRendererEvent, ipcId: string, checkedPath: string, authorization: "readWrite"|"execute") {
   const callback = ipcCallbacks[ipcId] as CheckPathAuthorizationCallback;
   if (callback == null) return;
   delete ipcCallbacks[ipcId];
 
-  callback(checkedPath, authorized);
+  callback(checkedPath, authorization);
 }
 
 namespace SupApp {
@@ -116,23 +135,49 @@ namespace SupApp {
   export function chooseFolder(callback: ChooseFolderCallback) {
     const ipcId = getNextIpcId();
     ipcCallbacks[ipcId] = callback;
-    electron.ipcRenderer.send("choose-folder", ipcId, window.location.origin);
+    electron.ipcRenderer.send("choose-folder", secretKey, ipcId, window.location.origin);
   }
 
-  export function chooseFile(callback: ChooseFileCallback) {
+  export function chooseFile(access: "readWrite"|"execute", callback: ChooseFileCallback) {
     const ipcId = getNextIpcId();
     ipcCallbacks[ipcId] = callback;
-    electron.ipcRenderer.send("choose-file", ipcId, window.location.origin);
+    electron.ipcRenderer.send("choose-file", secretKey, ipcId, window.location.origin, access);
+  }
+
+  export function tryFileAccess(filePath: string, access: "readWrite"|"execute", callback: (err: any) => void) {
+    checkPathAuthorization(filePath, (err, authorization) => {
+      if (authorization !== access) { callback(new Error("Unauthorized")); return; }
+
+      fs.exists(filePath, (exists) => {
+        callback(exists ? null : new Error("Not found"));
+      });
+    });
   }
 
   export function mkdirp(folderPath: string, callback: (err: any) => void) {
-    checkPathAuthorization(folderPath, (normalizedFolderPath, authorized) => {
-      if (!authorized) {
-        callback(new Error(`Access to "${normalizedFolderPath}" hasn't been authorized.`));
+    checkPathAuthorization(folderPath, (normalizedFolderPath, authorization) => {
+      if (authorization !== "readWrite") {
+        callback(new Error(`Access to "${normalizedFolderPath}" hasn't been authorized for read/write.`));
         return;
       }
 
       fsMkdirp(normalizedFolderPath, callback);
+    });
+  }
+
+  export function mktmpdir(callback: (err: any, path: string) => void) {
+    let tempFolderPath: string;
+    async.retry(10, (cb: ErrorCallback) => {
+      let folderName = "superpowers-temp-";
+      for (let i = 0; i < 16; i++) folderName += getRandomTmpCharacter();
+      tempFolderPath = `${tmpRoot}/${folderName}`;
+      fs.mkdir(tempFolderPath, cb);
+    }, (err) => {
+      if (err != null) { callback(err, null); return; }
+
+      const ipcId = getNextIpcId();
+      ipcCallbacks[ipcId] = () => { callback(err, tempFolderPath); };
+      electron.ipcRenderer.send("authorize-folder", secretKey, ipcId, window.location.origin, tempFolderPath);
     });
   }
 
@@ -142,9 +187,9 @@ namespace SupApp {
       options = null;
     }
 
-    checkPathAuthorization(filename, (normalizedFilename, authorized) => {
-      if (!authorized) {
-        callback(new Error(`Access to "${normalizedFilename}" hasn't been authorized.`));
+    checkPathAuthorization(filename, (normalizedFilename, authorization) => {
+      if (authorization !== "readWrite") {
+        callback(new Error(`Access to "${normalizedFilename}" hasn't been authorized for read/write.`));
         return;
       }
 
@@ -163,14 +208,14 @@ namespace SupApp {
     });
   }
 
-  export function spawnChildProcess(filename: string, callback: (err: Error, childProcess?: childProcess.ChildProcess) => void) {
-    checkPathAuthorization(filename, (normalizedFilename, authorized) => {
-      if (!authorized) {
-        callback(new Error(`Access to "${normalizedFilename}" hasn't been authorized.`));
+  export function spawnChildProcess(filename: string, args: string[], callback: (err: Error, childProcess?: childProcess.ChildProcess) => void) {
+    checkPathAuthorization(filename, (normalizedFilename, authorization) => {
+      if (authorization !== "execute") {
+        callback(new Error(`Access to "${normalizedFilename}" for execution hasn't been authorized.`));
         return;
       }
 
-      const spawnedProcess = childProcess.spawn(filename);
+      const spawnedProcess = childProcess.spawn(filename, args);
       callback(null, spawnedProcess);
     });
   }
