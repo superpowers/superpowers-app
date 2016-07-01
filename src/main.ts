@@ -44,7 +44,9 @@ function startCleanExit() {
   isQuitting = true;
 }
 
-electron.ipcMain.on("ready-to-quit", () => {
+electron.ipcMain.on("ready-to-quit", (event) => {
+  if (event.sender !== mainWindow.webContents) return;
+
   console.log("Exited cleanly.");
   isReadyToQuit = true;
   electron.app.quit();
