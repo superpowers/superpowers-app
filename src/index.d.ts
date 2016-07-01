@@ -1,4 +1,4 @@
-/// <reference path="../typings/main.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 
 interface ServerEntry {
   id: string;

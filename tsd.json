@@ -1,0 +1,36 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "node/node.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "async/async.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "github-electron/github-electron.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "electron-packager/electron-packager.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "mkdirp/mkdirp.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "slate-irc/slate-irc.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "yargs/yargs.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    },
+    "escape-html/escape-html.d.ts": {
+      "commit": "925dbd5230a014ae2618e58751235ffdba156b77"
+    }
+  }
+}
