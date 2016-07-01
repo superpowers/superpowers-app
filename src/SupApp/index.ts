@@ -210,6 +210,10 @@ namespace SupApp {
     });
   }
 
+  export function readDir(folderPath: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void) {
+    fs.readdir(folderPath, callback);
+  }
+
   export function spawnChildProcess(filename: string, args: string[], callback: (err: Error, childProcess?: childProcess.ChildProcess) => void) {
     checkPathAuthorization(filename, (normalizedFilename, authorization) => {
       if (authorization !== "execute") {
