@@ -128,6 +128,7 @@ function makeServerPane(serverEntry: ServerEntry) {
 
     webviewElt.src = `http://${host}`;
     paneElt.appendChild(webviewElt);
+    webviewElt.focus();
   }
 
   tryConnecting();

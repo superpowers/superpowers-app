@@ -18,7 +18,7 @@
     "resize-handle": "^4.0.0",
     "simple-dialogs": "^1.1.0",
     "slate-irc": "^0.8.1",
-    "tab-strip": "^2.2.0",
+    "tab-strip": "^2.3.1",
     "yargs": "^4.3.2",
     "yauzl": "^2.4.1"
   },

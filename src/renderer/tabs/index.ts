@@ -4,6 +4,7 @@ const tabsBarElt = document.querySelector(".tabs-bar") as HTMLElement;
 export const tabStrip = new TabStrip(tabsBarElt);
 export const panesElt = document.querySelector(".panes");
 
+
 tabStrip.on("activateTab", onActivateTab);
 tabStrip.on("closeTab", onCloseTab);
 tabStrip.tabsRoot.addEventListener("click", onTabStripClick);
@@ -42,6 +43,7 @@ export function onActivateTab(tabElt: HTMLLIElement) {
   if (serverId != null) paneElt = panesElt.querySelector(`:scope > div[data-server-id="${serverId}"]`) as HTMLDivElement;
   else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLDivElement;
   paneElt.hidden = false;
+  (paneElt.firstElementChild as HTMLElement).focus();
 }
 
 function onCloseTab(tabElement: HTMLLIElement) {
@@ -67,7 +69,11 @@ function onCloseTab(tabElement: HTMLLIElement) {
 
 function onTabStripClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
-  if (target.tagName !== "BUTTON" || target.className !== "close") return;
+  if (target.tagName !== "BUTTON" || target.className !== "close") {
+    const activePaneElt = (panesElt.querySelector(":scope > *:not([hidden])") as HTMLElement);
+    (activePaneElt.firstElementChild as HTMLElement).focus();
+    return;
+  }
 
   tabStrip.emit("closeTab", target.parentElement as HTMLLIElement);
 }
