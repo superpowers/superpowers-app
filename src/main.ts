@@ -147,10 +147,14 @@ function onCloseMainWindow(event: Event) {
 
   event.preventDefault();
 
-  // NOTE: Minimize before closing to convey the fact
-  // that the app is still running in the background
-  mainWindow.minimize();
-  setTimeout(() => { if (mainWindow.isMinimized()) mainWindow.hide(); }, 200);
+  if (process.platform !== "darwin") {
+    // NOTE: Minimize before closing to convey the fact
+    // that the app is still running in the background
+    mainWindow.minimize();
+    setTimeout(() => { if (mainWindow.isMinimized()) mainWindow.hide(); }, 200);
+  } else {
+    mainWindow.hide();
+  }
 }
 
 function restoreMainWindow() {
