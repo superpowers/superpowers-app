@@ -12,7 +12,12 @@ publicPackage.dependencies = rootPackage.dependencies;
 fs.writeFileSync(`${__dirname}/../public/package.json`, JSON.stringify(publicPackage, null, 2) + "\n");
 
 execSync("npm install --production", { cwd: `${__dirname}/../public`, stdio: "inherit" });
-execSync("npm install electron-packager", { stdio: "inherit" });
+
+// Running rcedit@0.5.1 on Wine 1.4 tries to access the display server, making the build fail on Travis
+// Wine 1.6 presumably works, but Travis currently doesn't allow installing it
+// electron-packager@7.2.0 explicitely depends on rcedit@^0.5.1 so we can't use it.
+// See https://github.com/electron-userland/electron-packager/issues/413
+execSync("npm install rcedit@0.5.0 electron-packager@7.1.0", { stdio: "inherit" });
 
 console.log("Running electron-packager...");
 
