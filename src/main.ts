@@ -1,5 +1,6 @@
 import * as electron from "electron";
 import * as i18n from "./shared/i18n";
+import * as menu from "./menu";
 import getPaths from "./getPaths";
 import getLanguageCode from "./getLanguageCode";
 import "./ipc";
@@ -55,7 +56,7 @@ electron.ipcMain.on("ready-to-quit", (event) => {
 electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 
 function onAppReady() {
-  electron.Menu.setApplicationMenu(null);
+  menu.setup(electron.app);
 
   getPaths((dataPathErr, pathToCore, pathToUserData) => {
     userDataPath = pathToUserData;
