@@ -43,7 +43,12 @@ export function onActivateTab(tabElt: HTMLLIElement) {
   if (serverId != null) paneElt = panesElt.querySelector(`:scope > div[data-server-id="${serverId}"]`) as HTMLDivElement;
   else paneElt = panesElt.querySelector(`:scope > *[data-name="${paneName}"]`) as HTMLDivElement;
   paneElt.hidden = false;
-  (paneElt.firstElementChild as HTMLElement).focus();
+
+  const firstChild = paneElt.firstElementChild as HTMLElement;
+  if (firstChild.tagName === "WEBVIEW") firstChild.focus();
+  else if (paneElt.classList.contains("chat-tab")) {
+    (paneElt.querySelector(".input textarea") as HTMLTextAreaElement).focus();
+  }
 }
 
 function onCloseTab(tabElement: HTMLLIElement) {
