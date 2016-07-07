@@ -1,4 +1,4 @@
-import * as net from "net";
+ import * as net from "net";
 import * as tls from "tls";
 import * as SlateIRC from "slate-irc";
 
@@ -15,7 +15,7 @@ export const languageChatRooms = [ "fr" ];
 
 export let irc: SlateIRC.Client;
 let socket: net.Socket;
-const ircNetwork = { host: "irc.freenode.net", port: 6697 };
+export const ircNetwork = { host: "irc.freenode.net", port: 6697 };
 let mentionRegex: RegExp;
 
 const statusChatTab = new ChatTab("status", { label: ircNetwork.host, showTab: false });
@@ -92,6 +92,7 @@ function connect() {
   irc = SlateIRC(socket);
   irc.on("welcome", onWelcome);
   irc.on("motd", onMOTD);
+  irc.on("topic", onTopic);
   irc.on("join", onJoin);
   irc.on("part", onPart);
   irc.on("nick", onNick);
@@ -171,6 +172,11 @@ export function join(channelName: string, focus?: boolean) {
   settings.scheduleSave();
 
   chatTab.showTab(focus === true);
+}
+
+function onTopic(event: SlateIRC.TopicEvent) {
+  const chatTab = channelChatTabs[event.channel];
+  if (chatTab != null) chatTab.onTopic(event);
 }
 
 function onJoin(event: SlateIRC.JoinEvent) {
@@ -271,7 +277,7 @@ function notify(title: string, body: string, callback: Function) {
 
 function onNotice(event: SlateIRC.MessageEvent) {
   if (event.to === "*") {
-    statusChatTab.addMessage(`(private) ${event.from}`, event.message, "notice");
+    statusChatTab.addMessage(event.from, event.message, "private notice");
     return;
   }
 

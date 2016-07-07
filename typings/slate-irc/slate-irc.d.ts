@@ -23,9 +23,16 @@ declare module "slate-irc" {
       motd: string[];
     }
 
+    interface TopicEvent {
+      nick: string;
+      hostmask: string;
+      channel: string;
+      topic: string;
+    }
+
     interface MessageEvent {
       from: string;
-      hostmask: any;
+      hostmask: string;
       to: string;
       message: string;
     }
@@ -92,6 +99,7 @@ declare module "slate-irc" {
       on(event: "message", callback: (event: MessageEvent) => void): void;
       on(event: "notice", callback: (event: MessageEvent) => void): void;
       on(event: "motd", callback: (event: MOTDEvent) => void): void;
+      on(event: "topic", callback: (event: TopicEvent) => void): void;
       on(event: "join", callback: (event: JoinEvent) => void): void;
       on(event: "part", callback: (event: PartEvent) => void): void;
       on(event: "nick", callback: (event: NickEvent) => void): void;

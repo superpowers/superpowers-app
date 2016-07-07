@@ -5,22 +5,27 @@ import { tabStrip, panesElt } from "../tabs";
 import * as chat from "./index";
 import * as tabs from  "../tabs";
 
+import html from "../html";
 import * as escapeHTML from "escape-html";
+import getBackgroundColor from "./getBackgroundColor";
 
 const tabTemplate = document.querySelector("template.chat-tab") as HTMLTemplateElement;
 const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 
 export default class ChatTab {
-  tabElt: HTMLLIElement;
+  private tabElt: HTMLLIElement;
   paneElt: HTMLDivElement;
   private label: string;
 
-  logElt: HTMLDivElement;
-  textAreaElt: HTMLTextAreaElement;
-  previousMessage: string;
+  private topicElt: HTMLDivElement;
+  private waitingForTopic: boolean;
 
-  usersTreeView: TreeView;
-  users: string[] = [];
+  private logElt: HTMLDivElement;
+  private textAreaElt: HTMLTextAreaElement;
+  private previousMessage: string;
+
+  private usersTreeView: TreeView;
+  private users: string[] = [];
 
   constructor(public target: string, options?: { label?: string; isChannel?: boolean; showTab?: boolean; }) {
     if (options == null) options = {};
@@ -33,6 +38,27 @@ export default class ChatTab {
     this.paneElt.className = "chat-tab";
     panesElt.appendChild(this.paneElt);
     this.paneElt.appendChild(document.importNode(tabTemplate.content, true));
+
+    const headerElt = this.paneElt.querySelector(".header") as HTMLDivElement;
+
+    let chatTabName = this.target;
+    let chatTabDetails = `on ${chat.ircNetwork.host}:${chat.ircNetwork.port}`;
+    let chatTabTopic = "(Waiting for topic...)";
+
+    if (this.target === "status") {
+      chatTabName = `${chat.ircNetwork.host}:${chat.ircNetwork.port}`;
+      chatTabDetails = "";
+      chatTabTopic = "Connection status";
+    } else if (this.target[0] !== "#") {
+      chatTabTopic = "Private chat";
+    } else {
+      this.waitingForTopic = true;
+    }
+
+    (headerElt.querySelector(".info .name") as HTMLDivElement).textContent = chatTabName;
+    (headerElt.querySelector(".info .details") as HTMLDivElement).textContent = chatTabDetails;
+    this.topicElt = (headerElt.querySelector(".topic") as HTMLDivElement);
+    this.topicElt.textContent = chatTabTopic;
 
     this.logElt = this.paneElt.querySelector(".log") as HTMLDivElement;
     this.textAreaElt = this.paneElt.querySelector("textarea") as HTMLTextAreaElement;
@@ -108,32 +134,61 @@ export default class ChatTab {
     return text;
   }
 
-  addInfo(text: string) {
-    const elt = document.createElement("div");
-    elt.className = "info";
-    elt.innerHTML = this.linkify(text);
+  lastLogItem: {
+    elt: HTMLDivElement;
+    type: string;
+    from: string;
+    style: string;
+  };
 
-    this.logElt.appendChild(elt);
+  private appendLogElt(type: string, from: string, style: string) {
+    let elt: HTMLDivElement;
+    let contentElt: HTMLDivElement;
+
+    if (this.lastLogItem != null &&
+    this.lastLogItem.elt.classList.contains(type) &&
+    this.lastLogItem.from === from &&
+    this.lastLogItem.style === style) {
+      elt = this.lastLogItem.elt;
+      contentElt = elt.querySelector(".content") as HTMLDivElement;
+    } else {
+      elt = html("div", type);
+      if (style != null) style.split(" ").forEach((x) => elt.classList.add(x));
+
+      if (from != null) {
+        const gutterElt = html("div", "gutter", { parent: elt });
+        html("div", "avatar", {
+          textContent: from.substring(0, 2),
+          style: { backgroundColor: getBackgroundColor(from), },
+          parent: gutterElt
+        });
+      }
+
+      contentElt = html("div", "content", { parent: elt });
+      html("div", "from", { parent: contentElt, textContent: from });
+
+      this.logElt.appendChild(elt);
+    }
+
+    this.lastLogItem = { elt, type, from, style };
+
+    return contentElt;
+ }
+
+ private scrollToBottom() {
     this.logElt.scrollTop = 9e9;
+ }
+
+  addInfo(text: string) {
+    const contentElt = this.appendLogElt("info", null, null);
+    html("div", "text", { innerHTML: this.linkify(text), parent: contentElt });
+    this.scrollToBottom();
   }
 
   addMessage(from: string, text: string, style: string) {
-    const elt = document.createElement("div");
-    elt.className = "message";
-    if (style != null) elt.classList.add(style);
-
-    const fromElt = document.createElement("span");
-    fromElt.className = "from";
-    fromElt.textContent = `${from}: `;
-    elt.appendChild(fromElt);
-
-    const textElt = document.createElement("span");
-    textElt.className = "text";
-    textElt.innerHTML = this.linkify(text);
-    elt.appendChild(textElt);
-
-    this.logElt.appendChild(elt);
-    this.logElt.scrollTop = 9e9;
+    const contentElt = this.appendLogElt("message", from, style);
+    html("div", "text", { innerHTML: this.linkify(text), parent: contentElt });
+    this.scrollToBottom();
   }
 
   hasUser(name: string) {
@@ -200,7 +255,7 @@ export default class ChatTab {
             return;
           }
 
-          chat.join(params);
+          chat.join(params, true);
         } break;
         default:
           this.addInfo(`Unsupported command: ${command}`);
@@ -218,6 +273,12 @@ export default class ChatTab {
       this.usersTreeView.treeRoot.innerHTML = "";
       this.users.length = 0;
     }
+  }
+
+  onTopic(event: SlateIRC.TopicEvent) {
+    this.topicElt.classList.toggle("disabled", event.topic.length === 0);
+    this.topicElt.textContent = event.topic.length > 0 ? event.topic : "(No topic)";
+    this.waitingForTopic = false;
   }
 
   onJoin(event: SlateIRC.JoinEvent) {
@@ -307,5 +368,11 @@ export default class ChatTab {
     this.usersTreeView.treeRoot.innerHTML = "";
     names.sort((a, b) => a.name.localeCompare(b.name));
     for (const name of names) this.addUser(name.name);
+
+    if (this.waitingForTopic) {
+      // If we receive the names before the topic then we can assume no topic has been set
+      this.waitingForTopic = false;
+      this.topicElt.textContent = "(No topic)";
+    }
   };
 }

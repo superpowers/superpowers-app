@@ -67,6 +67,7 @@ interface HTMLOptions {
   style?: HTMLStyleOptions;
   dataset?: { [key: string]: string; };
   textContent?: string;
+  innerHTML?: string;
   title?: string;
   hidden?: boolean;
   disabled?: boolean;

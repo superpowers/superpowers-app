@@ -1,59 +1,111 @@
-.chat-tab {
+& {
   flex: 1 1 0;
   display: flex;
- 
-  .channel {
-    flex: 1 1 0;
+}
+
+.header {
+  background: #eee;
+  padding: 0.5em;
+  border-bottom: 1px solid #ccc;
+
+  .info {
     display: flex;
-    flex-flow: column;
-
-    .log {
-      flex: 1 1 0;
-      padding: 0.5em;
-      overflow-y: scroll;
-      -webkit-user-select: initial;
-      -moz-user-select: initial;
-      user-select: initial;
-      cursor: initial;
-      
-      & > div { margin-bottom: 0.5em; }
-    }
-
-    .input {
-      padding: 0.5em;
-      display: flex;
-
-      textarea {
-        flex: 1 1 0;
-        resize: none;
-      }
+    align-items: baseline;
+    padding-bottom: 0.25em;
+    font-size: 1.5em;
+    .details {
+      color: #666;
+      font-size: smaller;
+      padding-left: 0.25em;
     }
   }
 
-  .sidebar {
-    min-width: 150px;
-    max-width: 300px;
-    display: flex;
+  .topic.disabled {
+    color: #888;
   }
+}
 
-  .users-tree-view {
+.channel {
+  flex: 1 1 0;
+  display: flex;
+  flex-flow: column;
+
+  .log {
     flex: 1 1 0;
+    padding: 1em;
     overflow-y: scroll;
+    -webkit-user-select: initial;
+    -moz-user-select: initial;
+    user-select: initial;
+    cursor: initial;
+  }
 
-    position: relative;
-    > .tree { position: absolute; }
-    li.item .nickname { padding: 0.25em; }
+  .input {
+    padding: 0.5em;
+    display: flex;
+
+    textarea {
+      flex: 1 1 0;
+      resize: none;
+    }
   }
 }
 
-.chat-tab .log > .info {
-  color: #666;
+.sidebar {
+  min-width: 150px;
+  max-width: 300px;
+  display: flex;
 }
 
-.chat-tab .log > .message {
+.users-tree-view {
+  flex: 1 1 0;
+  overflow-y: scroll;
+
+  position: relative;
+  > .tree { position: absolute; }
+  li.item {
+    height: auto;
+    padding: 0.25em 0.5em;
+  }
+}
+
+.log > div {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1em;
+}
+
+.log .gutter {
+  width: calc(36px + 0.5em);
+  .avatar {
+    width: 36px;
+    height: 36px;
+    background: #ddd;
+    color: #444;
+    border-radius: 2px;
+    font-size: 1.5em;
+    padding: 0.2em;
+    text-transform: uppercase;
+  }
+}
+
+.log .content {
+  flex: 1 1 0;
+  .text { padding-bottom: 0.25em; }
+}
+
+.log > .info { color: #666; }
+
+.log > .message {
   .from { font-weight: bold; }
 
-  &.private { color: #664444; }
+  &.private {
+    color: #664444;
+    .from:before {
+      content: "(private) ";
+      opacity: 0.5;
+      font-weight: normal;
+    }
+  }
   &.notice { color: #448888; }
-  &.me { color: #888888; }
 }
