@@ -9,8 +9,12 @@
     "save": "Сохранить",
     "download": "Скачать",
     "install": "Установить",
+    "uninstall": "Удалить",
     "open": "Открыть",
-    "update": "Обновить"
+    "refresh": "Обновить",
+    "update": "Обновить",
+    "show": "Показать",
+    "hide": "Скрыть"
   },
 
   "states": {
@@ -20,6 +24,14 @@
   "server": {
     "hostname": "Имя Хоста",
     "port": "Порт",
-    "label": "Метка"
+    "label": "Название",
+
+    "connecting": "Подключение к ${host}...",
+    "tryAgain": "Попробовать снова",
+    "errors": {
+      "superpowersJSON": "Не получилось загрузить ${host}/superpowers.json.",
+      "notSuperpowers": "Похоже, на сервере ${host} не запущен Superpowers.",
+      "incompatibleVersion": "На сервере ${host} работает несовместимая версия Superpowers (запущено приложение с API версии ${serverVersion}, необходима ${appVersion})."
+    }
   }
 }
