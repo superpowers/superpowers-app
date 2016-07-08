@@ -12,8 +12,7 @@
   "updateAvailable": {
     "app": "Доступен Superpowers ${latest} (вы запустили ${current}).",
     "core": "Доступен Superpowers Core ${latest} (вы запустили ${current}).",
-    "askGameInstall": "Вы хотите установить сейчас систему \"Superpowers Game\"? Ее можно использовать для создания HTML5 2D+3D игровых проектов.",
-    "systems": "Доступны обновления для некоторых систем."
+    "systemsAndPlugins": "Доступны обновления для следующих элементов: ${systemsAndPlugins}."
   },
 
   "status": {
