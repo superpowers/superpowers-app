@@ -11,4 +11,4 @@
 [How to contribute](http://docs.superpowers-html5.com/en/development/how-to-contribute) —
 [Build instructions](http://docs.superpowers-html5.com/en/development/building-superpowers)
 
-![](http://i.imgur.com/fjVk2GV.gif)
+![](http://i.imgur.com/xqspDRS.gif)
