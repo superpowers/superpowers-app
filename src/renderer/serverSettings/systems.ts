@@ -122,6 +122,7 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
 
     progressElt.textContent = "...";
     const process = serverProcessById[id] = forkServerProcess([ command, id, "--force", `--download-url=${registryItem.downloadURL}` ]);
+    process.stdout.on("data", () => { /* Ignore, we're just draining to prevent the process from getting stuck */ });
     updateUI();
 
     process.on("message", (event: any) => {
