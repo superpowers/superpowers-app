@@ -1,6 +1,8 @@
 {
   "activeLanguage": "English",
   
+  "none": "(None)",
+  
   "actions": {
     "cancel": "Cancel",
     "clear": "Clear",

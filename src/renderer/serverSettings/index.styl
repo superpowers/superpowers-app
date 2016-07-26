@@ -92,30 +92,50 @@
     flex: 1 1 0;
     display: flex;
     flex-flow: column;
+
+    .actions {
+      margin-bottom: 0.25em;
+      button { margin-right: 0.25em; }
+    }
+
     .tree-view-container {
       flex: 1 1 0;
       position: relative;
+      overflow-y: auto;
       border: 1px solid #ccc;
-      .tree { position: absolute; }
+      .tree { position: absolute; overflow-y: auto; }
       .progress {
         margin-left: auto;
         margin-right: 0.5em;
+      }
+      .label {
+        padding-left: 0.25em;
       }
     }
   }
 
   .details {
-    min-height: 100px;
-    display: flex;
-    flex-flow: column;
-    .header {
-      display: flex;
-      label { margin: auto; }
-    }
-    
-    .info { flex: 1 1 0; }
+    margin-top: 0.25em;
+    border: 1px solid #ccc;
 
-    button.changelogs { margin-left: 0.5em; }
+    .title {
+      font-size: 18px;
+      text-transform: uppercase;
+      padding: 0.25em;
+      background-color: #666;
+      color: #fff;
+    }
+
+    .info {
+      padding: 0.5em;
+      table { width: auto; }
+    }
+
+    .actions {
+      padding: 0 0.5em;
+      padding-bottom: 0.5em;
+      button { margin-right: 0.25em; }
+    }
   }
 }
 

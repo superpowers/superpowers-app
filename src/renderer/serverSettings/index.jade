@@ -53,18 +53,20 @@
           button.refresh= t("common:actions.refresh")
           button.update-all= t("server:systems.updateAll")
         .tree-view-container
-      .details
-        .content(hidden)
-          .header
-            button.install-uninstall= t("common:actions.install")
-            button.update= t("common:actions.update")
-            button.changelogs= t("server:systems.changelogs")
-            label.installed
-            label.latest
-          .info
-            .name
-            .description
-            .links
+      .details(hidden)
+        .title
+        .info
+          table
+            tr.installed
+              th= t("server:systems.installed")
+              td
+            tr.latest
+              th= t("server:systems.latest")
+              td
+        .actions
+          button.install-uninstall= t("common:actions.install")
+          button.update= t("common:actions.update")
+          button.release-notes= t("server:systems.releaseNotes")
 
 .resize-handle.bottom
 .server-log.collapsable

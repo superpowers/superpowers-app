@@ -18,17 +18,20 @@ refreshButton.addEventListener("click", refreshRegistry);
 const updateAllButton = systemsPaneElt.querySelector(".registry .actions .update-all") as HTMLButtonElement;
 updateAllButton.addEventListener("click", () => { updateAll(); });
 
-const detailsElt = systemsPaneElt.querySelector(".details .content") as HTMLDivElement;
+const detailsElt = systemsPaneElt.querySelector(".details") as HTMLDivElement;
 
-const installOrUninstallButton = detailsElt.querySelector(".header .install-uninstall") as HTMLButtonElement;
+const selectionTitleElt = detailsElt.querySelector(".title") as HTMLDirectoryElement;
+const selectionActionsElt = detailsElt.querySelector(".actions") as HTMLDivElement;
+const installOrUninstallButton = selectionActionsElt.querySelector(".install-uninstall") as HTMLButtonElement;
 installOrUninstallButton.addEventListener("click", installOrUninstallClick);
-const updateButton = detailsElt.querySelector(".header .update") as HTMLButtonElement;
+const updateButton = selectionActionsElt.querySelector(".update") as HTMLButtonElement;
 updateButton.addEventListener("click", onUpdateClick);
-const changelogsButton = detailsElt.querySelector(".header .changelogs") as HTMLButtonElement;
-changelogsButton.addEventListener("click", onChangelogsClick);
 
-const installedLabel = detailsElt.querySelector(".header .installed") as HTMLLabelElement;
-const latestLabel = detailsElt.querySelector(".header .latest") as HTMLLabelElement;
+const releaseNotesButton = selectionActionsElt.querySelector(".release-notes") as HTMLButtonElement;
+releaseNotesButton.addEventListener("click", onReleaseNotesClick);
+
+const installedElt = detailsElt.querySelector("tr.installed td") as HTMLLabelElement;
+const latestElt = detailsElt.querySelector("tr.latest td") as HTMLLabelElement;
 
 let registry: Registry;
 let registryServerProcess: ChildProcess;
@@ -42,7 +45,7 @@ export type Registry = {
 interface ItemData {
   version: string;
   downloadURL: string;
-  changelogsURL: string;
+  releaseNotesURL: string;
   localVersion: string;
   isLocalDev: boolean; };
 interface SystemData extends ItemData {
@@ -222,10 +225,11 @@ function updateUI() {
     const installOrUninstallAction = registryItem.isLocalDev || registryItem.localVersion == null ? "install" : "uninstall";
     installOrUninstallButton.textContent = i18n.t(`common:actions.${installOrUninstallAction}`);
 
-    installedLabel.textContent = i18n.t("server:systems.installed", { installed: registryItem.isLocalDev ? "DEV" : (registryItem.localVersion == null ? "NONE" : registryItem.localVersion)});
-    latestLabel.textContent = i18n.t("server:systems.latest", { latest: registryItem.version });
+    selectionTitleElt.textContent = id;
+    installedElt.textContent = registryItem.isLocalDev ? "(dev)" : (registryItem.localVersion == null ? i18n.t("common:none") : registryItem.localVersion);
+    latestElt.textContent = registryItem.version;
 
-    // TODO: Update system details (version, description, ...)
+    // TODO: Update system details (description, ...)
   } else {
     detailsElt.hidden = true;
   }
@@ -252,7 +256,7 @@ function onUpdateClick() {
   action("update", { systemId, authorName, pluginName });
 }
 
-function onChangelogsClick() {
+function onReleaseNotesClick() {
   const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
   if (id == null) return;
 
@@ -260,5 +264,5 @@ function onChangelogsClick() {
   const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
   const registryItem = pluginName != null ? registry.systems[systemId].plugins[authorName][pluginName] : registry.systems[systemId];
 
-  electron.shell.openExternal(registryItem.changelogsURL);
+  electron.shell.openExternal(registryItem.releaseNotesURL);
 }
