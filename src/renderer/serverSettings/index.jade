@@ -44,19 +44,6 @@
                 label= t("server:settings.authentication.password")
                 input(type="password")
                 button= t("common:actions.show")
-
-        tr
-          td
-            ol
-              li
-                input#guest-account-checkbox(type="checkbox")
-                label(for="guest-account-checkbox")= t("server:settings.authentication.guestAccount")
-              li
-                input#local-account-checkbox(type="checkbox")
-                label(for="local-account-checkbox")= t("server:settings.authentication.localAccount")
-              li
-                input#external-services-checkbox(type="checkbox")
-                label(for="external-services-checkbox")= t("server:settings.authentication.externalServices")
   .systems
     header= t("server:systems.title")
     .content
