@@ -15,13 +15,13 @@
     "remove": "Remove server"
   },
 
-	"addServer": {
-		"title": "Enter server details"
-	},
+  "addServer": {
+    "title": "Enter server details"
+  },
 
-	"editServer": {
-		"title": "Edit server details"
-	},
+  "editServer": {
+    "title": "Edit server details"
+  },
 
   "setNickname": {
     "title": "Set nickname"
