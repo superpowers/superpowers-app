@@ -51,6 +51,7 @@
     "title": "Systems and plugins",
     "updateAll": "Update all",
     "installed": "Installed: ${installed}",
-    "latest": "Latest: ${latest}"
+    "latest": "Latest: ${latest}",
+    "changelogs": "Changelogs"
   }
 }

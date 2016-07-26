@@ -1,3 +1,4 @@
+import * as electron from "electron";
 import { ChildProcess } from "child_process";
 import forkServerProcess from "../forkServerProcess";
 import * as TreeView from "dnd-tree-view";
@@ -23,6 +24,8 @@ const installOrUninstallButton = detailsElt.querySelector(".header .install-unin
 installOrUninstallButton.addEventListener("click", installOrUninstallClick);
 const updateButton = detailsElt.querySelector(".header .update") as HTMLButtonElement;
 updateButton.addEventListener("click", onUpdateClick);
+const changelogsButton = detailsElt.querySelector(".header .changelogs") as HTMLButtonElement;
+changelogsButton.addEventListener("click", onChangelogsClick);
 
 const installedLabel = detailsElt.querySelector(".header .installed") as HTMLLabelElement;
 const latestLabel = detailsElt.querySelector(".header .latest") as HTMLLabelElement;
@@ -39,6 +42,7 @@ export type Registry = {
 interface ItemData {
   version: string;
   downloadURL: string;
+  changelogsURL: string;
   localVersion: string;
   isLocalDev: boolean; };
 interface SystemData extends ItemData {
@@ -246,4 +250,15 @@ function onUpdateClick() {
   const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
 
   action("update", { systemId, authorName, pluginName });
+}
+
+function onChangelogsClick() {
+  const id = treeView.selectedNodes.length === 1 ? treeView.selectedNodes[0].dataset["id"] : null;
+  if (id == null) return;
+
+  const [ systemId, pluginPath ] = id.split(":");
+  const [ authorName, pluginName ] = pluginPath != null ? pluginPath.split("/") : [null, null];
+  const registryItem = pluginName != null ? registry.systems[systemId].plugins[authorName][pluginName] : registry.systems[systemId];
+
+  electron.shell.openExternal(registryItem.changelogsURL);
 }
