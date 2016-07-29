@@ -43,7 +43,10 @@ function onQuit() {
 
 function onSettingsLoaded(err: Error) {
   if (err != null) {
-    const label = i18n.t("startup:errors.couldNotLoadSettings", { reason: err.message });
+    const label = i18n.t("startup:errors.couldNotLoadSettings", {
+      settingsPath: `${settings.userDataPath}/settings.json`,
+      reason: err.message
+    });
     const options = {
       validationLabel: i18n.t("startup:startAnyway"),
       cancelLabel: i18n.t("common:actions.close")
