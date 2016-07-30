@@ -2,9 +2,9 @@
   "presence": {
     "online": "In linea",
     "away": "Assente",
-    "offline": "non in linea"
+    "offline": "Non in linea"
   },
-  
+
   "chat": {
     "showIrcStatus": "Mostra lo stato IRC"
   },

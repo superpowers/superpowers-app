@@ -1,6 +1,8 @@
 {
   "activeLanguage": "Italiano",
-  
+
+  "none": "(Nessuno)",
+
   "actions": {
     "cancel": "Annulla",
     "clear": "Pulisci",
@@ -12,8 +14,10 @@
     "uninstall": "Disinstalla",
     "open": "Apri",
     "refresh": "Ricarica",
-    "update": "Aggiorna"
-  },
+    "update": "Aggiorna",
+    "show": "Mostra",
+    "hide": "Nascondi"
+},
 
   "states": {
     "loading": "In caricamento..."
@@ -33,4 +37,3 @@
     }
   }
 }
-

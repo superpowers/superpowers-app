@@ -8,19 +8,19 @@
   },
 
   "chatrooms": {
-    "title": "Chatrooms",
+    "title": "Elenco Chatroom",
 
     "en": "Inglese",
     "fr": "Francese"
   },
 
   "links": {
-    "title": "Links",
+    "title": "Link",
 
     "documentation": "Documentazione",
     "forums": "Forum della Community",
     "patreon": "Patreon",
     "openSource": "Open Source",
-    "teamSpeak": "TeamSpeak server"
+    "teamSpeak": "Server TeamSpeak"
   }
 }
