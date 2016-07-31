@@ -5,5 +5,22 @@
   "nickname": "Nickname",
   "connectToChat": "Collegati alla chat della community",
 
-  "getStarted": "Iniziamo!"
+  "getStarted": "Iniziamo!",
+
+    "askGameInstall": {
+      "title": "Per iniziare",
+      "prompt": "Superpowers utilizza i sistemi, che ti permettono di creare diversi tipi di progetto. Il più comune è il sistema \"Superpowers Game\", che ti permette di creare giochi in 2D e 3D. Vuoi installare questo sistema?",
+      "waiting": "Il sistema \"Superpowers Game\" è in fase di installazione. Ci vorranno un paio di minuti."
+    },
+
+    "serverInformation": {
+      "title": "Gestione del server locale",
+      "info": "Puoi gestire il tuo server locale nell'angolo in basso a sinistra. Come comportamento predefinito, verrà avviato automaticamente quando lanci l'applicazione.",
+      "gotIt": "Capito!"
+    },
+
+    "sidebarInformation": {
+      "title": "Lista dei server",
+      "info": "La barra laterale a sinistra elenca i tuoi server preferiti. Effettua un doppio click su \"My Server\" per accedere all'hub del tuo server locale e creare il tuo primo progetto!"
+    }
 }

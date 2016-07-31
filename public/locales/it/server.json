@@ -5,8 +5,9 @@
   "status": {
   	"starting": "Server in avviamento...",
   	"started": "Server in funzione.",
-  	"stopping": "Server in interruzione...",
-  	"stopped": "Server arrestato."
+  	"stopping": "Server in fase di arresto...",
+  	"stopped": "Server arrestato.",
+    "updating": "Server in aggiornamento..."
   },
 
   "buttons": {
@@ -18,6 +19,7 @@
   "settings": {
     "title": "Impostazioni del server",
     "error": "Non è stato possibile caricare le impostazioni del server",
+    "serverMustBeStopped": "Il server deve essere arrestato prima di modificare le impostazioni.",
 
     "general": {
       "title": "Generale",
@@ -37,14 +39,19 @@
     "authentication": {
       "title": "Autenticazione",
       "openToInternet": "Apri il server in internet",
+      "password": "Password",
 
       "guestAccount": "Abilita account ospite temporanei",
       "localAccount": "Abilita la creazione di account locali",
       "externalServices": "Abilita l'accesso con servizi esterni"
     }
   },
-  
+
   "systems": {
-    "title": "Sistemi e plugin"
+    "title": "Sistemi e plugin",
+    "updateAll": "Aggiorna tutto",
+    "installed": "Versione installata",
+    "latest": "Ultima versione",
+    "releaseNotes": "Note di rilascio"
   }
 }
