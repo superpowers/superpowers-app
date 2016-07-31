@@ -85,12 +85,17 @@ function start() {
 
 function showWelcomeDialog(callback: Function) {
   new WelcomeDialog((result) => {
-    settings.nickname = result.nickname;
-    settings.presence = result.connectToChat ? "online" : "offline";
+    if (result != null) {
+      settings.nickname = result.nickname;
+      settings.presence = result.connectToChat ? "online" : "offline";
 
-    settings.savedChatrooms = [ "#superpowers-html5" ];
-    if (i18n.languageCode !== "en" && chat.languageChatRooms.indexOf(i18n.languageCode) !== -1) {
-      settings.savedChatrooms.push(`#superpowers-html5-${i18n.languageCode}`);
+      settings.savedChatrooms = [ "#superpowers-html5" ];
+      if (i18n.languageCode !== "en" && chat.languageChatRooms.indexOf(i18n.languageCode) !== -1) {
+        settings.savedChatrooms.push(`#superpowers-html5-${i18n.languageCode}`);
+      }
+    } else {
+      settings.nickname = "Nickname";
+      settings.presence = "offline";
     }
 
     settings.scheduleSave();
