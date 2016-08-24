@@ -1,0 +1,39 @@
+{
+  "activeLanguage": "Deutsch",
+
+  "none": "(Nichts)",
+
+  "actions": {
+    "cancel": "Abbrechen",
+    "clear": "Leeren",
+    "close": "Schließen",
+    "skip": "Überspringen",
+    "save": "Speichern",
+    "download": "Download",
+    "install": "Installieren",
+    "uninstall": "Deinstallieren",
+    "open": "Öffnen",
+    "refresh": "Aktualisieren",
+    "update": "Updaten",
+    "show": "Zeigen",
+    "hide": "Verstecken"
+  },
+
+  "states": {
+    "loading": "Lade ..."
+  },
+
+  "server": {
+    "hostname": "Hostname",
+    "port": "Port",
+    "label": "Label",
+
+    "connecting": "Verbinde mit ${host}...",
+    "tryAgain": "Erneut versuchen",
+    "errors": {
+      "superpowersJSON": "${host}/superpowers.json konnte nicht heruntergeladen werden.",
+      "notSuperpowers": "Auf dem Server ${host} scheint keine Superpowers Instanz zu laufen.",
+      "incompatibleVersion": "Auf dem Server ${host} läuft eine inkompatible Version von Superpowers (App API Version ${serverVersion} gefunden, erwartet wird ${appVersion})."
+    }
+  }
+}

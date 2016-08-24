@@ -1,0 +1,25 @@
+{
+  "startingUp": "Superpowers wird gestartet...",
+  "failedToStart": "App konnte nicht gestartet werden",
+  "startAnyway": "Trotzdem starten",
+
+  "errors": {
+    "missingEnvironmentVariables": "Benötigte Umgebungsvariablen konnten nicht gefunden werden: ${envVars}.",
+    "couldNotCreateUserDataFolder": "Benutzerdaten Ordner konnte in ${userDataPath} nicht angelegt werden. Grund: ${reason}.",
+    "couldNotLoadSettings": "Einstellungen aus ${settingsPath} konnten nicht geladen werden. Grund: ${reason}."
+  },
+
+  "updateAvailable": {
+    "app": "Superpowers ${latest} ist verfügbar (Sie haben noch ${current}).",
+    "core": "Superpowers Core ${latest} ist verfügbar (Sie haben noch ${current}).",
+    "systemsAndPlugins": "Für die folgenden Komponnenten ist ein Update verfügbar: ${systemsAndPlugins}."
+  },
+
+  "status": {
+    "installingCore": "Aktuelle Superpowers Core wird installiert...",
+    "installingCoreSucceed": "Superpowers Core wurde erfolgreich installiert.",
+    "installingCoreFailed": "Die Installation von Superpowers Core ist fehlgeschlagen. ${error}",
+    "installingGame": "Aktuelles Superpowers Game System wird installiert...",
+    "installingGameFailed": "Die Installation von Superpowers Game System ist fehlgeschlagen. ${error}"
+  }
+}

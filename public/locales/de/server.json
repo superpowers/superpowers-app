@@ -1,0 +1,57 @@
+{
+  "myServer": "Mein Server",
+  "log": "Server Log",
+
+  "status": {
+  	"starting": "Server startet...",
+  	"started": "Server läuft.",
+  	"stopping": "Server wird gestoppt...",
+  	"stopped": "Server gestoppt.",
+    "updating": "Server wird Aktualisiert..."
+  },
+
+  "buttons": {
+    "settings": "Einstellungen",
+    "start": "Start",
+    "stop": "Stopp"
+  },
+
+  "settings": {
+    "title": "Server Einstellungen",
+    "error": "Server Einstellungen konnten nicht geladen werden",
+    "serverMustBeStopped": "Der Server muss gestoppt werden um die Einstellungen zu bearbeiten.",
+
+    "general": {
+      "title": "Allgemein",
+
+      "mainPort": "Main Port",
+      "buildPort": "Build Port",
+
+      "autoStart": "Server bei APP-Start automatisch starten"
+    },
+
+    "storage": {
+      "title": "Storage",
+      "openProjectsFolder": "Projektverzeichnis öffnen",
+      "recentBuilds": "Letzte Builds zur Aufbewahrung"
+    },
+
+    "authentication": {
+      "title": "Authentifikation",
+      "openToInternet": "Server zum Internet öffnen",
+      "password": "Passwort",
+
+      "guestAccount": "Temporäre Gast Accounts aktivieren",
+      "localAccount": "Lokale Account Erstellung aktivieren",
+      "externalServices": "Login über externe Dienste aktivieren"
+    }
+  },
+
+  "systems": {
+    "title": "Systeme and Plugins",
+    "updateAll": "Alle aktualisieren",
+    "installed": "Installierte Version",
+    "latest": "Aktuelle Version",
+    "releaseNotes": "Release Notes"
+  }
+}
