@@ -6,6 +6,10 @@
     section.general
       header= t("server:settings.general.title")
       table
+        tr.server-name
+          th= t("server:settings.general.serverName")
+          td.no-padding
+            input(type="text",maxlength="30")
         tr.main-port
           th= t("server:settings.general.mainPort")
           td.no-padding

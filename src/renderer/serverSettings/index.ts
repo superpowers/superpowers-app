@@ -9,6 +9,7 @@ import "./log";
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
 const disabledElt = settingsElt.querySelector(".disabled") as HTMLDivElement;
 
+const serverNameElt = settingsElt.querySelector(".server-name input") as HTMLInputElement;
 const mainPortElt = settingsElt.querySelector(".main-port input") as HTMLInputElement;
 const buildPortElt = settingsElt.querySelector(".build-port input") as HTMLInputElement;
 const autoStartServerElt = settingsElt.querySelector("#auto-start-server-checkbox") as HTMLInputElement;
@@ -30,6 +31,8 @@ export function start() {
     return;
   }
 
+  serverNameElt.value = serverConfig.serverName != null ? serverConfig.serverName : "";
+  serverNameElt.addEventListener("input", scheduleSave);
   mainPortElt.value = serverConfig.mainPort.toString();
   mainPortElt.addEventListener("input", scheduleSave);
   buildPortElt.value = serverConfig.buildPort.toString();
@@ -57,6 +60,7 @@ export function enable(enabled: boolean) {
 }
 
 interface ServerConfig {
+  serverName: string;
   mainPort: number;
   buildPort: number;
   password: string;
@@ -138,6 +142,7 @@ export function applyScheduledSave() {
   if (scheduleSaveTimeoutId == null) return;
 
   const config: ServerConfig = {
+    serverName: serverNameElt.value.length > 0 ? serverNameElt.value : null,
     mainPort: parseInt(mainPortElt.value, 10),
     buildPort: parseInt(buildPortElt.value, 10),
     password: passwordElt.value,

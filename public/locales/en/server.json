@@ -24,6 +24,7 @@
     "general": {
       "title": "General",
 
+      "serverName": "Server name",
       "mainPort": "Main port",
       "buildPort": "Build port",
 
