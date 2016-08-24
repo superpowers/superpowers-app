@@ -41,7 +41,7 @@ electron.app.on("before-quit", (event) => {
 
 function startCleanExit() {
   console.log("Exiting cleanly...");
-  mainWindow.webContents.send("quit");
+  if (mainWindow != null) mainWindow.webContents.send("quit");
   isQuitting = true;
 }
 
