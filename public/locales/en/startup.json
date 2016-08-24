@@ -4,7 +4,7 @@
   "startAnyway": "Start anyway",
 
   "errors": {
-    "missingEnvironmentVariables": "Could not find required environment variables: ${envVars}.",
+    "couldNotGetDataPath": "Could not get data path: ${details}",
     "couldNotCreateUserDataFolder": "Could not create user data folder at ${userDataPath}. Reason: ${reason}.",
     "couldNotLoadSettings": "Could not load settings from ${settingsPath}. Reason: ${reason}."
   },
