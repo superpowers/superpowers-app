@@ -156,6 +156,13 @@ function onCloseMainWindow(event: Event) {
   } else {
     mainWindow.hide();
   }
+
+  if (process.platform === "win32") {
+    trayIcon.displayBalloon({
+      title: i18n.t("tray:stillRunning.title"),
+      content: i18n.t("tray:stillRunning.content")
+    });
+  }
 }
 
 function restoreMainWindow() {
