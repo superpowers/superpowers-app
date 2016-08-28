@@ -163,6 +163,8 @@ function installFirstSystem(callback: Function) {
 
 function updateSystemsAndPlugins() {
   serverSettingsSystems.getRegistry((registry) => {
+    if (registry == null) { localServer.start(); return; }
+
     const systemsAndPlugins: string[] = [];
     for (const systemId in registry.systems) {
       const system = registry.systems[systemId];

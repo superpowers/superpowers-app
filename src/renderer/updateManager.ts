@@ -176,7 +176,7 @@ function firstCoreInstall(callback: (error: Error) => void) {
 
 function updateCore(callback: (error: Error) => void) {
   systemServerSettings.getRegistry((registry) => {
-    if (registry.core.isLocalDev || registry.core.version === registry.core.localVersion) { callback(null); return; }
+    if (registry == null || registry.core.isLocalDev || registry.core.version === registry.core.localVersion) { callback(null); return; }
 
     const label = i18n.t("startup:updateAvailable.core", { latest: registry.core.version, current: registry.core.localVersion });
     const options = {

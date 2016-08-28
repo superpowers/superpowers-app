@@ -88,31 +88,35 @@ function onRegistryReceived(event: any) {
     return;
   }
 
-  registry = event.registry;
-  const systemsById = registry.systems;
+  if (event.error == null && event.registry != null) {
+    registry = event.registry;
+    const systemsById = registry.systems;
 
-  for (const systemId in systemsById) {
-    const system = systemsById[systemId];
+    for (const systemId in systemsById) {
+      const system = systemsById[systemId];
 
-    const systemElt = html("li", { dataset: { id: systemId } });
-    html("div", "label", { parent: systemElt, textContent: systemId });
-    html("div", "progress", { parent: systemElt });
-    treeView.append(systemElt, "group");
+      const systemElt = html("li", { dataset: { id: systemId } });
+      html("div", "label", { parent: systemElt, textContent: systemId });
+      html("div", "progress", { parent: systemElt });
+      treeView.append(systemElt, "group");
 
-    for (const authorName in system.plugins) {
-      const plugins = system.plugins[authorName];
+      for (const authorName in system.plugins) {
+        const plugins = system.plugins[authorName];
 
-      const authorElt = html("li");
-      html("div", "label", { parent: authorElt, textContent: `${authorName} (${Object.keys(plugins).length} plugins)` });
-      treeView.append(authorElt, "group", systemElt);
+        const authorElt = html("li");
+        html("div", "label", { parent: authorElt, textContent: `${authorName} (${Object.keys(plugins).length} plugins)` });
+        treeView.append(authorElt, "group", systemElt);
 
-      for (const pluginName in plugins) {
-        const pluginElt = html("li", { dataset: { id: `${systemId}:${authorName}/${pluginName}` } });
-        html("div", "label", { parent: pluginElt, textContent: pluginName });
-        html("div", "progress", { parent: pluginElt });
-        treeView.append(pluginElt, "item", authorElt);
+        for (const pluginName in plugins) {
+          const pluginElt = html("li", { dataset: { id: `${systemId}:${authorName}/${pluginName}` } });
+          html("div", "label", { parent: pluginElt, textContent: pluginName });
+          html("div", "progress", { parent: pluginElt });
+          treeView.append(pluginElt, "item", authorElt);
+        }
       }
     }
+  } else {
+    registry = null;
   }
 
   for (const getRegistryCallback of getRegistryCallbacks) getRegistryCallback(registry);
@@ -122,6 +126,8 @@ function onRegistryReceived(event: any) {
 type ActionItem = { systemId: string; authorName?: string; pluginName?: string };
 export function action(command: string, item: ActionItem, callback?: (succeed: boolean) => void) {
   getRegistry((registry) => {
+    if (registry == null) return;
+
     const id = item.pluginName != null ? `${item.systemId}:${item.authorName}/${item.pluginName}` : item.systemId;
 
     const progressElt = treeView.treeRoot.querySelector(`li[data-id="${id}"] .progress`) as HTMLDivElement;
@@ -146,6 +152,7 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
 
       progressElt.textContent = `${event.value}%`;
     });
+
     process.on("exit", (statusCode: number) => {
       progressElt.textContent = "";
       delete serverProcessById[id];
@@ -173,6 +180,8 @@ export function action(command: string, item: ActionItem, callback?: (succeed: b
 
 export function updateAll(callback?: Function) {
   getRegistry((registry) => {
+    if (registry == null) return;
+
     async.each(Object.keys(registry.systems), (systemId, cb) => {
       const system = registry.systems[systemId];
       async.parallel([
