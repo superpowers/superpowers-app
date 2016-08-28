@@ -12,6 +12,11 @@ import getBackgroundColor from "./getBackgroundColor";
 const tabTemplate = document.querySelector("template.chat-tab") as HTMLTemplateElement;
 const commandRegex = /^\/([^\s]*)(?:\s(.*))?$/;
 
+interface ChannelUser {
+  nickname: string;
+  mode: string;
+}
+
 export default class ChatTab {
   private tabElt: HTMLLIElement;
   paneElt: HTMLDivElement;
@@ -25,7 +30,7 @@ export default class ChatTab {
   private previousMessage: string;
 
   private usersTreeView: TreeView;
-  private users: string[] = [];
+  private users: { [nickname: string]: ChannelUser } = {};
 
   constructor(public target: string, options?: { label?: string; isChannel?: boolean; showTab?: boolean; }) {
     if (options == null) options = {};
@@ -191,30 +196,41 @@ export default class ChatTab {
     this.scrollToBottom();
   }
 
-  hasUser(name: string) {
-    return this.users.indexOf(name) !== -1;
+  hasUser(nickname: string) {
+    return this.users[nickname] != null;
   }
 
-  private addUser(name: string) {
-    if (this.users.indexOf(name) !== -1) return;
-    this.users.push(name);
+  private addUser(nickname: string, mode: string) {
+    if (this.hasUser(nickname)) return;
+    this.users[nickname] = { nickname, mode };
 
     const userElt = document.createElement("li");
-    userElt.dataset["nickname"] = name;
+    userElt.dataset["nickname"] = nickname;
+
+    const modeElt = document.createElement("div");
+    modeElt.className = "mode";
+    modeElt.textContent = this.getModeSymbol(mode);
+    userElt.appendChild(modeElt);
 
     const nicknameElt = document.createElement("div");
     nicknameElt.className = "nickname";
-    nicknameElt.textContent = name;
+    nicknameElt.textContent = nickname;
     userElt.appendChild(nicknameElt);
 
     this.usersTreeView.append(userElt, "item");
   }
 
-  private removeUser(name: string) {
-    if (this.users.indexOf(name) === -1) return;
-    this.users.splice(this.users.indexOf(name), 1);
+  private getModeSymbol(mode: string) {
+    if (mode.indexOf("o") !== -1) return "@";
+    if (mode.indexOf("v") !== -1) return "+";
+    return "";
+  }
 
-    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${name}"]`) as HTMLLIElement;
+  private removeUser(nickname: string) {
+    if (!this.hasUser(nickname)) return;
+    delete this.users[nickname];
+
+    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${nickname}"]`) as HTMLLIElement;
     this.usersTreeView.remove(userElt);
   }
 
@@ -271,7 +287,7 @@ export default class ChatTab {
     if (this.usersTreeView != null) {
       this.usersTreeView.clearSelection();
       this.usersTreeView.treeRoot.innerHTML = "";
-      this.users.length = 0;
+      this.users = {};
     }
   }
 
@@ -285,10 +301,9 @@ export default class ChatTab {
     this.addInfo(`${event.nick} has joined ${event.channel}.`);
 
     if (event.nick === chat.irc.me) {
-      // this.hasJoinedChannel = true;
       chat.irc.names(this.target, this.onChannelNamesReceived);
     } else {
-      this.addUser(event.nick);
+      this.addUser(event.nick, "");
     }
   }
 
@@ -300,8 +315,34 @@ export default class ChatTab {
   onNick(event: SlateIRC.NickEvent) {
     this.addInfo(`${event.nick} has changed nick to ${event.new}.`);
 
-    this.removeUser(event.nick);
-    this.addUser(event.new);
+    const oldUser = this.users[event.nick];
+    if (oldUser == null) return;
+    delete this.users[event.nick];
+    this.users[event.new] = { nickname: event.new, mode: oldUser.mode };
+
+    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${event.nick}"]`) as HTMLLIElement;
+    userElt.dataset["nickname"] = event.new;
+    userElt.querySelector(".nickname").textContent = event.new;
+  }
+
+  onMode(event: SlateIRC.ModeEvent) {
+    const user = this.users[event.client];
+    if (user == null) return;
+
+    let addingMode = true;
+
+    for (const c of event.mode) {
+      if (c === "+") addingMode = true;
+      else if (c === "-") addingMode = false;
+      else {
+        const index = user.mode.indexOf(c);
+        if (addingMode && index === -1) user.mode += c;
+        else if (!addingMode && index !== -1) user.mode = user.mode.substring(0, index) + user.mode.substring(index + 1);
+      }
+    }
+
+    const userElt = this.usersTreeView.treeRoot.querySelector(`li[data-nickname="${event.client}"]`) as HTMLLIElement;
+    userElt.querySelector(".mode").textContent = this.getModeSymbol(user.mode);
   }
 
   onAway(event: SlateIRC.AwayEvent) {
@@ -335,7 +376,7 @@ export default class ChatTab {
     if (stub.length === 0) return;
 
     const matches: string[] = [];
-    for (const user of this.users) {
+    for (const user in this.users) {
       if (user.toLowerCase().indexOf(stub) === 0) matches.push(user);
     }
 
@@ -364,10 +405,16 @@ export default class ChatTab {
       return;
     }
 
-    this.users.length = 0;
+    this.users = {};
     this.usersTreeView.treeRoot.innerHTML = "";
     names.sort((a, b) => a.name.localeCompare(b.name));
-    for (const name of names) this.addUser(name.name);
+    for (const name of names) {
+      let mode = "";
+      if (name.mode.indexOf("@") !== -1) mode += "o";
+      if (name.mode.indexOf("+") !== -1) mode += "v";
+
+      this.addUser(name.name, mode);
+    }
 
     if (this.waitingForTopic) {
       // If we receive the names before the topic then we can assume no topic has been set

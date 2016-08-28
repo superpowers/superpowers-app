@@ -96,6 +96,7 @@ function connect() {
   irc.on("join", onJoin);
   irc.on("part", onPart);
   irc.on("nick", onNick);
+  irc.on("mode", onMode);
   irc.on("away", onAway);
   irc.on("quit", onQuit);
   irc.on("data", onData);
@@ -205,6 +206,11 @@ function onNick(event: SlateIRC.NickEvent) {
     privateChatTabs[event.new] = privateChatTab;
     privateChatTab.updateTarget(event.new);
   }
+}
+
+function onMode(event: SlateIRC.ModeEvent) {
+  const chatTab = channelChatTabs[event.target];
+  if (chatTab != null) chatTab.onMode(event);
 }
 
 function onAway(event: SlateIRC.AwayEvent) {

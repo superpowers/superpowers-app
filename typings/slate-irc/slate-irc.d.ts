@@ -55,6 +55,13 @@ declare module "slate-irc" {
       new: string;
     }
 
+    interface ModeEvent {
+      nick: string;
+      target: string;
+      mode: string;
+      client: string;
+    }
+
     interface AwayEvent {
       nick: string;
       message: string;
@@ -103,6 +110,8 @@ declare module "slate-irc" {
       on(event: "join", callback: (event: JoinEvent) => void): void;
       on(event: "part", callback: (event: PartEvent) => void): void;
       on(event: "nick", callback: (event: NickEvent) => void): void;
+      on(event: "mode", callback: (event: ModeEvent) => void): void;
+      on(event: "away", callback: (event: AwayEvent) => void): void;
       on(event: "quit", callback: (event: QuitEvent) => void): void;
     }
   }
