@@ -15,7 +15,7 @@
 
   "serverInformation": {
     "title": "Local server management",
-    "info": "You can manage your own local server from the bottom-left corner. By default, it start automatically when you launch the app.",
+    "info": "You can manage your own local server from the bottom-left corner. By default, it starts automatically when you launch the app.",
     "gotIt": "Got it!"
   },
 
