@@ -5,7 +5,7 @@
   "status": {
   	"starting": "Server in avviamento...",
   	"started": "Server in funzione.",
-  	"stopping": "Server in fase di arresto...",
+  	"stopping": "Server in interruzione...",
   	"stopped": "Server arrestato.",
     "updating": "Server in aggiornamento..."
   },
@@ -19,7 +19,7 @@
   "settings": {
     "title": "Impostazioni del server",
     "error": "Non è stato possibile caricare le impostazioni del server",
-    "serverMustBeStopped": "Il server deve essere arrestato prima di modificare le impostazioni.",
+    "serverMustBeStopped": "Il server deve essere fermato prima di modificare le impostazioni.",
 
     "general": {
       "title": "Generale",
