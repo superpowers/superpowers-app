@@ -1,7 +1,23 @@
 import * as electron from "electron";
+import * as fs from "fs";
 import * as path from "path";
 
-const authorizationsByOrigin: { [origin: string]: { folders: string[]; rwFiles: string[], exeFiles: string[] } } = {};
+let authorizationsByOrigin: { [origin: string]: { folders: string[]; rwFiles: string[], exeFiles: string[] } } = {};
+
+export function loadAuthorizations(dataPath: string) {
+  try {
+    const authorizationsByOriginJSON = fs.readFileSync(`${dataPath}/authorizationsByOrigin.json`, { encoding: "utf8" });
+    authorizationsByOrigin = JSON.parse(authorizationsByOriginJSON);
+    if (authorizationsByOrigin == null || typeof authorizationsByOrigin !== "object") authorizationsByOrigin = {};
+  } catch (err) {
+    // Ignore
+  }
+}
+
+export function saveAuthorizations(dataPath: string) {
+  fs.writeFileSync(`${dataPath}/authorizationsByOrigin.json`, JSON.stringify(authorizationsByOrigin, null, 2));
+}
+
 function getAuthorizationsForOrigin(origin: string) {
   let authorizations = authorizationsByOrigin[origin];
   if (authorizations == null) authorizations = authorizationsByOrigin[origin] = { folders: [], rwFiles: [], exeFiles: [] };

@@ -3,7 +3,7 @@ import * as i18n from "./shared/i18n";
 import * as menu from "./menu";
 import getPaths from "./getPaths";
 import getLanguageCode from "./getLanguageCode";
-import "./ipc";
+import * as SupAppIPC from "./ipc";
 
 let corePath: string;
 let userDataPath: string;
@@ -48,6 +48,8 @@ function startCleanExit() {
 electron.ipcMain.on("ready-to-quit", (event) => {
   if (event.sender !== mainWindow.webContents) return;
 
+  SupAppIPC.saveAuthorizations(userDataPath);
+
   console.log("Exited cleanly.");
   isReadyToQuit = true;
   electron.app.quit();
@@ -61,6 +63,8 @@ function onAppReady() {
   getPaths((dataPathErr, pathToCore, pathToUserData) => {
     userDataPath = pathToUserData;
     corePath = pathToCore;
+
+    SupAppIPC.loadAuthorizations(userDataPath);
 
     getLanguageCode(userDataPath, (languageCode) => {
       i18n.languageCode = languageCode;
