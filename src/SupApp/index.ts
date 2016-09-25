@@ -12,7 +12,7 @@ const tmpRoot = os.tmpdir();
 const tmpCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const getRandomTmpCharacter = () => tmpCharacters[Math.floor(Math.random() * tmpCharacters.length)];
 
-const secretKey = crypto.randomBytes(48).toString("hex");;
+const secretKey = crypto.randomBytes(48).toString("hex");
 electron.ipcRenderer.send("setup-key", secretKey);
 
 let nextIpcId = 0;
