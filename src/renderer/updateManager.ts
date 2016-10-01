@@ -194,8 +194,8 @@ function updateCore(callback: (error: Error) => void) {
 
       const process = forkServerProcess([ "update", "core", "--force", `--download-url=${registry.core.downloadURL}` ]);
 
-      // FIXME: The update on the core fails somehow if we remove this line
-      process.stdout.on("data", (data: any) => { /* NOTHING */ });
+      // We need to drain stdout otherwise the process gets stuck
+      process.stdout.on("data", (data: any) => { /* Ignore */ });
 
       process.on("message", (event: any) => {
         if (event.type === "error") {
