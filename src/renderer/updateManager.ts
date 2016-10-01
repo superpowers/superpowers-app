@@ -197,9 +197,11 @@ function updateCore(callback: (error: Error) => void) {
       // We need to drain stdout otherwise the process gets stuck
       process.stdout.on("data", (data: any) => { /* Ignore */ });
 
+      let errorMessage: string;
+
       process.on("message", (event: any) => {
         if (event.type === "error") {
-          new dialogs.InfoDialog(event.message);
+          errorMessage = event.message;
           return;
         }
 
@@ -213,10 +215,15 @@ function updateCore(callback: (error: Error) => void) {
       });
 
       process.on("exit", (statusCode: number) => {
-        splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
         splashScreen.setProgressVisible(false);
 
-        callback(statusCode !== 0 ? new Error("Update failed") : null);
+        if (statusCode !== 0) {
+          callback(new Error(errorMessage != null ? errorMessage : "Update failed"));
+          return;
+        }
+
+        splashScreen.setStatus(i18n.t("startup:status.installingCoreSucceed"));
+        callback(null);
       });
     });
   });
