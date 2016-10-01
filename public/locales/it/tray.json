@@ -1,4 +1,9 @@
 {
   "dashboard": "Dashboard",
-  "exit": "Esci"
+  "exit": "Esci",
+
+  "stillRunning": {
+    "title": "In funzione in background...",
+    "content": "Clicca con il tasto destro del mouse sulla icona nella barra per uscire da Superpowers."
+  }
 }

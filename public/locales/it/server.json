@@ -24,6 +24,7 @@
     "general": {
       "title": "Generale",
 
+      "serverName": "Nome server",
       "mainPort": "Porta principale",
       "buildPort": "Porta di compilazione",
 
