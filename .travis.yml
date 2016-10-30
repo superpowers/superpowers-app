@@ -1,13 +1,14 @@
-sudo: false
+dist: trusty
+sudo: true
 language: node_js
 node_js: "node"
 cache:
   directories:
   - node_modules
-addons:
-  apt:
-    packages:
-    - wine
+before_install: 
+  - sudo dpkg --add-architecture i386
+  - sudo apt-get -qq update
+  - sudo apt-get install wine1.6
 install: true
 script:
 - npm run build
