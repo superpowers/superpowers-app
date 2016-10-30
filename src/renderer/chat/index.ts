@@ -165,7 +165,7 @@ export function join(channelName: string, focus?: boolean) {
   }
 
   if (settings.presence === "offline") {
-    settings.presence = "online";
+    settings.setPresence("online");
     sidebarMe.updatePresenceFromSettings();
     connect();
   }

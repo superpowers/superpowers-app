@@ -14,6 +14,27 @@ export let nickname: string;
 export let presence: "online"|"away"|"offline";
 export let savedChatrooms: string[];
 
+export function setPaths(newCorePath: string, newUserDataPath: string) {
+  corePath = newCorePath;
+  userDataPath = newUserDataPath;
+}
+
+export function setNickname(newNickname: string) {
+  nickname = newNickname;
+}
+
+export function setPresence(newPresence: "online"|"away"|"offline") {
+  presence = newPresence;
+}
+
+export function setSavedChatrooms(newSavedChatrooms: string[]) {
+  savedChatrooms = newSavedChatrooms;
+}
+
+export function setAutoStartServer(enabled: boolean) {
+  autoStartServer = enabled;
+}
+
 export function load(callback: (err: Error) => void) {
   const settingsPath = `${userDataPath}/settings.json`;
   console.log(`Loading settings from ${settingsPath}.`);

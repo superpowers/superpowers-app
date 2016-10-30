@@ -97,7 +97,7 @@ function onOpenProjectsFolderClick() {
 }
 
 function onChangeAutoStartServer() {
-  settings.autoStartServer = autoStartServerElt.checked;
+  settings.setAutoStartServer(autoStartServerElt.checked);
   settings.scheduleSave();
 }
 

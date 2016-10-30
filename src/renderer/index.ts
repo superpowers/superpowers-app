@@ -27,10 +27,8 @@ const namespaces = [
 ];
 
 function onInitialize(sender: any, corePath: string, userDataPath: string, languageCode: string) {
-  settings.corePath = corePath;
-  settings.userDataPath = userDataPath;
-
-  i18n.languageCode = languageCode;
+  settings.setPaths(corePath, userDataPath);
+  i18n.setLanguageCode(languageCode);
   i18n.load(namespaces, () => { settings.load(onSettingsLoaded); });
 }
 
@@ -86,16 +84,16 @@ function start() {
 function showWelcomeDialog(callback: Function) {
   new WelcomeDialog((result) => {
     if (result != null) {
-      settings.nickname = result.nickname;
-      settings.presence = result.connectToChat ? "online" : "offline";
+      settings.setNickname(result.nickname);
+      settings.setPresence(result.connectToChat ? "online" : "offline");
 
-      settings.savedChatrooms = [ "#superpowers-html5" ];
+      settings.setSavedChatrooms([ "#superpowers-html5" ]);
       if (i18n.languageCode !== "en" && chat.languageChatRooms.indexOf(i18n.languageCode) !== -1) {
         settings.savedChatrooms.push(`#superpowers-html5-${i18n.languageCode}`);
       }
     } else {
-      settings.nickname = "Nickname";
-      settings.presence = "offline";
+      settings.setNickname("Nickname");
+      settings.setPresence("offline");
     }
 
     settings.scheduleSave();

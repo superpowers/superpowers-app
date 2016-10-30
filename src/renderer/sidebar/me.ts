@@ -28,7 +28,8 @@ nameElt.addEventListener("click", (event) => {
 
   new dialogs.PromptDialog("Enter a new nickname", options, (newNickname) => {
     if (newNickname != null) {
-      nameElt.textContent = settings.nickname = newNickname;
+      nameElt.textContent = newNickname;
+      settings.setNickname(newNickname);
       settings.scheduleSave();
       chat.onNicknameUpdated();
     }
@@ -36,7 +37,7 @@ nameElt.addEventListener("click", (event) => {
 });
 
 presenceElt.addEventListener("change", (event) => {
-  settings.presence = presenceElt.value as any;
+  settings.setPresence(presenceElt.value as any);
   settings.scheduleSave();
 
   chat.onPresenceUpdated();

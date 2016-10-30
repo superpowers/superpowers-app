@@ -6,6 +6,11 @@ interface I18nContext { [name: string]: I18nValue; }
 
 export const languageIds = fs.readdirSync(`${__dirname}/../locales`);
 export let languageCode: string;
+
+export function setLanguageCode(code: string) {
+  languageCode = code;
+}
+
 export const contexts: { [name: string]: I18nContext } = {};
 export const fallbackContexts: { [name: string]: I18nContext } = {};
 
