@@ -12,6 +12,13 @@ let mainWindow: Electron.BrowserWindow;
 let trayIcon: Electron.Tray;
 let trayMenu: Electron.Menu;
 
+let windowIconPath: string;
+
+if (process.platform === "linux") {
+  windowIconPath = `${__dirname}/icon-256.png`;
+} else {
+  windowIconPath = `${__dirname}/superpowers.ico`;
+}
 
 /* tslint:disable */
 const expectedElectronVersion = require(`${__dirname}/package.json`).superpowers.electron;
@@ -127,7 +134,7 @@ function setupTrayOrDock() {
 
 function setupMainWindow() {
   mainWindow = new electron.BrowserWindow({
-    width: 1000, height: 600, icon: `${__dirname}/superpowers.ico`,
+    width: 1000, height: 600, icon: windowIconPath,
     minWidth: 800, minHeight: 480,
     useContentSize: true, autoHideMenuBar: true,
     show: false
