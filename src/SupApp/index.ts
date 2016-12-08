@@ -169,7 +169,7 @@ namespace SupApp {
 
   export function mktmpdir(callback: (err: any, path: string) => void) {
     let tempFolderPath: string;
-    async.retry(10, (cb: ErrorCallback) => {
+    async.retry(10, (cb: ErrorCallback<NodeJS.ErrnoException>) => {
       let folderName = "superpowers-temp-";
       for (let i = 0; i < 16; i++) folderName += getRandomTmpCharacter();
       tempFolderPath = `${tmpRoot}/${folderName}`;
