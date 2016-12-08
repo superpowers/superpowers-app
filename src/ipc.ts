@@ -31,7 +31,7 @@ electron.ipcMain.on("choose-file", onChooseFile);
 electron.ipcMain.on("authorize-folder", onAuthorizeFolder);
 electron.ipcMain.on("check-path-authorization", onCheckPathAuthorization);
 
-const secretKeys = new Map<Electron.WebContents,string>();
+const secretKeys = new Map<Electron.WebContents, string>();
 
 function onSetupKey(event: Electron.IpcMainEvent, secretKey: string) {
   if (secretKeys.has(event.sender)) return;
