@@ -26,8 +26,8 @@ const namespaces = [
   "welcome", "home"
 ];
 
-function onInitialize(sender: any, corePath: string, userDataPath: string, languageCode: string) {
-  settings.setPaths(corePath, userDataPath);
+function onInitialize(sender: any, corePath: string, roUserDataPath: string, rwUserDataPath: string, languageCode: string) {
+  settings.setPaths(corePath, roUserDataPath, rwUserDataPath);
   i18n.setLanguageCode(languageCode);
   i18n.load(namespaces, () => { settings.load(onSettingsLoaded); });
 }
@@ -42,7 +42,7 @@ function onQuit() {
 function onSettingsLoaded(err: Error) {
   if (err != null) {
     const label = i18n.t("startup:errors.couldNotLoadSettings", {
-      settingsPath: `${settings.userDataPath}/settings.json`,
+      settingsPath: `${settings.rwUserDataPath}/settings.json`,
       reason: err.message
     });
     const options = {

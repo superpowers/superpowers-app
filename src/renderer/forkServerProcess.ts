@@ -19,7 +19,7 @@ export default function forkSererProcess(extraArgs: string[] = []) {
 
   const serverProcess = fork(
     serverPath,
-    [ `--data-path=${settings.userDataPath}` ].concat(extraArgs),
+    [ `--data-path=${settings.roUserDataPath}`, `--rw-data-path=${settings.rwUserDataPath}` ].concat(extraArgs),
     { silent: true, env: serverEnv }
   );
   return serverProcess;
