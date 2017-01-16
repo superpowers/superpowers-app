@@ -16,6 +16,7 @@ import openServerSettings from "./tabs/openServerSettings";
 import * as localServer from "./localServer";
 import * as chat from "./chat";
 import WelcomeDialog from "./WelcomeDialog";
+import * as flatpak from "./flatpak";
 
 electron.ipcRenderer.on("init", onInitialize);
 electron.ipcRenderer.on("quit", onQuit);
@@ -71,7 +72,10 @@ function start() {
 
   splashScreen.fadeOut(() => {
     if (settings.nickname == null) {
-      async.series([ showWelcomeDialog, installFirstSystem ]);
+      let actions = [ showWelcomeDialog, installFirstSystem ];
+      if (flatpak.underFlatpak())
+        actions = [ showWelcomeDialog, startLocalServer ];
+      async.series(actions);
     } else {
       me.start();
       chat.start();
@@ -105,6 +109,11 @@ function showWelcomeDialog(callback: Function) {
   });
 }
 
+function startLocalServer(callback: Function) {
+  localServer.start();
+  callback();
+}
+
 function installFirstSystem(callback: Function) {
   const label = i18n.t("welcome:askGameInstall.prompt");
   const options = {
@@ -115,8 +124,7 @@ function installFirstSystem(callback: Function) {
 
   new dialogs.ConfirmDialog(label, options, (installGame) => {
     if (!installGame) {
-      localServer.start();
-      callback();
+      startLocalServer(callback);
       return;
     }
 
@@ -160,6 +168,8 @@ function installFirstSystem(callback: Function) {
 }
 
 function updateSystemsAndPlugins() {
+  if (flatpak.underFlatpak()) { localServer.start(); return; }
+
   serverSettingsSystems.getRegistry((registry) => {
     if (registry == null) { localServer.start(); return; }
 

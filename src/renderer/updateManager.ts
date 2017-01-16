@@ -12,6 +12,7 @@ import * as systemServerSettings from "./serverSettings/systems";
 import * as i18n from "../shared/i18n";
 import * as splashScreen from "./splashScreen";
 import fetch from "../shared/fetch";
+import * as flatpak from "./flatpak";
 
 /* tslint:disable */
 const https: typeof dummy_https = require("follow-redirects").https;
@@ -24,7 +25,14 @@ if (appVersion === "0.0.0-dev") {
 } else appVersion = `v${appVersion}`;
 
 export function checkForUpdates(callback: (err: Error) => void) {
-  async.series([ checkAppUpdate, checkCoreUpdate ], callback);
+  let updateRoutines = [ checkAppUpdate, checkCoreUpdate ];
+  if (flatpak.underFlatpak())
+    updateRoutines = [ checkNoUpdates ];
+  async.series(updateRoutines, callback);
+}
+
+function checkNoUpdates(callback: (err: Error) => void) {
+  callback(null);
 }
 
 function checkAppUpdate(callback: (err: Error) => void) {
