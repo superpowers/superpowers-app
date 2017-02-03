@@ -1,0 +1,26 @@
+{
+  "activeLanguage": "Português do Brasil",
+  
+  "actions": {
+    "cancel": "Cancelar",
+    "clear": "Limpar",
+    "close": "Fechar",
+    "skip": "Pular",
+    "save": "Salvar",
+    "download": "Baixar",
+    "install": "Instalar",
+    "open": "Abrir",
+    "update": "Atualizar"
+  },
+
+  "states": {
+    "loading": "Carregando..."
+  },
+
+  "server": {
+    "hostname": "Hostname",
+    "port": "Porta",
+    "label": "Rótulo"
+  }
+}
+
