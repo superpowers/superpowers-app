@@ -1,0 +1,40 @@
+{
+  "activeLanguage": "ภาษาไทย",
+  
+  "none": "(ปกติ)",
+  
+  "actions": {
+    "cancel": "ยกเลิก",
+    "clear": "ล้าง",
+    "close": "ปิด",
+    "skip": "ข้าม",
+    "save": "บันทึก",
+    "download": "ดาวน์โหลด",
+    "install": "ติดตั้ง",
+    "uninstall": "ถอนการติดตั้ง",
+    "open": "เปิด",
+    "refresh": "รีเฟรส",
+    "update": "อัพเดท",
+    "show": "แสดง",
+    "hide": "ซ่อน"
+  },
+
+  "states": {
+    "loading": "กำลังโหลด..."
+  },
+
+  "server": {
+    "hostname": "Hostname",
+    "port": "Port",
+    "label": "ป้ายชื่อ",
+
+    "connecting": "กำลังเชื่อมต่อไปยัง ${host}...",
+    "tryAgain": "ลองอีกครั้ง",
+    "errors": {
+      "superpowersJSON": "ไม่สามารถดาวน์โหลด ${host}/superpowers.json ได้",
+      "notSuperpowers": "เซิฟเวอร์ ${host} ไม่ได้ทำงานด้วยระบบ Superpowers",
+      "incompatibleVersion": "เซิฟเวอร์ ${host} ทำงานด้วยระบบ Superpowers ที่เข้ากันไม่ได้ (API เวอร์ชั่น ${serverVersion}, ต้องการ ${appVersion})."
+    }
+  }
+}
+

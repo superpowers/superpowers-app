@@ -1,0 +1,10 @@
+{
+  "dashboard": "แดชบอร์ด",
+  "exit": "ปิดโปรแกรม",
+
+  "stillRunning": {
+    "title": "ยังทำงานอยู่ในแบ็คกราว...",
+    "content": "คลิกขวาไอคอนที่ tray เพื่อออก Superpowers"
+  }
+
+}

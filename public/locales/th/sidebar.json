@@ -1,0 +1,29 @@
+{
+  "presence": {
+    "online": "ออนไลน์",
+    "away": "ไม่อยู่",
+    "offline": "ออฟไลน์"
+  },
+  
+  "chat": {
+    "showIrcStatus": "แสดงสถานะ IRC"
+  },
+
+  "servers": {
+    "add": "เพิ่มเซิฟเวอร์",
+    "edit": "แก้ไขเซิฟเวอร์",
+    "remove": "ลบเซิฟเวอร์"
+  },
+
+  "addServer": {
+    "title": "กรอกข้อมูลเซิฟเวอร์"
+  },
+
+  "editServer": {
+    "title": "แก้ไขข้อมูลเซิฟเวอร์"
+  },
+
+  "setNickname": {
+    "title": "ตั้งชื่อเล่น"
+  }
+}

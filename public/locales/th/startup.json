@@ -1,0 +1,25 @@
+{
+  "startingUp": "กำลังเริ่มต้น Superpowers...",
+  "failedToStart": "ไม่สามารถเปิดโปรแกรมได้",
+  "startAnyway": "Start anyway",
+
+  "errors": {
+    "missingEnvironmentVariables": "ไม่พบค่าตัวแปรในสิ่งแวดล้อมที่ต้องการ : ${envVars}.",
+    "couldNotCreateUserDataFolder": "ไม่สามารถสร้างโฟลเดอร์ข้อมูลผู้ใข้ที่ ${userDataPath}. สาเหตุ : ${reason}.",
+    "couldNotLoadSettings": "ไม่สามารถโหลดการตั้งค่าที่ถูกตั้งไว้จาก ${settingsPath} สาเหตุ : ${reason}."
+  },
+
+  "updateAvailable": {
+    "app": "Superpowers มีอัพเดทเวอร์ชั่นใหม่ ${latest}  (เวอร์ชั่นที่คุณกำลังใช้อยู่ ${current}).",
+    "core": "Superpowers Core มีอัพเดทเวอร์ชั่นใหม่ ${latest}  (เวอร์ชั่นที่คุณกำลังใช้อยู่ ${current}).",
+    "systemsAndPlugins": "รายการต่อไปนี้พร้อมสำหรับการอัพเดท: ${systemsAndPlugins}."
+  },
+
+  "status": {
+    "installingCore": "กำลังติดตั้ง Superpowers Core เวอร์ชั่นล่าสุด...",
+    "installingCoreSucceed": "Superpowers Core ติดตั้งเสร็จสิ้น",
+    "installingCoreFailed": "Superpowers Core ล้มเหลวในการติดตั้ง ${error}",
+    "installingGame": "กำลังติดตั้งระบบเกมเวอร์ชั่นล่าสุด...",
+    "installingGameFailed": "Superpowers Game Core ล้มเหลวในการติดตั้ง. ${error}"
+  }
+}
