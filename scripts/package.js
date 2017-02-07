@@ -1,5 +1,6 @@
 "use strict";
 
+const yargs = require("yargs");
 const fs = require("fs");
 const execSync = require("child_process").execSync;
 const path = require("path");
@@ -8,6 +9,17 @@ const rootPackage = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, {
 const publicPackage = JSON.parse(fs.readFileSync(`${__dirname}/../public/package.json`, { encoding: "utf8" }));
 publicPackage.version = rootPackage.version;
 publicPackage.dependencies = rootPackage.dependencies;
+
+const argv = yargs.argv;
+let platform = argv._[0];
+let arch = argv._[1];
+
+if (arch == null) {
+  arch = "all";
+}
+if (platform == null) {
+  platform = "all";
+}
 
 fs.writeFileSync(`${__dirname}/../public/package.json`, JSON.stringify(publicPackage, null, 2) + "\n");
 
@@ -19,7 +31,7 @@ execSync("npm install --production", { cwd: `${__dirname}/../public`, stdio: "in
 // See https://github.com/electron-userland/electron-packager/issues/413
 execSync("npm install rcedit@0.5.0 electron-packager@7.1.0", { stdio: "inherit" });
 
-console.log("Running electron-packager...");
+console.log(`Running electron-packager for platform '${platform}' and arch '${arch}'...`);
 
 const packager = require("electron-packager");
 const year = new Date().getFullYear();
@@ -27,7 +39,8 @@ const year = new Date().getFullYear();
 packager({
   dir: "public",
   name: "Superpowers",
-  all: true,
+  platform: platform,
+  arch: arch,
   version: publicPackage.superpowers.electron,
   out: "packages",
   icon: "icons/superpowers",
