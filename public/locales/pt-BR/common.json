@@ -1,5 +1,7 @@
 {
   "activeLanguage": "Português do Brasil",
+
+  "none": "(Nenhum)",
   
   "actions": {
     "cancel": "Cancelar",
@@ -9,8 +11,12 @@
     "save": "Salvar",
     "download": "Baixar",
     "install": "Instalar",
+    "uninstall": "Desinstalar",
     "open": "Abrir",
-    "update": "Atualizar"
+    "refresh": "Recarregar",
+    "update": "Atualizar",
+    "show": "Mostrar",
+    "hide": "Esconder"
   },
 
   "states": {
@@ -20,7 +26,15 @@
   "server": {
     "hostname": "Hostname",
     "port": "Porta",
-    "label": "Rótulo"
+    "label": "Rótulo",
+
+    "connecting": "Conectando a ${host}...",
+    "tryAgain": "Tentar novamente",
+    "errors": {
+      "superpowersJSON": "Não foi possível baixar ${host}/superpowers.json.",
+      "notSuperpowers": "O servidor em ${host} não parece estar rodando Superpowers.",
+      "incompatibleVersion": "O servidor em ${host} está rodando uma versão incompatível do Superpowers (recebeu versão ${serverVersion} da API, mas esperava receber ${appVersion})."
+    }
   }
 }
 

@@ -6,7 +6,8 @@
   	"starting": "Servidor iniciando...",
   	"started": "Servidor rodando.",
   	"stopping": "Servidor parando...",
-  	"stopped": "Servidor parado."
+  	"stopped": "Servidor parado.",
+    "updating": "Servidor atualizando..."
   },
 
   "buttons": {
@@ -18,10 +19,12 @@
   "settings": {
     "title": "Configurações do Servidor",
     "error": "Não foi possível carregar as configurações do servidor",
+    "serverMustBeStopped": "O servidor precisa ser parado antes de modificar as configurações.",
 
     "general": {
       "title": "Geral",
 
+      "serverName": "Nome do Servidor",
       "mainPort": "Porta Principal",
       "buildPort": "Porta para Build",
 
@@ -37,6 +40,7 @@
     "authentication": {
       "title": "Autenticação",
       "openToInternet": "Abrir o servidor para a Internet",
+      "password": "Senha",
 
       "guestAccount": "Habilitar contas temporárias de visitantes",
       "localAccount": "Habilitar criação de conta local",
@@ -45,6 +49,10 @@
   },
   
   "systems": {
-    "title": "Sistemas e plugins"
+    "title": "Sistemas e plugins",
+    "updateAll": "Atualizar tudo",
+    "installed": "Versão instalada",
+    "latest": "Última versão",
+    "releaseNotes": "Notas de lançamento"
   }
 }

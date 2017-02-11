@@ -1,7 +1,7 @@
 {
   "title": "Home",
 
-  "tagline": "Criador de jogos 2D+3D para indies. Free & Open Source,&nbsp;<b>finalmente</b>.",
+  "tagline": "Motor de jogo 2D+3D para indies. Gratuito e de código aberto,&nbsp;<b>finalmente</b>.",
 
   "news": {
     "couldNotFetch": "Não foi possível obter as últimas notícias."
@@ -20,7 +20,8 @@
     "documentation": "Documentação",
     "forums": "Fóruns da Comunidade",
     "patreon": "Patreon",
-    "openSource": "Open Source",
+    "openSource": "Código Aberto",
+    "freeAssets": "Assets Gratuitos",
     "teamSpeak": "Servidor de TeamSpeak"
   }
 }

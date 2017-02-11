@@ -1,12 +1,12 @@
 {
   "presence": {
-    "online": "Online",
+    "online": "Conectado",
     "away": "Ausente",
-    "offline": "Offline"
+    "offline": "Desconectado"
   },
   
   "chat": {
-    "showIrcStatus": "Mostrar status do IRC"
+    "showIrcStatus": "Status do IRC"
   },
 
   "servers": {
