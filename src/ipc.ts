@@ -30,6 +30,7 @@ electron.ipcMain.on("choose-folder", onChooseFolder);
 electron.ipcMain.on("choose-file", onChooseFile);
 electron.ipcMain.on("authorize-folder", onAuthorizeFolder);
 electron.ipcMain.on("check-path-authorization", onCheckPathAuthorization);
+electron.ipcMain.on("send-message", onSendMessage);
 
 const secretKeys = new Map<Electron.WebContents, string>();
 
@@ -95,4 +96,11 @@ function onCheckPathAuthorization(event: Electron.IpcMainEvent, secretKey: strin
 
   const authorization = canReadWrite ? "readWrite" : (canExecute ? "execute" : null);
   event.sender.send("check-path-authorization-callback", ipcId, normalizedPath, authorization);
+}
+
+function onSendMessage(event: Electron.IpcMainEvent, windowId: number, message: string, args: any[] = []) {
+  const window = electron.BrowserWindow.fromId(windowId);
+  if (window == null) return;
+
+  window.webContents.send(`sup-app-message-${message}`, ...args);
 }

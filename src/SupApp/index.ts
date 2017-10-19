@@ -81,6 +81,9 @@ namespace SupApp {
   export function onMessage(messageType: string, callback: Function) {
     electron.ipcRenderer.addListener(`sup-app-message-${messageType}`, (event, ...args) => { callback(...args); });
   }
+  export function sendMessage(windowId: number, message: string) {
+    electron.ipcRenderer.send("send-message", windowId, message);
+  }
 
   export function getCurrentWindow() { return currentWindow; }
   export function showMainWindow() { electron.ipcRenderer.send("show-main-window"); }
