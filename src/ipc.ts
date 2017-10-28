@@ -34,12 +34,12 @@ electron.ipcMain.on("send-message", onSendMessage);
 
 const secretKeys = new Map<Electron.WebContents, string>();
 
-function onSetupKey(event: Electron.IpcMainEvent, secretKey: string) {
+function onSetupKey(event: Electron.Event, secretKey: string) {
   if (secretKeys.has(event.sender)) return;
   secretKeys.set(event.sender, secretKey);
 }
 
-function onChooseFolder(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string) {
+function onChooseFolder(event: Electron.Event, secretKey: string, ipcId: string, origin: string) {
   if (secretKeys.get(event.sender) !== secretKey) return;
 
   electron.dialog.showOpenDialog({ properties: [ "openDirectory" ] }, (directory: string[]) => {
@@ -52,7 +52,7 @@ function onChooseFolder(event: Electron.IpcMainEvent, secretKey: string, ipcId: 
   });
 }
 
-function onChooseFile(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, access: "readWrite"|"execute") {
+function onChooseFile(event: Electron.Event, secretKey: string, ipcId: string, origin: string, access: "readWrite"|"execute") {
   if (secretKeys.get(event.sender) !== secretKey) return;
 
   electron.dialog.showOpenDialog({ properties: [ "openFile" ] }, (file: string[]) => {
@@ -68,14 +68,14 @@ function onChooseFile(event: Electron.IpcMainEvent, secretKey: string, ipcId: st
   });
 }
 
-function onAuthorizeFolder(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, folderPath: string) {
+function onAuthorizeFolder(event: Electron.Event, secretKey: string, ipcId: string, origin: string, folderPath: string) {
   const normalizedPath = path.normalize(folderPath);
   getAuthorizationsForOrigin(origin).folders.push(normalizedPath);
 
   event.sender.send("authorize-folder-callback", ipcId);
 }
 
-function onCheckPathAuthorization(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, pathToCheck: string) {
+function onCheckPathAuthorization(event: Electron.Event, secretKey: string, ipcId: string, origin: string, pathToCheck: string) {
   if (secretKeys.get(event.sender) !== secretKey) return;
 
   const normalizedPath = path.normalize(pathToCheck);
@@ -98,7 +98,7 @@ function onCheckPathAuthorization(event: Electron.IpcMainEvent, secretKey: strin
   event.sender.send("check-path-authorization-callback", ipcId, normalizedPath, authorization);
 }
 
-function onSendMessage(event: Electron.IpcMainEvent, windowId: number, message: string, args: any[] = []) {
+function onSendMessage(event: Electron.Event, windowId: number, message: string, args: any[] = []) {
   const window = electron.BrowserWindow.fromId(windowId);
   if (window == null) return;
 

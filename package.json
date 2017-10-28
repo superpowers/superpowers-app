@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/async": "^2.0.32",
-    "@types/electron": "^1.4.25",
+    "@types/electron": "^1.6.10",
     "@types/electron-packager": "^5.1.29",
     "@types/escape-html": "0.0.19",
     "@types/lodash": "^4.14.37",
@@ -39,7 +39,6 @@
     "gulp-tslint": "^4.3.1",
     "gulp-typescript": "^3.1.2",
     "tslint": "^3.12.1",
-    "typescript": "^2.0.6",
-    "yargs": "^4.1.0"
+    "typescript": "^2.0.6"
   }
 }

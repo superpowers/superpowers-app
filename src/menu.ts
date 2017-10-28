@@ -7,7 +7,7 @@ export function setup(app: Electron.App) {
   }
 
   const name = app.getName();
-  const template: Electron.MenuItemOptions[] = [
+  const template: Electron.MenuItemConstructorOptions[] = [
     {
       label: name,
       submenu: [

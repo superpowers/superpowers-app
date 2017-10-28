@@ -45,7 +45,7 @@ function startCleanExit() {
   isQuitting = true;
 }
 
-electron.ipcMain.on("ready-to-quit", (event) => {
+electron.ipcMain.on("ready-to-quit", (event: Electron.Event) => {
   if (event.sender !== mainWindow.webContents) return;
 
   SupAppIPC.saveAuthorizations(userDataPath);

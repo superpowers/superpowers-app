@@ -144,7 +144,8 @@ function installFirstSystem(callback: Function) {
 
         const label = i18n.t("welcome:sidebarInformation.info");
         const options = {
-          header: i18n.t("welcome:sidebarInformation.title")
+          header: i18n.t("welcome:sidebarInformation.title"),
+          closeLabel: dialogs.BaseDialog.defaultLabels.close
         };
 
         new dialogs.InfoDialog(label, options, cb);

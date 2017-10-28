@@ -44,7 +44,7 @@ packager({
   }
 }, (err, oldPaths) => {
   if (err) throw err;
-  
+
   const buildPaths = [];
   for (const oldPath of oldPaths) {
     const newPath = oldPath
