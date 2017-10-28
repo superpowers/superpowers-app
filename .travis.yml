@@ -5,7 +5,8 @@ node_js: "node"
 cache:
   directories:
   - node_modules
-before_install: 
+before_install:
+  - npm i -g npm@5.2.0
   - sudo dpkg --add-architecture i386
   - sudo apt-get -qq update
   - sudo apt-get install wine1.6
