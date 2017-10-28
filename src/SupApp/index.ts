@@ -79,7 +79,7 @@ function onPathAuthorizationChecked(event: Electron.Event, ipcId: string, checke
 
 namespace SupApp {
   export function onMessage(messageType: string, callback: Function) {
-    electron.ipcRenderer.addListener(`sup-app-message-${messageType}`, (event: Electron.Event, args: any[]) => { callback(...args); });
+    electron.ipcRenderer.addListener(`sup-app-message-${messageType}`, (event: Electron.Event, ...args: any[]) => { callback(...args); });
   }
   export function sendMessage(windowId: number, message: string) {
     electron.ipcRenderer.send("send-message", windowId, message);
