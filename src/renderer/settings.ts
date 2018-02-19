@@ -68,11 +68,13 @@ export function load(callback: (err: Error) => void) {
     const data = JSON.parse(dataJSON);
 
     // Account for legacy servers
-    data.forEach(function(d: any) {
-      if(!("secure" in d)) {
-        d.secure = false;
-      }
-    });
+    if(data != null && data.favoriteServers != null) {
+      data.favoriteServers.forEach(function(d: any) {
+        if(!("secure" in d)) {
+          d.secure = false;
+        }
+      });
+    }
 
     favoriteServers = data.favoriteServers;
     for (const entry of favoriteServers) favoriteServersById[entry.id] = entry;
