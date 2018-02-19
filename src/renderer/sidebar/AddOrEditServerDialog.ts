@@ -104,10 +104,23 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
   }
 
   submit() {
+    let secure: boolean;
+    let value: string;
+    if(this.hostnameInputElt.value.startsWith("http://")) {
+      secure = false;
+      value = this.hostnameInputElt.value.substr(7);
+    } else if(this.hostnameInputElt.value.startsWith("https://")) {
+      secure = true;
+      value = this.hostnameInputElt.value.substr(8);
+    } else {
+      secure = false;
+      value = this.hostnameInputElt.value;
+    }
     const result = {
-      hostname: this.hostnameInputElt.value,
+      hostname: value,
       port: this.portInputElt.value !== "" ? this.portInputElt.value : null,
-      label: this.labelInputElt.value
+      label: this.labelInputElt.value,
+      secure: secure
     };
     super.submit(result);
   }

@@ -3,4 +3,5 @@ interface ServerEntry {
   hostname: string;
   port: string;
   label: string;
+  secure: boolean;
 }
