@@ -76,13 +76,15 @@ function makeServerPane(serverEntry: ServerEntry) {
   }
   retryButton.addEventListener("click", onRetryButtonClick);
 
-  const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
+  // Automatically add insecure protocol if none is already provided in the hostname
+  const protocol = serverEntry.hostname.startsWith("http") ? "" : "http://";
+  const host = protocol + serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
 
   function tryConnecting() {
     statusElt.textContent = i18n.t("common:server.connecting", { host });
     retryButton.hidden = true;
 
-    fetch(`http://${host}/superpowers.json`, "json", onFetchJSON);
+    fetch(`${host}/superpowers.json`, "json", onFetchJSON);
   }
 
   function onFetchJSON(err: Error, serverInfo: { version: string; appApiVersion: number; }) {
@@ -126,7 +128,7 @@ function makeServerPane(serverEntry: ServerEntry) {
     webviewElt.addEventListener("did-finish-load", onLoad);
     webviewElt.addEventListener("did-fail-load", onError);
 
-    webviewElt.src = `http://${host}`;
+    webviewElt.src = host;
     paneElt.appendChild(webviewElt);
     webviewElt.focus();
   }
