@@ -32,7 +32,7 @@ serversTreeView.on("activate", onServerActivate);
 function onAddServerClick(event: MouseEvent) {
   const addOrEditOptions = {
     validationLabel: "Add",
-    initialHostnameValue: "127.0.0.1",
+    initialHostnameValue: "http://127.0.0.1",
     initialPortValue: "4237",
     initialLabelValue: ""
   };
@@ -107,7 +107,14 @@ function addServer(serverEntry: ServerEntry) {
   const hostElt = document.createElement("div");
   hostElt.classList.add("host");
 
-  const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
+  let prefix: string;
+  if(serverEntry.secure) {
+    prefix = "https";
+  } else {
+    prefix = "http";
+  }
+
+  const host = prefix + "://" + serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
   hostElt.textContent = host;
   serverElt.appendChild(hostElt);
 }

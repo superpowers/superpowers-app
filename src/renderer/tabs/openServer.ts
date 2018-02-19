@@ -40,7 +40,15 @@ function makeServerTab(serverEntry: ServerEntry) {
 
   const locationElt = document.createElement("div");
   locationElt.className = "location";
-  locationElt.textContent = `${serverEntry.hostname}:${serverEntry.port}`;
+
+  let prefix: string;
+  if(serverEntry.secure) {
+      prefix = "https";
+  } else {
+      prefix = "http";
+  }
+
+  locationElt.textContent = `${prefix}://${serverEntry.hostname}:${serverEntry.port}`;
   labelElt.appendChild(locationElt);
 
   const nameElt = document.createElement("div");
@@ -76,13 +84,20 @@ function makeServerPane(serverEntry: ServerEntry) {
   }
   retryButton.addEventListener("click", onRetryButtonClick);
 
-  const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
+  let prefix: string;
+  if(serverEntry.secure) {
+      prefix = "https";
+  } else {
+      prefix = "http";
+  }
+
+  const host = prefix + "://" + serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
 
   function tryConnecting() {
     statusElt.textContent = i18n.t("common:server.connecting", { host });
     retryButton.hidden = true;
 
-    fetch(`http://${host}/superpowers.json`, "json", onFetchJSON);
+    fetch(`${host}/superpowers.json`, "json", onFetchJSON);
   }
 
   function onFetchJSON(err: Error, serverInfo: { version: string; appApiVersion: number; }) {
