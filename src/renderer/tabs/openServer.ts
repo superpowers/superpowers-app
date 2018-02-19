@@ -40,7 +40,7 @@ function makeServerTab(serverEntry: ServerEntry) {
 
   const locationElt = document.createElement("div");
   locationElt.className = "location";
-  locationElt.textContent = `${serverEntry.hostname}:${serverEntry.port}`;
+  locationElt.textContent = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
   labelElt.appendChild(locationElt);
 
   const nameElt = document.createElement("div");

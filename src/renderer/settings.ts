@@ -50,7 +50,7 @@ export function load(callback: (err: Error) => void) {
 
     if (dataJSON == null) {
       // Setup defaults
-      const myServerEntry = { hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer"), id: "0" };
+      const myServerEntry: ServerEntry = { id: "0", hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer") };
       favoriteServers = [ myServerEntry ];
       favoriteServersById[myServerEntry.id] = myServerEntry;
 

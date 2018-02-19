@@ -104,7 +104,8 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
   }
 
   submit() {
-    const result = {
+    const result: ServerEntry = {
+      id: null,
       hostname: this.hostnameInputElt.value,
       port: this.portInputElt.value !== "" ? this.portInputElt.value : null,
       label: this.labelInputElt.value
