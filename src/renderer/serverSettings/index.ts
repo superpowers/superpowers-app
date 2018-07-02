@@ -79,7 +79,7 @@ function getServerConfig() {
 
   let localConfig: ServerConfig;
   try {
-    localConfig = JSON.parse(fs.readFileSync(`${settings.userDataPath}/config.json`, { encoding: "utf8" }));
+    localConfig = JSON.parse(fs.readFileSync(`${settings.rwUserDataPath}/config.json`, { encoding: "utf8" }));
   } catch (err) { /* Ignore */ }
   if (localConfig == null) localConfig = {} as any;
 
@@ -93,7 +93,7 @@ function getServerConfig() {
 }
 
 function onOpenProjectsFolderClick() {
-  electron.shell.openExternal(`${settings.userDataPath}/projects/`);
+  electron.shell.openExternal(`${settings.rwUserDataPath}/projects/`);
 }
 
 function onChangeAutoStartServer() {
@@ -149,7 +149,7 @@ export function applyScheduledSave() {
     maxRecentBuilds: parseInt(maxRecentBuildsElt.value, 10)
   };
 
-  fs.writeFileSync(`${settings.userDataPath}/config.json`, JSON.stringify(config, null, 2) + "\n", { encoding: "utf8" });
+  fs.writeFileSync(`${settings.rwUserDataPath}/config.json`, JSON.stringify(config, null, 2) + "\n", { encoding: "utf8" });
 
   clearTimeout(scheduleSaveTimeoutId);
   scheduleSaveTimeoutId = null;

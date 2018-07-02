@@ -7,28 +7,45 @@ import { LocalizedError } from "./shared/i18n";
 const argv = yargs
   .usage("Usage: $0 [options]")
   .describe("core-path", "Path to Superpowers core")
+  .describe("ro-data-path", "Path to Superpowers readonly data (used only when core-path is passed too, use '<default>' to get the default electron app appData directory. Falls back to core-path.")
+  .describe("rw-data-path", "Path to Superpowers writable data (used only when core-path is passed too, use '<default>' to get the default electron app appData directory. Falls back to core-path.")
   .argv;
 
-export default function getPaths(callback: (err: LocalizedError, corePath?: string, dataPath?: string) => void) {
-  let dataPath: string;
+export default function getPaths(callback: (err: LocalizedError, corePath?: string, roDataPath?: string, rwDataPath?: string) => void) {
+  let roDataPath: string;
+  let rwDataPath: string;
 
   let corePath = argv["core-path"] != null ? path.resolve(argv["core-path"]) : null;
   if (corePath != null) {
-    dataPath = corePath;
-    process.nextTick(() => { callback(null, corePath, dataPath); });
+    roDataPath = argv["ro-data-path"] != null ? argv["ro-data-path"] : corePath;
+    if (roDataPath === "<default>") {
+      roDataPath = path.join(electron.app.getPath("appData"), "Superpowers");
+    } else {
+      roDataPath = path.resolve(roDataPath);
+    }
+
+    rwDataPath = argv["rw-data-path"] != null ? argv["rw-data-path"] : corePath;
+    if (rwDataPath === "<default>") {
+      rwDataPath = path.join(electron.app.getPath("appData"), "Superpowers");
+    } else {
+      rwDataPath = path.resolve(rwDataPath);
+    }
+
+    process.nextTick(() => { callback(null, corePath, roDataPath, rwDataPath); });
     return;
   }
 
   try {
-    dataPath = path.join(electron.app.getPath("appData"), "Superpowers");
+    roDataPath = rwDataPath = path.join(electron.app.getPath("appData"), "Superpowers");
   } catch (err) {
     process.nextTick(() => { callback(new LocalizedError("startup:errors.couldNotGetDataPath", { details: err.message })); });
     return;
   }
 
-  console.log(dataPath);
+  console.log(roDataPath);
+  console.log(rwDataPath);
 
-  if (!fs.existsSync(dataPath)) {
+  if (!fs.existsSync(rwDataPath)) {
     // This is the old custom logic we used to determine the appData folder
     // so if the new data folder doesn't exist, we'll try to migrate from the old one
     let oldDataPath: string;
@@ -46,19 +63,19 @@ export default function getPaths(callback: (err: LocalizedError, corePath?: stri
     }
 
     if (oldDataPath != null && fs.existsSync(oldDataPath)) {
-      console.log(`Migrating data from ${oldDataPath} to ${dataPath}...`);
-      fs.renameSync(oldDataPath, dataPath);
+      console.log(`Migrating data from ${oldDataPath} to ${rwDataPath}...`);
+      fs.renameSync(oldDataPath, rwDataPath);
     }
   }
 
-  corePath = path.join(dataPath, "core");
+  corePath = path.join(roDataPath, "core");
 
-  fs.mkdir(dataPath, (err) => {
+  fs.mkdir(rwDataPath, (err) => {
     if (err != null && err.code !== "EEXIST") {
-      callback(new LocalizedError("startup:errors.couldNotCreateUserDataFolder", { dataPath, reason: err.message }));
+      callback(new LocalizedError("startup:errors.couldNotCreateUserDataFolder", { rwDataPath, reason: err.message }));
       return;
     }
 
-    callback(null, corePath, dataPath);
+    callback(null, corePath, roDataPath, rwDataPath);
   });
 }

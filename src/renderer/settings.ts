@@ -2,7 +2,8 @@ import * as fs from "fs";
 import * as i18n from "../shared/i18n";
 
 export let corePath: string;
-export let userDataPath: string;
+export let roUserDataPath: string;
+export let rwUserDataPath: string;
 
 export let favoriteServers: ServerEntry[];
 export let favoriteServersById: { [id: string]: ServerEntry };
@@ -14,9 +15,10 @@ export let nickname: string;
 export let presence: "online"|"away"|"offline";
 export let savedChatrooms: string[];
 
-export function setPaths(newCorePath: string, newUserDataPath: string) {
+export function setPaths(newCorePath: string, newRoUserDataPath: string, newRwUserDataPath: string) {
   corePath = newCorePath;
-  userDataPath = newUserDataPath;
+  roUserDataPath = newRoUserDataPath;
+  rwUserDataPath = newRwUserDataPath;
 }
 
 export function setNickname(newNickname: string) {
@@ -36,7 +38,7 @@ export function setAutoStartServer(enabled: boolean) {
 }
 
 export function load(callback: (err: Error) => void) {
-  const settingsPath = `${userDataPath}/settings.json`;
+  const settingsPath = `${rwUserDataPath}/settings.json`;
   console.log(`Loading settings from ${settingsPath}.`);
 
   fs.readFile(settingsPath, { encoding: "utf8" }, (err, dataJSON) => {
@@ -97,7 +99,7 @@ export function applyScheduledSave() {
     savedChatrooms
   };
 
-  fs.writeFileSync(`${userDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
+  fs.writeFileSync(`${rwUserDataPath}/settings.json`, JSON.stringify(data, null, 2) + "\n", { encoding: "utf8" });
 
   clearTimeout(scheduleSaveTimeoutId);
   scheduleSaveTimeoutId = null;

@@ -13,13 +13,13 @@ export default function forkSererProcess(extraArgs: string[] = []) {
   // for (const key in nodeProcess.env) serverEnv[key] = nodeProcess.env[key];
 
   // So instead, we'll just copy the environment variables we definitely need
-  for (const varName of [ "NODE_ENV", "APPDATA", "HOME", "XDG_DATA_HOME" ]) {
+  for (const varName of [ "NODE_ENV", "APPDATA", "HOME", "XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "LD_LIBRARY_PATH", "GST_PLUGIN_SYSTEM_PATH", "XDG_CONFIG_DIRS", "PATH", "GI_TYPELIB_PATH" ]) {
     if (process.env[varName] != null) serverEnv[varName] = process.env[varName];
   }
 
   const serverProcess = fork(
     serverPath,
-    [ `--data-path=${settings.userDataPath}` ].concat(extraArgs),
+    [ `--data-path=${settings.roUserDataPath}`, `--rw-data-path=${settings.rwUserDataPath}` ].concat(extraArgs),
     { silent: true, env: serverEnv }
   );
   return serverProcess;

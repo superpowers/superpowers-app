@@ -6,7 +6,8 @@ import getLanguageCode from "./getLanguageCode";
 import * as SupAppIPC from "./ipc";
 
 let corePath: string;
-let userDataPath: string;
+let roUserDataPath: string;
+let rwUserDataPath: string;
 
 let mainWindow: Electron.BrowserWindow;
 let trayIcon: Electron.Tray;
@@ -48,7 +49,7 @@ function startCleanExit() {
 electron.ipcMain.on("ready-to-quit", (event: Electron.Event) => {
   if (event.sender !== mainWindow.webContents) return;
 
-  SupAppIPC.saveAuthorizations(userDataPath);
+  SupAppIPC.saveAuthorizations(rwUserDataPath);
 
   console.log("Exited cleanly.");
   isReadyToQuit = true;
@@ -60,13 +61,14 @@ electron.ipcMain.on("show-main-window", () => { restoreMainWindow(); });
 function onAppReady() {
   menu.setup(electron.app);
 
-  getPaths((dataPathErr, pathToCore, pathToUserData) => {
-    userDataPath = pathToUserData;
+  getPaths((dataPathErr, pathToCore, pathToRoUserData, pathToRwUserData) => {
+    roUserDataPath = pathToRoUserData;
+    rwUserDataPath = pathToRwUserData;
     corePath = pathToCore;
 
-    SupAppIPC.loadAuthorizations(userDataPath);
+    SupAppIPC.loadAuthorizations(rwUserDataPath);
 
-    getLanguageCode(userDataPath, (languageCode) => {
+    getLanguageCode(rwUserDataPath, (languageCode) => {
       i18n.setLanguageCode(languageCode);
       i18n.load([ "startup", "tray" ], () => {
         if (dataPathErr != null) {
@@ -135,7 +137,7 @@ function setupMainWindow() {
   mainWindow.loadURL(`file://${__dirname}/renderer/${i18n.getLocalizedFilename("index.html")}`);
 
   mainWindow.webContents.on("did-finish-load", () => {
-    mainWindow.webContents.send("init", corePath, userDataPath, i18n.languageCode);
+    mainWindow.webContents.send("init", corePath, roUserDataPath, rwUserDataPath, i18n.languageCode);
     mainWindow.show();
   });
 
