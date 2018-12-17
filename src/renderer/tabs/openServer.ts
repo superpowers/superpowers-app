@@ -4,6 +4,7 @@ import fetch from "../../shared/fetch";
 import * as i18n from "../../shared/i18n";
 
 import { tabStrip, panesElt, clearActiveTab } from "./index";
+import electron = require("electron");
 
 const { superpowers: { appApiVersion: appApiVersion } } = JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`, { encoding: "utf8" }));
 
@@ -84,7 +85,13 @@ function makeServerPane(serverEntry: ServerEntry) {
     statusElt.textContent = i18n.t("common:server.connecting", { host });
     retryButton.hidden = true;
 
-    fetch(`${host}/superpowers.json`, "json", onFetchJSON);
+    let httpAuth = null;
+
+    if (serverEntry.httpUsername.length > 0 || serverEntry.httpPassword.length > 0) {
+      httpAuth = { username: serverEntry.httpUsername, password: serverEntry.httpPassword };
+    }
+
+    fetch(`${host}/superpowers.json`, { type: "json", httpAuth }, onFetchJSON);
   }
 
   function onFetchJSON(err: Error, serverInfo: { version: string; appApiVersion: number; }) {
@@ -131,6 +138,24 @@ function makeServerPane(serverEntry: ServerEntry) {
     webviewElt.src = host;
     paneElt.appendChild(webviewElt);
     webviewElt.focus();
+
+    function setupHttpAuth() {
+      // This won't return a valid value until the <webview> has been initialized
+      // so if it fails, we wait a bit and try again
+      const webContents = webviewElt.getWebContents();
+
+      if (webContents == null) {
+        setTimeout(setupHttpAuth, 100);
+        return;
+      }
+
+      electron.ipcRenderer.send("set-web-contents-http-auth", webContents.id, {
+        username: serverEntry.httpUsername,
+        password: serverEntry.httpPassword
+      });
+    }
+
+    setTimeout(setupHttpAuth, 0);
   }
 
   tryConnecting();

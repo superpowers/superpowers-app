@@ -30,7 +30,7 @@ export function checkForUpdates(callback: (err: Error) => void) {
 function checkAppUpdate(callback: (err: Error) => void) {
   if (electron.remote.app.getVersion() === "0.0.0-dev") { callback(null); return; }
 
-  fetch(`https://api.github.com/repos/superpowers/superpowers-app/releases/latest`, "json", (err, lastRelease) => {
+  fetch(`https://api.github.com/repos/superpowers/superpowers-app/releases/latest`, { type: "json" }, (err, lastRelease) => {
     if (err != null) { callback(err); return; }
     if (lastRelease.tag_name === appVersion) { callback(null); return; }
 

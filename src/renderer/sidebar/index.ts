@@ -34,7 +34,9 @@ function onAddServerClick(event: MouseEvent) {
     validationLabel: "Add",
     initialHostnameValue: "127.0.0.1",
     initialPortValue: "4237",
-    initialLabelValue: ""
+    initialLabelValue: "",
+    initialHttpUsernameValue: "",
+    initialHttpPasswordValue: ""
   };
 
   new AddAddOrEditServerDialog(i18n.t("sidebar:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
@@ -59,7 +61,9 @@ function onEditServerClick(event: MouseEvent) {
     validationLabel: i18n.t("common:actions.save"),
     initialHostnameValue: serverEntry.hostname,
     initialPortValue: serverEntry.port,
-    initialLabelValue: serverEntry.label
+    initialLabelValue: serverEntry.label,
+    initialHttpUsernameValue: serverEntry.httpUsername,
+    initialHttpPasswordValue: serverEntry.httpPassword
   };
 
   new AddAddOrEditServerDialog(i18n.t("sidebar:editServer.title"), addOrEditOptions, (updatedEntry) => {

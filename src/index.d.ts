@@ -3,4 +3,6 @@ interface ServerEntry {
   hostname: string;
   port: string;
   label: string;
+  httpUsername: string;
+  httpPassword: string;
 }

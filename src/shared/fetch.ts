@@ -1,7 +1,8 @@
-export default function fetch(url: string, type: XMLHttpRequestResponseType, callback: (err: Error, data?: any) => any) {
+export default function fetch(url: string, options: { type: XMLHttpRequestResponseType; httpAuth?: { username: string; password: string; } }, callback: (err: Error, data?: any) => any) {
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
-  xhr.responseType = type;
+  if (options.httpAuth != null) xhr.setRequestHeader("Authorization", "Basic " + window.btoa(`${options.httpAuth.username}:${options.httpAuth.password}`));
+  xhr.responseType = options.type;
 
   xhr.onload = (event) => {
     if (xhr.status !== 200 && xhr.status !== 0) {

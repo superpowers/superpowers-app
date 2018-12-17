@@ -179,3 +179,29 @@ function restoreMainWindow() {
 
   return true;
 }
+
+// Handle HTTP basic auth
+const authsByWebContentsId: { [id: string]: { username: string; password: string; }} = {};
+
+electron.ipcMain.on("set-web-contents-http-auth", (event: Electron.Event, id: number, auth: { username: string; password: string; }) => {
+  authsByWebContentsId[id] = auth;
+});
+
+electron.app.on("login", (event, webContents, request, authInfo, callback) => {
+  event.preventDefault();
+
+  const authData = authsByWebContentsId[webContents.id];
+
+  if (authData == null) {
+    // Since this might race with the set-web-contents-http-auth event above,
+    // try again a second later
+    setTimeout(() => {
+      const authData = authsByWebContentsId[webContents.id];
+      if (authData == null) callback(null, null);
+      else callback(authData.username, authData.password);
+    }, 1000);
+    return;
+  }
+
+  callback(authData.username, authData.password);
+});

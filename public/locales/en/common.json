@@ -27,6 +27,8 @@
     "hostname": "Hostname",
     "port": "Port",
     "label": "Label",
+    "httpUsername": "HTTP Username",
+    "httpPassword": "HTTP Password",
 
     "connecting": "Connecting to ${host}...",
     "tryAgain": "Try again",
