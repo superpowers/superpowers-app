@@ -15,6 +15,7 @@
     "follow-redirects": "0.0.7",
     "lodash": "^4.0.0",
     "mkdirp": "^0.5.1",
+    "natives": "^1.1.6",
     "resize-handle": "^5.0.0",
     "simple-dialogs": "^2.0.0",
     "slate-irc": "^0.8.1",
