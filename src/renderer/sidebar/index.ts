@@ -72,6 +72,8 @@ function onEditServerClick(event: MouseEvent) {
     serverEntry.hostname = updatedEntry.hostname;
     serverEntry.port = updatedEntry.port;
     serverEntry.label = updatedEntry.label;
+    serverEntry.httpUsername = updatedEntry.httpUsername;
+    serverEntry.httpPassword = updatedEntry.httpPassword;
 
     const selectedServerElt = serversTreeView.treeRoot.querySelector(`li[data-server-id="${serverId}"]`);
     const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
