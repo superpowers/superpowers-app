@@ -8,7 +8,7 @@ type AddOrEditOptions = {
   initialLabelValue: string;
   initialHttpUsernameValue: string;
   initialHttpPasswordValue: string;
-}
+};
 
 interface AddOrEditServerResult {
   hostname: string;
@@ -16,7 +16,7 @@ interface AddOrEditServerResult {
   label: string;
   httpUsername: string;
   httpPassword: string;
-};
+}
 
 export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerResult> {
   private hostnameInputElt: HTMLInputElement;

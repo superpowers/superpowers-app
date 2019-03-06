@@ -42,13 +42,16 @@ export type Registry = {
   version: number;
   core: ItemData;
   systems: { [sytemId: string]: SystemData }
-}
+};
+
 interface ItemData {
   version: string;
   downloadURL: string;
   releaseNotesURL: string;
   localVersion: string;
-  isLocalDev: boolean; };
+  isLocalDev: boolean;
+}
+
 interface SystemData extends ItemData {
   repository: string;
   plugins: { [authorName: string]: { [pluginName: string]: ItemData; } };

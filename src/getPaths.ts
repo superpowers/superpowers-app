@@ -12,7 +12,7 @@ const argv = yargs
 export default function getPaths(callback: (err: LocalizedError, corePath?: string, dataPath?: string) => void) {
   let dataPath: string;
 
-  let corePath = argv["core-path"] != null ? path.resolve(argv["core-path"]) : null;
+  let corePath = argv["core-path"] != null ? path.resolve(argv["core-path"] as string) : null;
   if (corePath != null) {
     dataPath = corePath;
     process.nextTick(() => { callback(null, corePath, dataPath); });

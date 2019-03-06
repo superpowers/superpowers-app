@@ -19,4 +19,4 @@ export default function fetch(url: string, options: { type: XMLHttpRequestRespon
   };
 
   xhr.send();
-};
+}

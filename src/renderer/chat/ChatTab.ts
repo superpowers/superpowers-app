@@ -363,11 +363,11 @@ export default class ChatTab {
       if (this.textAreaElt.value.length > 0) return;
       event.preventDefault();
       this.textAreaElt.value = this.previousMessage;
-    } else if(event.keyCode === 9 /* Tab */) {
+    } else if (event.keyCode === 9 /* Tab */) {
       event.preventDefault();
       this.doNicknameAutocomplete();
     }
-  };
+  }
 
   private doNicknameAutocomplete() {
     const stubStartIndex = this.textAreaElt.value.lastIndexOf(" ", this.textAreaElt.selectionStart - 1) + 1;
@@ -397,7 +397,7 @@ export default class ChatTab {
         this.textAreaElt.value = "";
       }
     }
-  };
+  }
 
   private onChannelNamesReceived = (error: Error, names: { name: string; mode: string; }[]) => {
     if (error != null) {
@@ -421,5 +421,5 @@ export default class ChatTab {
       this.waitingForTopic = false;
       this.topicElt.textContent = "(No topic)";
     }
-  };
+  }
 }
