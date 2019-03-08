@@ -6,24 +6,21 @@ type AddOrEditOptions = {
   initialHostnameValue: string;
   initialPortValue: string;
   initialLabelValue: string;
-  initialHttpUsernameValue: string;
-  initialHttpPasswordValue: string;
+  initialPasswordValue: string;
 };
 
 interface AddOrEditServerResult {
   hostname: string;
   port: string;
   label: string;
-  httpUsername: string;
-  httpPassword: string;
+  password: string;
 }
 
 export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerResult> {
   private hostnameInputElt: HTMLInputElement;
   private portInputElt: HTMLInputElement;
   private labelInputElt: HTMLInputElement;
-  private httpUsernameInputElt: HTMLInputElement;
-  private httpPasswordInputElt: HTMLInputElement;
+  private passwordInputElt: HTMLInputElement;
 
   constructor(headerLabel: string, options: AddOrEditOptions, callback: (result: AddOrEditServerResult) => void) {
     super(callback);
@@ -83,40 +80,23 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
     this.labelInputElt.style.flex = "1 1 0";
     labelRow.appendChild(this.labelInputElt);
 
-    // HTTP basic auth username
-    const httpUsernameRow = document.createElement("div");
-    httpUsernameRow.className = "group";
-    httpUsernameRow.style.display = "flex";
-    httpUsernameRow.style.alignItems = "center";
-    this.formElt.appendChild(httpUsernameRow);
+    // Password
+    const passwordRow = document.createElement("div");
+    passwordRow.className = "group";
+    passwordRow.style.display = "flex";
+    passwordRow.style.alignItems = "center";
+    this.formElt.appendChild(passwordRow);
 
-    const httpUsernameHeader = document.createElement("label");
-    httpUsernameHeader.textContent = i18n.t("common:server.httpUsername");
-    httpUsernameHeader.style.marginRight = "0.5em";
-    httpUsernameRow.appendChild(httpUsernameHeader);
+    const passwordHeader = document.createElement("label");
+    passwordHeader.textContent = i18n.t("common:server.password");
+    passwordHeader.style.marginRight = "0.5em";
+    passwordRow.appendChild(passwordHeader);
 
-    this.httpUsernameInputElt = document.createElement("input");
-    this.httpUsernameInputElt.value = options.initialHttpUsernameValue;
-    this.httpUsernameInputElt.style.flex = "1 1 0";
-    httpUsernameRow.appendChild(this.httpUsernameInputElt);
-
-    // HTTP basic auth password
-    const httpPasswordRow = document.createElement("div");
-    httpPasswordRow.className = "group";
-    httpPasswordRow.style.display = "flex";
-    httpPasswordRow.style.alignItems = "center";
-    this.formElt.appendChild(httpPasswordRow);
-
-    const httpPasswordHeader = document.createElement("label");
-    httpPasswordHeader.textContent = i18n.t("common:server.httpPassword");
-    httpPasswordHeader.style.marginRight = "0.5em";
-    httpPasswordRow.appendChild(httpPasswordHeader);
-
-    this.httpPasswordInputElt = document.createElement("input");
-    this.httpPasswordInputElt.setAttribute("type", "password");
-    this.httpPasswordInputElt.value = options.initialHttpPasswordValue;
-    this.httpPasswordInputElt.style.flex = "1 1 0";
-    httpPasswordRow.appendChild(this.httpPasswordInputElt);
+    this.passwordInputElt = document.createElement("input");
+    this.passwordInputElt.setAttribute("type", "password");
+    this.passwordInputElt.value = options.initialPasswordValue;
+    this.passwordInputElt.style.flex = "1 1 0";
+    passwordRow.appendChild(this.passwordInputElt);
 
     // Buttons
     const buttonsElt = document.createElement("div");
@@ -150,8 +130,7 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
       hostname: this.hostnameInputElt.value,
       port: this.portInputElt.value !== "" ? this.portInputElt.value : null,
       label: this.labelInputElt.value,
-      httpUsername: this.httpUsernameInputElt.value,
-      httpPassword: this.httpPasswordInputElt.value
+      password: this.passwordInputElt.value
     };
     super.submit(result);
   }

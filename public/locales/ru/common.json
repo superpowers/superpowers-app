@@ -26,12 +26,12 @@
     "port": "Порт",
     "label": "Название",
 
-    "connecting": "Подключение к ${host}...",
+    "connecting": "Подключение к ${baseUrl}...",
     "tryAgain": "Попробовать снова",
     "errors": {
-      "superpowersJSON": "Не получилось загрузить ${host}/superpowers.json.",
-      "notSuperpowers": "Похоже, на сервере ${host} не запущен Superpowers.",
-      "incompatibleVersion": "На сервере ${host} работает несовместимая версия Superpowers (запущено приложение с API версии ${serverVersion}, необходима ${appVersion})."
+      "superpowersJSON": "Не получилось загрузить ${baseUrl}/superpowers.json.",
+      "notSuperpowers": "Похоже, на сервере ${baseUrl} не запущен Superpowers.",
+      "incompatibleVersion": "На сервере ${baseUrl} работает несовместимая версия Superpowers (запущено приложение с API версии ${serverVersion}, необходима ${appVersion})."
     }
   }
 }

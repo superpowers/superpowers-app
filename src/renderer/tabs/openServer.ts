@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as electron from "electron";
 
-import fetch from "../../shared/fetch";
+import fetch, { FetchError } from "../../shared/fetch";
 import * as i18n from "../../shared/i18n";
 
 import { tabStrip, panesElt, clearActiveTab } from "./index";
@@ -79,36 +79,38 @@ function makeServerPane(serverEntry: ServerEntry) {
 
   // Automatically add insecure protocol if none is already provided in the hostname
   const protocol = serverEntry.hostname.startsWith("http") ? "" : "http://";
-  const host = protocol + serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");
+  const host = `${serverEntry.hostname}:${serverEntry.port}`;
+  const baseUrl = protocol + host;
 
   function tryConnecting() {
-    statusElt.textContent = i18n.t("common:server.connecting", { host });
+    statusElt.textContent = i18n.t("common:server.connecting", { baseUrl });
     retryButton.hidden = true;
 
     let httpAuth = null;
 
-    if (serverEntry.httpUsername.length > 0 || serverEntry.httpPassword.length > 0) {
-      httpAuth = { username: serverEntry.httpUsername, password: serverEntry.httpPassword };
+    if (serverEntry.password.length > 0) {
+      httpAuth = { username: "superpowers", password: serverEntry.password };
     }
 
-    fetch(`${host}/superpowers.json`, { type: "json", httpAuth }, onFetchJSON);
+    fetch(`${baseUrl}/superpowers.json`, { type: "json", httpAuth }, onFetchJSON);
   }
 
-  function onFetchJSON(err: Error, serverInfo: { version: string; appApiVersion: number; }) {
+  function onFetchJSON(err: FetchError, serverInfo: { version: string; appApiVersion: number; buildPort: number; }) {
     if (err != null) {
-      statusElt.textContent = i18n.t("common:server.errors.superpowersJSON", { host });
+      if (err.status === 401) statusElt.textContent = i18n.t("common:server.errors.incorrectPassword", { baseUrl });
+      else statusElt.textContent = i18n.t("common:server.errors.superpowersJSON", { baseUrl });
       retryButton.hidden = false;
       return;
     }
 
     if (serverInfo == null || typeof serverInfo !== "object") {
-      statusElt.textContent = i18n.t("common:server.errors.notSuperpowers", { host });
+      statusElt.textContent = i18n.t("common:server.errors.notSuperpowers", { baseUrl });
       retryButton.hidden = false;
       return;
     }
 
     if (serverInfo.appApiVersion !== appApiVersion) {
-      statusElt.textContent = i18n.t("common:server.errors.incompatibleVersion", { host, serverVersion: serverInfo.appApiVersion, appVersion: appApiVersion });
+      statusElt.textContent = i18n.t("common:server.errors.incompatibleVersion", { baseUrl, serverVersion: serverInfo.appApiVersion, appVersion: appApiVersion });
       retryButton.hidden = false;
       return;
     }
@@ -135,27 +137,14 @@ function makeServerPane(serverEntry: ServerEntry) {
     webviewElt.addEventListener("did-finish-load", onLoad);
     webviewElt.addEventListener("did-fail-load", onError);
 
-    webviewElt.src = host;
+    webviewElt.src = baseUrl;
     paneElt.appendChild(webviewElt);
     webviewElt.focus();
 
-    function setupHttpAuth() {
-      // This won't return a valid value until the <webview> has been initialized
-      // so if it fails, we wait a bit and try again
-      const webContents = webviewElt.getWebContents();
-
-      if (webContents == null) {
-        setTimeout(setupHttpAuth, 100);
-        return;
-      }
-
-      electron.ipcRenderer.send("set-web-contents-http-auth", webContents.id, {
-        username: serverEntry.httpUsername,
-        password: serverEntry.httpPassword
-      });
-    }
-
-    setTimeout(setupHttpAuth, 0);
+    const buildHost = `${serverEntry.hostname}:${serverInfo.buildPort}`;
+    const auth = { username: "superpowers", password: serverEntry.password };
+    electron.ipcRenderer.send("set-http-auth", host, auth);
+    electron.ipcRenderer.send("set-http-auth", buildHost, auth);
   }
 
   tryConnecting();

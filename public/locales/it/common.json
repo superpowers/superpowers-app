@@ -28,12 +28,12 @@
     "port": "Porta",
     "label": "Etichetta",
 
-    "connecting": "Collegamento a ${host}...",
+    "connecting": "Collegamento a ${baseUrl}...",
     "tryAgain": "Riprova",
     "errors": {
-      "superpowersJSON": "Non è stato possibile scaricare ${host}/superpowers.json.",
-      "notSuperpowers": "Sembra che il server all'indirizzo ${host} non stia facendo girare Superpowers.",
-      "incompatibleVersion": "Il server all'indirizzo ${host} sta facendo girare una versione incompatibile di Superpowers (versione API ricevuta ${serverVersion}, prevista ${appVersion})."
+      "superpowersJSON": "Non è stato possibile scaricare ${baseUrl}/superpowers.json.",
+      "notSuperpowers": "Sembra che il server all'indirizzo ${baseUrl} non stia facendo girare Superpowers.",
+      "incompatibleVersion": "Il server all'indirizzo ${baseUrl} sta facendo girare una versione incompatibile di Superpowers (versione API ricevuta ${serverVersion}, prevista ${appVersion})."
     }
   }
 }

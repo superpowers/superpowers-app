@@ -50,7 +50,7 @@ export function load(callback: (err: Error) => void) {
 
     if (dataJSON == null) {
       // Setup defaults
-      const myServerEntry: ServerEntry = { id: "0", hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer"), httpUsername: "", httpPassword: "" };
+      const myServerEntry: ServerEntry = { id: "0", hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer"), password: "" };
       favoriteServers = [ myServerEntry ];
       favoriteServersById[myServerEntry.id] = myServerEntry;
 
@@ -69,8 +69,7 @@ export function load(callback: (err: Error) => void) {
     favoriteServers = data.favoriteServers;
     for (const entry of favoriteServers) {
       favoriteServersById[entry.id] = entry;
-      if (entry.httpUsername == null) entry.httpUsername = "";
-      if (entry.httpPassword == null) entry.httpPassword = "";
+      if (entry.password == null) entry.password = "";
     }
     recentProjects = data.recentProjects;
     autoStartServer = data.autoStartServer;

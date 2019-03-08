@@ -35,8 +35,7 @@ function onAddServerClick(event: MouseEvent) {
     initialHostnameValue: "127.0.0.1",
     initialPortValue: "4237",
     initialLabelValue: "",
-    initialHttpUsernameValue: "",
-    initialHttpPasswordValue: ""
+    initialPasswordValue: ""
   };
 
   new AddAddOrEditServerDialog(i18n.t("sidebar:addServer.title"), addOrEditOptions, (newServer: ServerEntry) => {
@@ -62,8 +61,7 @@ function onEditServerClick(event: MouseEvent) {
     initialHostnameValue: serverEntry.hostname,
     initialPortValue: serverEntry.port,
     initialLabelValue: serverEntry.label,
-    initialHttpUsernameValue: serverEntry.httpUsername,
-    initialHttpPasswordValue: serverEntry.httpPassword
+    initialPasswordValue: serverEntry.password
   };
 
   new AddAddOrEditServerDialog(i18n.t("sidebar:editServer.title"), addOrEditOptions, (updatedEntry) => {
@@ -72,8 +70,7 @@ function onEditServerClick(event: MouseEvent) {
     serverEntry.hostname = updatedEntry.hostname;
     serverEntry.port = updatedEntry.port;
     serverEntry.label = updatedEntry.label;
-    serverEntry.httpUsername = updatedEntry.httpUsername;
-    serverEntry.httpPassword = updatedEntry.httpPassword;
+    serverEntry.password = updatedEntry.password;
 
     const selectedServerElt = serversTreeView.treeRoot.querySelector(`li[data-server-id="${serverId}"]`);
     const host = serverEntry.hostname + (serverEntry.port != null ? `:${serverEntry.port}` : "");

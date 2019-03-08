@@ -4,6 +4,7 @@ import * as menu from "./menu";
 import getPaths from "./getPaths";
 import getLanguageCode from "./getLanguageCode";
 import * as SupAppIPC from "./ipc";
+import * as url from "url";
 
 let corePath: string;
 let userDataPath: string;
@@ -58,7 +59,7 @@ function onAppReady() {
 
     getLanguageCode(userDataPath, (languageCode) => {
       i18n.setLanguageCode(languageCode);
-      i18n.load([ "startup", "tray" ], () => {
+      i18n.load(["startup", "tray"], () => {
         if (dataPathErr != null) {
           electron.dialog.showErrorBox(i18n.t("startup:failedToStart"), i18n.t(dataPathErr.key, dataPathErr.variables));
           electron.app.quit();
@@ -171,27 +172,29 @@ function restoreMainWindow() {
 }
 
 // Handle HTTP basic auth
-const authsByWebContentsId: { [id: string]: { username: string; password: string; }} = {};
+const httpAuthByHosts: { [origin: string]: { username: string; password: string; } } = {};
 
-electron.ipcMain.on("set-web-contents-http-auth", (event: Electron.Event, id: number, auth: { username: string; password: string; }) => {
-  authsByWebContentsId[id] = auth;
+electron.ipcMain.on("set-http-auth", (event: Electron.Event, host: string, auth: { username: string; password: string; }) => {
+  httpAuthByHosts[host] = auth;
 });
 
 electron.app.on("login", (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
 
-  const authData = authsByWebContentsId[webContents.id];
+  const parsedUrl = url.parse(request.url);
+  const host = `${parsedUrl.hostname}:${parsedUrl.port}`;
+  const auth = httpAuthByHosts[host];
 
-  if (authData == null) {
-    // Since this might race with the set-web-contents-http-auth event above,
+  if (auth == null) {
+    // Since this might race with the set-http-auth event above,
     // try again a second later
     setTimeout(() => {
-      const authData = authsByWebContentsId[webContents.id];
-      if (authData == null) callback(null, null);
-      else callback(authData.username, authData.password);
+      const auth = httpAuthByHosts[host];
+      if (auth == null) callback(null, null);
+      else callback(auth.username, auth.password);
     }, 1000);
     return;
   }
 
-  callback(authData.username, authData.password);
+  callback(auth.username, auth.password);
 });

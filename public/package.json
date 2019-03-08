@@ -4,6 +4,6 @@
   "main": "main.js",
   "superpowers": {
     "electron": "4.0.7",
-    "appApiVersion": 4
+    "appApiVersion": 5
   }
 }

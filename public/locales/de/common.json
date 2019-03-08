@@ -28,12 +28,12 @@
     "port": "Port",
     "label": "Label",
 
-    "connecting": "Verbinde mit ${host}...",
+    "connecting": "Verbinde mit ${baseUrl}...",
     "tryAgain": "Erneut versuchen",
     "errors": {
-      "superpowersJSON": "${host}/superpowers.json konnte nicht heruntergeladen werden.",
-      "notSuperpowers": "Auf dem Server ${host} scheint keine Superpowers Instanz zu laufen.",
-      "incompatibleVersion": "Auf dem Server ${host} läuft eine inkompatible Version von Superpowers (App API Version ${serverVersion} gefunden, erwartet wird ${appVersion})."
+      "superpowersJSON": "${baseUrl}/superpowers.json konnte nicht heruntergeladen werden.",
+      "notSuperpowers": "Auf dem Server ${baseUrl} scheint keine Superpowers Instanz zu laufen.",
+      "incompatibleVersion": "Auf dem Server ${baseUrl} läuft eine inkompatible Version von Superpowers (App API Version ${serverVersion} gefunden, erwartet wird ${appVersion})."
     }
   }
 }

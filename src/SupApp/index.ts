@@ -31,7 +31,7 @@ electron.ipcRenderer.on("check-path-authorization-callback", onPathAuthorization
 type ChooseFolderCallback = (folder: string) => void;
 type ChooseFileCallback = (filename: string) => void;
 type AuthorizeFolderCallback = () => void;
-type CheckPathAuthorizationCallback = (normalizedPath: string, access: "readWrite"|"execute") => void;
+type CheckPathAuthorizationCallback = (normalizedPath: string, access: "readWrite" | "execute") => void;
 
 interface OpenWindowOptions {
   size?: { width: number; height: number; };
@@ -69,7 +69,7 @@ function checkPathAuthorization(pathToCheck: string, callback: CheckPathAuthoriz
   electron.ipcRenderer.send("check-path-authorization", secretKey, ipcId, window.location.origin, pathToCheck);
 }
 
-function onPathAuthorizationChecked(event: Electron.Event, ipcId: string, checkedPath: string, authorization: "readWrite"|"execute") {
+function onPathAuthorizationChecked(event: Electron.Event, ipcId: string, checkedPath: string, authorization: "readWrite" | "execute") {
   const callback = ipcCallbacks[ipcId] as CheckPathAuthorizationCallback;
   if (callback == null) return;
   delete ipcCallbacks[ipcId];
@@ -143,13 +143,13 @@ namespace SupApp {
     electron.ipcRenderer.send("choose-folder", secretKey, ipcId, window.location.origin);
   }
 
-  export function chooseFile(access: "readWrite"|"execute", callback: ChooseFileCallback) {
+  export function chooseFile(access: "readWrite" | "execute", callback: ChooseFileCallback) {
     const ipcId = getNextIpcId();
     ipcCallbacks[ipcId] = callback;
     electron.ipcRenderer.send("choose-file", secretKey, ipcId, window.location.origin, access);
   }
 
-  export function tryFileAccess(filePath: string, access: "readWrite"|"execute", callback: (err: any) => void) {
+  export function tryFileAccess(filePath: string, access: "readWrite" | "execute", callback: (err: any) => void) {
     checkPathAuthorization(filePath, (err, authorization) => {
       if (authorization !== access) { callback(new Error("Unauthorized")); return; }
 

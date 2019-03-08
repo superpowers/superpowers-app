@@ -27,15 +27,15 @@
     "hostname": "Hostname",
     "port": "Port",
     "label": "Label",
-    "httpUsername": "HTTP Username",
-    "httpPassword": "HTTP Password",
+    "password": "Password",
 
-    "connecting": "Connecting to ${host}...",
+    "connecting": "Connecting to ${baseUrl}...",
     "tryAgain": "Try again",
     "errors": {
-      "superpowersJSON": "Could not download ${host}/superpowers.json.",
-      "notSuperpowers": "The server at ${host} doesn't seem to be running Superpowers.",
-      "incompatibleVersion": "The server at ${host} runs an incompatible version of Superpowers (got app API version ${serverVersion}, expected ${appVersion})."
+      "superpowersJSON": "Could not download ${baseUrl}/superpowers.json.",
+      "incorrectPassword": "Wrong password for ${baseUrl}.",
+      "notSuperpowers": "The server at ${baseUrl} doesn't seem to be running Superpowers.",
+      "incompatibleVersion": "The server at ${baseUrl} runs an incompatible version of Superpowers (got app API version ${serverVersion}, expected ${appVersion})."
     }
   }
 }
