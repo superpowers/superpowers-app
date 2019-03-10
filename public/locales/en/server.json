@@ -1,5 +1,6 @@
 {
   "myServer": "My Server",
+  "autoConfigured": "(automatically configured)",
   "log": "Server log",
 
   "status": {

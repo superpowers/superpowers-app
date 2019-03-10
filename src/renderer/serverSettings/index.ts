@@ -6,6 +6,8 @@ import * as i18n from "../../shared/i18n";
 import * as systems from "./systems";
 import "./log";
 
+export let config: ServerConfig;
+
 const settingsElt = document.querySelector(".server-settings") as HTMLDivElement;
 const disabledElt = settingsElt.querySelector(".disabled") as HTMLDivElement;
 
@@ -23,21 +25,22 @@ const passwordElt = passwordRowElt.querySelector("input") as HTMLInputElement;
 const showOrHidePasswordElt = passwordRowElt.querySelector("button") as HTMLButtonElement;
 
 export function start() {
-  const serverConfig = getServerConfig();
-  if (serverConfig == null) {
+  config = getServerConfig();
+
+  if (config == null) {
     (settingsElt.querySelector(".error") as HTMLElement).hidden = false;
     (settingsElt.querySelector(".settings") as HTMLElement).hidden = true;
     (settingsElt.querySelector(".systems") as HTMLElement).hidden = true;
     return;
   }
 
-  serverNameElt.value = serverConfig.serverName != null ? serverConfig.serverName : "";
+  serverNameElt.value = config.serverName != null ? config.serverName : "";
   serverNameElt.addEventListener("input", scheduleSave);
-  mainPortElt.value = serverConfig.mainPort.toString();
+  mainPortElt.value = config.mainPort.toString();
   mainPortElt.addEventListener("input", scheduleSave);
-  buildPortElt.value = serverConfig.buildPort.toString();
+  buildPortElt.value = config.buildPort.toString();
   buildPortElt.addEventListener("input", scheduleSave);
-  maxRecentBuildsElt.value = serverConfig.maxRecentBuilds.toString();
+  maxRecentBuildsElt.value = config.maxRecentBuilds.toString();
   maxRecentBuildsElt.addEventListener("input", scheduleSave);
 
   autoStartServerElt.checked = settings.autoStartServer;
@@ -45,10 +48,10 @@ export function start() {
 
   openProjectsFolderElt.addEventListener("click", onOpenProjectsFolderClick);
 
-  openToInternetElt.checked = serverConfig.password.length > 0;
+  openToInternetElt.checked = config.password.length > 0;
   openToInternetElt.addEventListener("change", onChangeOpenToInternet);
-  passwordRowElt.hidden = serverConfig.password.length === 0;
-  passwordElt.value = serverConfig.password;
+  passwordRowElt.hidden = config.password.length === 0;
+  passwordElt.value = config.password;
   passwordElt.addEventListener("input", scheduleSave);
   showOrHidePasswordElt.addEventListener("click", onShowOrHidePassword);
 
@@ -67,6 +70,7 @@ interface ServerConfig {
   maxRecentBuilds: number;
   [key: string]: any;
 }
+
 function getServerConfig() {
   let defaultConfig: ServerConfig;
   try {
@@ -141,13 +145,11 @@ export function scheduleSave() {
 export function applyScheduledSave() {
   if (scheduleSaveTimeoutId == null) return;
 
-  const config: ServerConfig = {
-    serverName: serverNameElt.value.length > 0 ? serverNameElt.value : null,
-    mainPort: parseInt(mainPortElt.value, 10),
-    buildPort: parseInt(buildPortElt.value, 10),
-    password: passwordElt.value,
-    maxRecentBuilds: parseInt(maxRecentBuildsElt.value, 10)
-  };
+  config.serverName = serverNameElt.value.length > 0 ? serverNameElt.value : null;
+  config.mainPort = parseInt(mainPortElt.value, 10);
+  config.buildPort = parseInt(buildPortElt.value, 10);
+  config.password = passwordElt.value;
+  config.maxRecentBuilds = parseInt(maxRecentBuildsElt.value, 10);
 
   fs.writeFileSync(`${settings.userDataPath}/config.json`, JSON.stringify(config, null, 2) + "\n", { encoding: "utf8" });
 

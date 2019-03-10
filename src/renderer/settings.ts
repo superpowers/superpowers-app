@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as i18n from "../shared/i18n";
 
 export let corePath: string;
 export let userDataPath: string;
@@ -11,7 +10,7 @@ export let recentProjects: { host: string; projectId: string; name: string; }[];
 export let autoStartServer: boolean;
 
 export let nickname: string;
-export let presence: "online"|"away"|"offline";
+export let presence: "online" | "away" | "offline";
 export let savedChatrooms: string[];
 
 export function setPaths(newCorePath: string, newUserDataPath: string) {
@@ -23,7 +22,7 @@ export function setNickname(newNickname: string) {
   nickname = newNickname;
 }
 
-export function setPresence(newPresence: "online"|"away"|"offline") {
+export function setPresence(newPresence: "online" | "away" | "offline") {
   presence = newPresence;
 }
 
@@ -46,15 +45,11 @@ export function load(callback: (err: Error) => void) {
     }
 
     favoriteServersById = {};
+    favoriteServers = [];
     recentProjects = [];
 
     if (dataJSON == null) {
       // Setup defaults
-      const myServerEntry: ServerEntry = { id: "0", hostname: "127.0.0.1", port: "4237", label: i18n.t("server:myServer"), password: "" };
-      favoriteServers = [ myServerEntry ];
-      favoriteServersById[myServerEntry.id] = myServerEntry;
-
-      recentProjects = [];
       autoStartServer = true;
 
       nickname = null;
@@ -67,7 +62,10 @@ export function load(callback: (err: Error) => void) {
 
     const data = JSON.parse(dataJSON);
     favoriteServers = data.favoriteServers;
+
+    let nextServerId = 0;
     for (const entry of favoriteServers) {
+      entry.id = (nextServerId++).toString();
       favoriteServersById[entry.id] = entry;
       if (entry.password == null) entry.password = "";
     }
@@ -91,8 +89,14 @@ export function scheduleSave() {
 export function applyScheduledSave() {
   if (scheduleSaveTimeoutId == null) return;
 
+  const savedFavoriteServers: { hostname: string; port: string; label: string; }[] = [];
+
+  for (const entry of favoriteServers) {
+    savedFavoriteServers.push({ hostname: entry.hostname, port: entry.port, label: entry.label });
+  }
+
   const data = {
-    favoriteServers,
+    favoriteServers: savedFavoriteServers,
     recentProjects,
     autoStartServer,
     nickname,

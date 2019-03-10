@@ -65,13 +65,13 @@ function onSettingsLoaded(err: Error) {
 }
 
 function start() {
+  serverSettings.start();
   sidebar.start();
   home.start();
-  serverSettings.start();
 
   splashScreen.fadeOut(() => {
     if (settings.nickname == null) {
-      async.series([ showWelcomeDialog, installFirstSystem ]);
+      async.series([showWelcomeDialog, installFirstSystem]);
     } else {
       me.start();
       chat.start();
@@ -87,7 +87,7 @@ function showWelcomeDialog(callback: Function) {
       settings.setNickname(result.nickname);
       settings.setPresence(result.connectToChat ? "online" : "offline");
 
-      settings.setSavedChatrooms([ "#superpowers-html5" ]);
+      settings.setSavedChatrooms(["#superpowers-html5"]);
       if (i18n.languageCode !== "en" && chat.languageChatRooms.indexOf(i18n.languageCode) !== -1) {
         settings.savedChatrooms.push(`#superpowers-html5-${i18n.languageCode}`);
       }

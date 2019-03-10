@@ -7,6 +7,7 @@ import * as i18n from "../../shared/i18n";
 
 import AddAddOrEditServerDialog from "./AddOrEditServerDialog";
 import * as settings from "../settings";
+import * as serverSettings from "../serverSettings";
 import openServer from "../tabs/openServer";
 
 new ResizeHandle(document.querySelector("body > .sidebar") as HTMLDivElement, "left");
@@ -18,6 +19,13 @@ const removeServerBtn = document.querySelector(".remove-server") as HTMLButtonEl
 const serversTreeView = new TreeView(document.querySelector(".servers-tree-view") as HTMLElement, { dropCallback: onServerDrop });
 
 export function start() {
+  addServer({
+    id: "local",
+    label: i18n.t("server:myServer"),
+    hostname: i18n.t("server:autoConfigured"),
+    port: null, password: null
+  });
+
   for (const serverEntry of settings.favoriteServers) addServer(serverEntry);
   addServerBtn.disabled = false;
 }
@@ -53,7 +61,9 @@ function onAddServerClick(event: MouseEvent) {
 }
 
 function onEditServerClick(event: MouseEvent) {
-  const serverId = parseInt(serversTreeView.selectedNodes[0].dataset["serverId"], 10);
+  const serverId = serversTreeView.selectedNodes[0].dataset["serverId"];
+  if (serverId === "local") return;
+
   const serverEntry = settings.favoriteServersById[serverId];
 
   const addOrEditOptions = {
@@ -82,10 +92,12 @@ function onEditServerClick(event: MouseEvent) {
 }
 
 function onRemoveServerClick(event: MouseEvent) {
+  const selectedServerId = serversTreeView.selectedNodes[0].dataset["serverId"];
+  if (selectedServerId === "local") return;
+
   new ConfirmDialog("Are you sure you want to remove the server?", { validationLabel: "Remove" }, (confirm) => {
     if (!confirm) return;
 
-    const selectedServerId = serversTreeView.selectedNodes[0].dataset["serverId"];
     const selectedServerElt = serversTreeView.treeRoot.querySelector(`li[data-server-id="${selectedServerId}"]`);
     serversTreeView.treeRoot.removeChild(selectedServerElt);
 
@@ -121,18 +133,35 @@ function onServerDrop(event: DragEvent, dropLocation: TreeView.DropLocation, ord
 }
 
 function updateSelectedServer() {
-  if (serversTreeView.selectedNodes.length === 0) {
-    editServerBtn.disabled = true;
-    removeServerBtn.disabled = true;
-  } else {
-    editServerBtn.disabled = false;
-    removeServerBtn.disabled = false;
+  let canEditSelectedServer = false;
+
+  if (serversTreeView.selectedNodes.length !== 0) {
+    const selectedServerId = serversTreeView.selectedNodes[0].dataset["serverId"];
+    canEditSelectedServer = selectedServerId !== "local";
   }
+
+  editServerBtn.disabled = !canEditSelectedServer;
+  removeServerBtn.disabled = !canEditSelectedServer;
 }
 
 function onServerActivate() {
   if (serversTreeView.selectedNodes.length === 0) return;
 
   const serverId = serversTreeView.selectedNodes[0].dataset["serverId"];
-  openServer(settings.favoriteServersById[serverId]);
+  let serverEntry: ServerEntry;
+
+  if (serverId === "local") {
+    // Fetch local server config to build up-to-date entry
+    serverEntry = {
+      id: "local",
+      label: i18n.t("server:myServer"),
+      hostname: "127.0.0.1",
+      port: serverSettings.config.mainPort.toString(),
+      password: serverSettings.config.password
+    };
+  } else {
+    serverEntry = settings.favoriteServersById[serverId];
+  }
+
+  openServer(serverEntry);
 }
