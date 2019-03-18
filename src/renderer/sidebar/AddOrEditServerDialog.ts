@@ -42,13 +42,13 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
     hostnameHeader.style.marginRight = "0.5em";
     hostRow.appendChild(hostnameHeader);
 
+    // TODO: Add a dropdownbox for HTTP or HTTPS
     this.hostnameInputElt = document.createElement("input");
     this.hostnameInputElt.placeholder = i18n.t("common:server.hostnamePlaceholder");
     this.hostnameInputElt.style.flex = "1 1 0";
     this.hostnameInputElt.style.marginRight = "0.5em";
     this.hostnameInputElt.required = true;
     this.hostnameInputElt.value = options.initialHostnameValue;
-    // this.hostnameInputElt.placeholder = ;
     hostRow.appendChild(this.hostnameInputElt);
 
     // Port
