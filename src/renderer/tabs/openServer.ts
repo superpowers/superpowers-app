@@ -78,9 +78,14 @@ function makeServerPane(serverEntry: ServerEntry) {
   retryButton.addEventListener("click", onRetryButtonClick);
 
   // Automatically add insecure protocol if none is already provided in the hostname
-  const protocol = serverEntry.hostname.startsWith("http") ? "" : "http://";
-  const host = `${serverEntry.hostname}:${serverEntry.port}`;
-  const baseUrl = protocol + host;
+  const protocol = serverEntry.hostname.startsWith("https://") ? "https://" : "http://";
+
+  let hostname = serverEntry.hostname;
+  if (hostname.startsWith("http://")) hostname = hostname.substring("http://".length);
+  else if (hostname.startsWith("https://")) hostname = hostname.substring("https://".length);
+  const hostnameAndPort = `${hostname}:${serverEntry.port}`;
+
+  const baseUrl = protocol + hostnameAndPort;
 
   function tryConnecting() {
     statusElt.textContent = i18n.t("common:server.connecting", { baseUrl });
@@ -141,10 +146,10 @@ function makeServerPane(serverEntry: ServerEntry) {
     paneElt.appendChild(webviewElt);
     webviewElt.focus();
 
-    const buildHost = `${serverEntry.hostname}:${serverInfo.buildPort}`;
+    const buildHostnameAndPort = `${hostname}:${serverInfo.buildPort}`;
     const auth = { username: "superpowers", password: serverEntry.password };
-    electron.ipcRenderer.send("set-http-auth", host, auth);
-    electron.ipcRenderer.send("set-http-auth", buildHost, auth);
+    electron.ipcRenderer.send("set-http-auth", hostnameAndPort, auth);
+    electron.ipcRenderer.send("set-http-auth", buildHostnameAndPort, auth);
   }
 
   tryConnecting();

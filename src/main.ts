@@ -182,14 +182,15 @@ electron.app.on("login", (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
 
   const parsedUrl = url.parse(request.url);
-  const host = `${parsedUrl.hostname}:${parsedUrl.port}`;
-  const auth = httpAuthByHosts[host];
+  const port = parsedUrl.port != null ? parsedUrl.port : (parsedUrl.protocol === "https:" ? 443 : 80);
+  const hostnameAndPort = `${parsedUrl.hostname}:${port}`;
+  const auth = httpAuthByHosts[hostnameAndPort];
 
   if (auth == null) {
     // Since this might race with the set-http-auth event above,
     // try again a second later
     setTimeout(() => {
-      const auth = httpAuthByHosts[host];
+      const auth = httpAuthByHosts[hostnameAndPort];
       if (auth == null) callback(null, null);
       else callback(auth.username, auth.password);
     }, 1000);
