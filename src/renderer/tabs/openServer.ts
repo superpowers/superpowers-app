@@ -83,6 +83,7 @@ function makeServerPane(serverEntry: ServerEntry) {
   let hostname = serverEntry.hostname;
   if (hostname.startsWith("http://")) hostname = hostname.substring("http://".length);
   else if (hostname.startsWith("https://")) hostname = hostname.substring("https://".length);
+  if (hostname.endsWith("/")) hostname = hostname.substring(0, hostname.length - 1);
   const hostnameAndPort = `${hostname}:${serverEntry.port}`;
 
   const baseUrl = protocol + hostnameAndPort;
