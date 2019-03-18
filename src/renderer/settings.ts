@@ -89,10 +89,10 @@ export function scheduleSave() {
 export function applyScheduledSave() {
   if (scheduleSaveTimeoutId == null) return;
 
-  const savedFavoriteServers: { hostname: string; port: string; label: string; }[] = [];
+  const savedFavoriteServers: { hostname: string; port: string; label: string; password: string; }[] = [];
 
   for (const entry of favoriteServers) {
-    savedFavoriteServers.push({ hostname: entry.hostname, port: entry.port, label: entry.label });
+    savedFavoriteServers.push({ hostname: entry.hostname, port: entry.port, label: entry.label, password: entry.password });
   }
 
   const data = {
