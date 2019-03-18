@@ -131,7 +131,7 @@ function makeServerPane(serverEntry: ServerEntry) {
     function onError() {
       clearEventListeners();
       paneElt.removeChild(webviewElt);
-      statusElt.textContent = "Failed to load iframe";
+      statusElt.textContent = "Failed to load webview";
     }
 
     webviewElt.addEventListener("did-finish-load", onLoad);
