@@ -25,6 +25,7 @@
 
   "server": {
     "hostname": "Hostname",
+    "hostnamePlaceholder": "Server IP or domain name",
     "port": "Port",
     "label": "Label",
     "password": "Password",

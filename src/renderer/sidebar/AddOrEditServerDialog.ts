@@ -43,6 +43,7 @@ export default class AddOrEditServerDialog extends BaseDialog<AddOrEditServerRes
     hostRow.appendChild(hostnameHeader);
 
     this.hostnameInputElt = document.createElement("input");
+    this.hostnameInputElt.placeholder = i18n.t("common:server.hostnamePlaceholder");
     this.hostnameInputElt.style.flex = "1 1 0";
     this.hostnameInputElt.style.marginRight = "0.5em";
     this.hostnameInputElt.required = true;
