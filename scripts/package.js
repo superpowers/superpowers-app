@@ -22,7 +22,7 @@ const year = new Date().getFullYear();
 packager({
   dir: "public",
   name: "Superpowers",
-  platform: [ "linux", "win32","mas" ],
+  platform: [ "linux", "win32","darwin" ],
   arch: [ "ia32", "x64" ],
   version: require(`${__dirname}/../node_modules/electron/package.json`).version,
   out: "packages",
