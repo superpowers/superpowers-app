@@ -1,4 +1,9 @@
 {
-  "dashboard": "Dashboard",
-  "exit": "Sair"
+  "dashboard": "Painel de Controle",
+  "exit": "Sair",
+
+  "stillRunning": {
+    "title": "Rodando em segundo plano...",
+    "content": "Clique com o botão direito do mouse no ícone da bandeja para sair do Superpowers."
+  }
 }

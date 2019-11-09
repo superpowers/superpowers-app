@@ -4,7 +4,7 @@
   "startAnyway": "Iniciar mesmo assim",
 
   "errors": {
-    "missingEnvironmentVariables": "Não foi possível localizar variáveis de ambiente necessárias: ${envVars}.",
+    "couldNotGetDataPath": "Não foi possível obter o data path: ${details}",
     "couldNotCreateUserDataFolder": "Não foi possível criar pasta de dados do usuário em ${userDataPath}. Razão: ${reason}.",
     "couldNotLoadSettings": "Não foi possível carregar as configurações de ${settingsPath}. Razão: ${reason}."
   },
@@ -12,15 +12,14 @@
   "updateAvailable": {
     "app": "Superpowers ${latest} está disponível (você está rodando ${current}).",
     "core": "Superpowers Core ${latest} está disponível (você está rodando ${current}).",
-    "askGameInstall": "Você deseja instalar o sistema Superpowers Game agora? Ele pode ser usado para criar projetos de jogos HTML5 2D+3D.",
-    "systems": "Há atualizações disponíveis para alguns sistemas."
+    "systemsAndPlugins": "Os seguintes itens possuem atualização disponível: ${systemsAndPlugins}."
   },
 
   "status": {
     "installingCore": "Instalando Superpowers Core mais recente...",
     "installingCoreSucceed": "Superpowers Core foi instalado com êxito.",
     "installingCoreFailed": "Instalação do Superpowers Core falhou. ${error}",
-    "installingGame": "Instalando sistema Superpowers Game mais recente...",
+    "installingGame": "Instalando o sistema Superpowers Game mais recente...",
     "installingGameFailed": "Instalação do sistema Superpowers Game falhou. ${error}"
   }
 }
