@@ -13,7 +13,7 @@
     "dnd-tree-view": "^4.0.0",
     "escape-html": "^1.0.3",
     "follow-redirects": "^1.7.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mkdirp": "^0.5.1",
     "resize-handle": "^5.0.0",
     "simple-dialogs": "^2.0.0",
