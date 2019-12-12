@@ -34,7 +34,7 @@ electron.ipcMain.on("send-message", onSendMessage);
 
 const secretKeys = new Map<Electron.WebContents, string[]>();
 
-function onSetupKey(event: Electron.Event, secretKey: string) {
+function onSetupKey(event: Electron.IpcMainEvent, secretKey: string) {
   let keys = secretKeys.get(event.sender);
 
   if (keys == null) {
@@ -45,26 +45,28 @@ function onSetupKey(event: Electron.Event, secretKey: string) {
   keys.push(secretKey);
 }
 
-function onChooseFolder(event: Electron.Event, secretKey: string, ipcId: string, origin: string) {
+function onChooseFolder(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string) {
   if (!secretKeys.get(event.sender).includes(secretKey)) return;
 
-  electron.dialog.showOpenDialog({ properties: [ "openDirectory" ] }, (directory: string[]) => {
-    if (directory == null) { event.sender.send("choose-folder-callback", ipcId, null); return; }
+  const promise = electron.dialog.showOpenDialog({ properties: [ "openDirectory" ] });
+  promise.then((result) => {
+    if (result.canceled) { event.sender.send("choose-folder-callback", ipcId, null); return; }
 
-    const normalizedPath = path.normalize(directory[0]);
+    const normalizedPath = path.normalize(result.filePaths[0]);
     getAuthorizationsForOrigin(origin).folders.push(normalizedPath);
 
     event.sender.send("choose-folder-callback", ipcId, normalizedPath);
   });
 }
 
-function onChooseFile(event: Electron.Event, secretKey: string, ipcId: string, origin: string, access: "readWrite"|"execute") {
+function onChooseFile(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, access: "readWrite"|"execute") {
   if (!secretKeys.get(event.sender).includes(secretKey)) return;
 
-  electron.dialog.showOpenDialog({ properties: [ "openFile" ] }, (file: string[]) => {
-    if (file == null) { event.sender.send("choose-file-callback", ipcId, null); return; }
+  const promise = electron.dialog.showOpenDialog({ properties: [ "openFile" ] });
+  promise.then((result) => {
+    if (result.canceled) { event.sender.send("choose-file-callback", ipcId, null); return; }
 
-    const normalizedPath = path.normalize(file[0]);
+    const normalizedPath = path.normalize(result.filePaths[0]);
     const auths = getAuthorizationsForOrigin(origin);
 
     if (access === "execute") auths.exeFiles.push(normalizedPath);
@@ -74,14 +76,14 @@ function onChooseFile(event: Electron.Event, secretKey: string, ipcId: string, o
   });
 }
 
-function onAuthorizeFolder(event: Electron.Event, secretKey: string, ipcId: string, origin: string, folderPath: string) {
+function onAuthorizeFolder(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, folderPath: string) {
   const normalizedPath = path.normalize(folderPath);
   getAuthorizationsForOrigin(origin).folders.push(normalizedPath);
 
   event.sender.send("authorize-folder-callback", ipcId);
 }
 
-function onCheckPathAuthorization(event: Electron.Event, secretKey: string, ipcId: string, origin: string, pathToCheck: string) {
+function onCheckPathAuthorization(event: Electron.IpcMainEvent, secretKey: string, ipcId: string, origin: string, pathToCheck: string) {
   if (!secretKeys.get(event.sender).includes(secretKey)) return;
 
   const normalizedPath = path.normalize(pathToCheck);

@@ -36,7 +36,7 @@ function startCleanExit() {
   isQuitting = true;
 }
 
-electron.ipcMain.on("ready-to-quit", (event: Electron.Event) => {
+electron.ipcMain.on("ready-to-quit", (event: Electron.IpcMainEvent) => {
   if (event.sender !== mainWindow.webContents) return;
 
   SupAppIPC.saveAuthorizations(userDataPath);
@@ -121,8 +121,10 @@ function setupMainWindow() {
     width: 1000, height: 600, icon: `${__dirname}/superpowers.ico`,
     minWidth: 800, minHeight: 480,
     useContentSize: true, autoHideMenuBar: true,
-    show: false
+    show: false,
+    webPreferences: { nodeIntegration: true, webviewTag: true }
   });
+
   mainWindow.loadURL(`file://${__dirname}/renderer/${i18n.getLocalizedFilename("index.html")}`);
 
   mainWindow.webContents.on("did-finish-load", () => {

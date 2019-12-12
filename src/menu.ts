@@ -48,7 +48,7 @@ export function setup(app: Electron.App) {
           accelerator: "Command+Q",
           click() { app.quit(); }
         },
-      ]
+      ] as Electron.MenuItemConstructorOptions[]
     },
     {
       label: "Edit",
@@ -86,7 +86,7 @@ export function setup(app: Electron.App) {
           accelerator: "CmdOrCtrl+A",
           role: "selectall"
         },
-      ]
+      ] as Electron.MenuItemConstructorOptions[]
     },
     {
       label: "Window",
