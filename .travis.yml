@@ -28,6 +28,7 @@ deploy:
   file_glob: true
   file: "packages/superpowers-*.zip"
   skip_cleanup: true
+  draft: true
   on:
     repo: superpowers/superpowers-app
     tags: true
